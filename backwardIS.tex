@@ -29,6 +29,9 @@
 \usepackage{geometry}
 \pagestyle{fancy}
 
+\newcommand{\gpeUB}{\overline{m}_{\parvec}}
+\newcommand{\gpeLB}{\underline{m}_{\parvec}}
+
 \def\dimX{d}
 \def\dimY{m}
 %\def\Xset{\mathsf{X}}
@@ -592,7 +595,9 @@ The replicates show that the variance of our estimator (for a given set of obser
 
 \section{Tangent filters and online recursive maximum likelihood}
 \label{sec:tangent:filter}
-Let $\parspace$ be a parameter space. This section considers a family of transition kernels $(\hk_{k;\parvec})_{\parvec\in\parspace; 0\leqslant k \leqslant n-1}$ on $\Xset\times \mathcal{B}(\Xset)$ and $(\mk_{k;\parvec})_{\parvec\in\parspace;1\leqslant k \leqslant n}$ on $\Xset\times \mathcal{B}(\Yset)$ associated with densities $\hd{k;\parvec}$ and $\md{k;\parvec}$ with respect to $\mu$ and  $\nu$. The joint smoothing distributions are then defined, for any $\parvec\in\parspace$, $0 \leqslant k_1 \leqslant k_2 \leqslant n$ and any function $h\in \bmf{\Xset^{k_2 - k_1 +1}}$,  by:
+Let $\parspace$ be a parameter space. 
+This section considers a family of transition kernels $(\hk_{k;\parvec})_{\parvec\in\parspace; 0\leqslant k \leqslant n-1}$ on $\Xset\times \mathcal{B}(\Xset)$ and $(\mk_{k;\parvec})_{\parvec\in\parspace;1\leqslant k \leqslant n}$ on $\Xset\times \mathcal{B}(\Yset)$ associated with densities $\hd{k;\parvec}$ and $\md{k;\parvec}$ with respect to $\mu$ and  $\nu$. 
+The joint smoothing distributions are then defined, for any $\parvec\in\parspace$, $0 \leqslant k_1 \leqslant k_2 \leqslant n$ and any function $h\in \bmf{(\Xset)^{k_2 - k_1 +1}}$,  by:
 \[
 \post{k_1:k_2;\parvec \mid n}[h] \eqdef \llh{n;\parvec}^{-1}(Y_{1:n})\int \chi(\rmd x_0)\prod_{k=0}^{n-1}\hk_{k;\parvec}(x_{k},\rmd x_{k+1})\md{k+1;\parvec}(x_{k+1},Y_{k+1})h(x_{k_1:k_2})\eqsp,
 \]
@@ -600,7 +605,7 @@ where
 \[
 \llh{n;\parvec}(Y_{1:n})  = \int \chi(\rmd x_0)\prod_{k=0}^{n-1}\hk_{k;\parvec}(x_{k},\rmd x_{k+1})\md{k+1;\parvec}(x_{k+1},Y_{k+1})
 \]
-As noted for instance in \cite[Section~2]{delmoral:doucet:singh:2015} and \cite{olsson:westerborn:2017}, for all $\parvec\in\parspace$ and all $f_{0:n}\in \bmf{\Xset^{n+1}}$,
+As noted for instance in \cite[Section~2]{delmoral:doucet:singh:2015} and \cite{olsson:westerborn:2017}, for all $\parvec\in\parspace$ and all $f_{0:n}\in \bmf{(\Xset)^{n+1}}$,
 \[
 \deriv \post{0:n;\parvec \mid n - 1}[f_{0:n}]  = \post{0:n;\parvec \mid n - 1} [\af{n} f_{0:n}] - \post{0:n;\parvec \mid n - 1} [f_{0:n}] \times \post{0:n;\parvec \mid n - 1 }[\af{n}]\eqsp,
 \]
@@ -906,7 +911,7 @@ The exact sampling being replaced by an importance sampling step, the conjecture
 However, the empirical study illustrates that $\K$ may be chosen to increase with $\N$ sufficiently slowly to remove the additional bias term while simultaneously ensuring better computational performance. % This empirical analysis could be supported by theoretical guarantees   and motivates future developments.
 
 \bibliographystyle{apalike}
-\bibliography{backwardIS_sde}
+\bibliography{backwardIS}
 
 
 \end{document}

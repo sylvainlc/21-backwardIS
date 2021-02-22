@@ -1,0 +1,213 @@
+\begin{thebibliography}{}
+
+\bibitem[A\"{i}t-Shalia, 2008]{ait-sahalia2008closed}
+A\"{i}t-Shalia, Y. (2008).
+\newblock Closed-form likelihood expansions for multivariate diffusions.
+\newblock {\em Annals of {S}tatistics}, 36(2):906--937.
+
+\bibitem[Andersson and Kohatsu-Higa, 2017]{andersson2017unbiased}
+Andersson, P. and Kohatsu-Higa, A. (2017).
+\newblock Unbiased simulation of stochastic differential equations using
+  parametrix expansions.
+\newblock {\em Bernoulli}, 23(3):2028--2057.
+
+\bibitem[Beskos et~al., 2006a]{beskos2006retrospective}
+Beskos, A., Papaspiliopoulos, O., and Roberts, G.~O. (2006a).
+\newblock Retrospective exact simulation of diffusion sample paths with
+  applications.
+\newblock {\em Bernoulli}, 12(6):1077--1098.
+
+\bibitem[Beskos et~al., 2006b]{beskos2006exact}
+Beskos, A., Papaspiliopoulos, O., Roberts, G.~O., and Fearnhead, P. (2006b).
+\newblock Exact and computationally efficient likelihood-based estimation for
+  discretely observed diffusion processes (with discussion).
+\newblock {\em Journal of the Royal Statistical Society: Series B (Statistical
+  Methodology)}, 68(3):333--382.
+
+\bibitem[Briers et~al., 2010]{briers2010smoothing}
+Briers, M., Doucet, A., and Maskell, S. (2010).
+\newblock Smoothing algorithms for state--space models.
+\newblock {\em Annals of the Institute of Statistical Mathematics}, 62(1):61.
+
+\bibitem[Candanedo et~al., 2017]{candanedo2017methodology}
+Candanedo, L.~M., Feldheim, V., and Deramaix, D. (2017).
+\newblock A methodology based on hidden markov models for occupancy detection
+  and a case study in a low energy residential building.
+\newblock {\em Energy and Buildings}, 148:327--341.
+
+\bibitem[Capp\'e et~al., 2005]{cappe2005inference}
+Capp\'e, O., Moulines, E., and Ryd\'en, T. (2005).
+\newblock {\em Inference in Hidden Markov Models}.
+\newblock Springer.
+
+\bibitem[Del~Moral et~al., 2010]{delmoral2010backward}
+Del~Moral, P., Doucet, A., and Singh, S.~S. (2010).
+\newblock A backward particle interpretation of feynman-kac formulae.
+\newblock {\em ESAIM: Mathematical Modelling and Numerical Analysis},
+  44(5):947--975.
+
+\bibitem[Dempster et~al., 1977]{dempster1977maximum}
+Dempster, A., Laird, N., and Rubin, D. (1977).
+\newblock Maximum likelihood from incomplete data via the {EM} algorithm (with
+  discussion).
+\newblock 39:1--38.
+
+\bibitem[Douc et~al., 2011]{douc2011sequential}
+Douc, R., Garivier, A., Moulines, E., and Olsson, J. (2011).
+\newblock Sequential monte carlo smoothing for general state space hidden
+  markov models.
+\newblock {\em The Annals of Applied Probability}, 21(6):2109--2145.
+
+\bibitem[Douc et~al., 2014]{douc2014nonlinear}
+Douc, R., Moulines, E., and Stoffer, D. (2014).
+\newblock {\em Nonlinear time series: theory, methods and applications with {R}
+  examples}.
+\newblock CRC Press.
+
+\bibitem[Doucet et~al., 2013]{doucet2013sequential}
+Doucet, A., de~Freitas, N., and Gordon, N. (2013).
+\newblock {\em Sequential Monte Carlo methods in practice}.
+\newblock Springer Science \& Business Media.
+
+\bibitem[Dubarry and Le~Corff, 2011]{dubarry2011fast}
+Dubarry, C. and Le~Corff, S. (2011).
+\newblock Fast computation of smoothed additive functionals in general
+  state-space models.
+\newblock {\em 2011 IEEE Statistical Signal Processing Workshop (SSP)}, pages
+  197--200.
+
+\bibitem[Dubarry and Le~Corff, 2013]{dubarry2013nonasymptotic}
+Dubarry, C. and Le~Corff, S. (2013).
+\newblock Non-asymptotic deviation inequalities for smoothed additive
+  functionals in nonlinear state-space models.
+\newblock {\em Bernoulli}, 19(5B):2222--2249.
+
+\bibitem[Fearnhead et~al., 2017]{fearnhead2017continuous}
+Fearnhead, P., Latuszynski, K., Roberts, G.~O., and Sermaidis, G. (2017).
+\newblock Continuous-time importance sampling: Monte carlo methods which avoid
+  time-discretisation error.
+\newblock {\em arXiv preprint arXiv:1712.06201}.
+
+\bibitem[Fearnhead et~al., 2010a]{fearnhead2010random}
+Fearnhead, P., Papaspiliopoulos, O., Roberts, G., and Stuart, A. (2010a).
+\newblock Random ­weight particle filtering of continuous time stochastic
+  processes.
+\newblock {\em Journal of the Royal Statistical Society: Series B (Statistical
+  Methodology)}, 72(4):497--512.
+
+\bibitem[Fearnhead et~al., 2008]{fearnhead2008particle}
+Fearnhead, P., Papaspiliopoulos, O., and Roberts, G.~O. (2008).
+\newblock Particle filters for partially observed diffusions.
+\newblock {\em Journal of the Royal Statistical Society: Series B (Statistical
+  Methodology)}, 70(4):755--777.
+
+\bibitem[Fearnhead et~al., 2010b]{fearnhead2010sequential}
+Fearnhead, P., Wyncoll, D., and Tawn, J. (2010b).
+\newblock A sequential smoothing algorithm with linear computational cost.
+\newblock {\em Biometrika}, 97(2):447--464.
+
+\bibitem[Gassiat et~al., 2016]{gassiat2016inference}
+Gassiat, {\'E}., Cleynen, A., and Robin, S. (2016).
+\newblock Inference in finite state space non parametric hidden markov models
+  and applications.
+\newblock {\em Statistics and Computing}, 26(1-2):61--71.
+
+\bibitem[Gerber and Chopin, 2017]{gerber2017convergence}
+Gerber, M. and Chopin, N. (2017).
+\newblock Convergence of sequential quasi-{M}onte {C}arlo smoothing algorithms.
+\newblock {\em Bernoulli}, 23(4B):2951--2987.
+
+\bibitem[Gloaguen et~al., 2018]{gloaguen2018online}
+Gloaguen, P., Etienne, M.-P., and Le~Corff, S. (2018).
+\newblock Online sequential monte carlo smoother for partially observed
+  diffusion processes.
+\newblock {\em EURASIP Journal on Advances in Signal Processing}, 2018(1):9.
+
+\bibitem[Gloaguen et~al., 2019]{gloaguen2019pseudo}
+Gloaguen, P., Le~Corff, S., and Olsson, J. (2019).
+\newblock Pseudo marginal sequential {M}onte {C}arlo methods for general state
+  spaces. {A}pplications to recursive maximum likelihood.
+\newblock {\em arXiv:1908.07254}.
+
+\bibitem[Gordon et~al., 1993]{gordon1993novel}
+Gordon, N.~J., Salmond, D.~J., and Smith, A.~F. (1993).
+\newblock Novel approach to nonlinear/non-gaussian bayesian state estimation.
+\newblock In {\em IEE proceedings F (radar and signal processing)}, volume 140,
+  pages 107--113. IET.
+
+\bibitem[Hansen, 2006]{hansen2006cma}
+Hansen, N. (2006).
+\newblock The cma evolution strategy: a comparing review.
+\newblock In {\em Towards a new evolutionary computation}, pages 75--102.
+  Springer.
+
+\bibitem[Hening and Nguyen, 2018]{hening2018persistence}
+Hening, A. and Nguyen, D.~H. (2018).
+\newblock Persistence in stochastic lotka--volterra food chains with
+  intraspecific competition.
+\newblock {\em Bulletin of mathematical biology}, 80(10):2527--2560.
+
+\bibitem[Michelot et~al., 2016]{michelot2016movehmm}
+Michelot, T., Langrock, R., and Patterson, T.~A. (2016).
+\newblock movehmm: an r package for the statistical modelling of animal
+  movement data using hidden markov models.
+\newblock {\em Methods in Ecology and Evolution}, 7(11):1308--1315.
+
+\bibitem[Nguyen et~al., 2017]{nguyen2017two}
+Nguyen, T., Le~Corff, S., and Moulines, {\'E}. (2017).
+\newblock On the two-filter approximations of marginal smoothing distributions
+  in general state-space models.
+\newblock {\em Advances in Applied Probability}, 50(1):154--177.
+
+\bibitem[Odum and Barrett, 1971]{odum1971fundamentals}
+Odum, E.~P. and Barrett, G.~W. (1971).
+\newblock {\em Fundamentals of ecology}, volume~3.
+\newblock Saunders Philadelphia.
+
+\bibitem[Olsson et~al., 2011]{olsson2011particle}
+Olsson, J., Str{\"o}jby, J., et~al. (2011).
+\newblock Particle-based likelihood inference in partially observed diffusion
+  processes using generalised poisson estimators.
+\newblock {\em Electronic Journal of Statistics}, 5:1090--1122.
+
+\bibitem[Olsson et~al., 2017]{olsson2017efficient}
+Olsson, J., Westerborn, J., et~al. (2017).
+\newblock Efficient particle-based online smoothing in general hidden markov
+  models: the paris algorithm.
+\newblock {\em Bernoulli}, 23(3):1951--1996.
+
+\bibitem[Rabiner, 1989]{rabiner1989tutorial}
+Rabiner, L. (1989).
+\newblock A tutorial on hidden markov models and selected applications in
+  speech recognition.
+\newblock In {\em Proceedings of the IEEE}, pages 257--286.
+
+\bibitem[S\"arkk\"a, 2013]{sarkka2013bayesian}
+S\"arkk\"a, S. (2013).
+\newblock {\em Bayesian Filtering and Smoothing}.
+\newblock Cambridge University Press, New York, NY, USA.
+
+\bibitem[S\"arkk\"a et~al., 2007]{sarkka2007rao}
+S\"arkk\"a, S., Vehtari, A., and Lampinen, J. (2007).
+\newblock Rao-{B}lackwellized particle filter for multiple target tracking.
+\newblock {\em Inofrmation Fusion}, 8(1):2--15.
+
+\bibitem[Wang et~al., 2017]{wang2017variational}
+Wang, X., Lebarbier, E., Aubert, J., and Robin, S. (2017).
+\newblock Variational inference for coupled hidden markov models applied to the
+  joint detection of copy number variations.
+\newblock {\em The International Journal of Biostatistics}, 15.
+
+\bibitem[Yau et~al., 2011]{yau2011bayesian}
+Yau, C., Papaspiliopoulos, O., Roberts, G.~O., and Holmes, C. (2011).
+\newblock Bayesian non-parametric hidden {M}arkov models with applications in
+  genomics.
+\newblock 73:1--21.
+
+\bibitem[Zucchini et~al., 2017]{zucchini2017hidden}
+Zucchini, W., Mac~Donald, I., and Langrock, R. (2017).
+\newblock {\em Hidden {M}arkov models for time series: an introduction using
+  {R}}.
+\newblock CRC Press.
+
+\end{thebibliography}
