@@ -275,7 +275,7 @@ The proposed method does not rely on any acceptance rejection procedure which re
 %where $\parvec\in\parspace$, $(W_t)_{t\geqslant 0}$ is a standard Brownian motion in $\mathbb{R}^{\sfd}$, $\alpha_{\parvec_*}: \mathbb{R}^d\to\mathbb{R}^d$ is the drift function and $\sigma_{\parvec_*}:\mathbb{R}^d\to\mathbb{R}^{d\times \sfd}$ is the diffusion. 
 Let $(X_k)_{k\geq 0}$ be a Markov chain on $\rset^d$ such that the distribution of $X_0$ has density $\chi$ with respect to the Lebesgue measure and for all $0\leqslant k \leqslant n-1$, the conditional distribution of $X_{k+1} $ given $(X_{0},\ldots, X_k)$ has density $\hd{k+1;\parvec}(X_{k},\cdot)$. 
 It is assumed that this state  is partially observed  through an observation process $(Y_k)_{0\leqslant k \leqslant n}$ taking values in $\mathbb{R}^m$. 
-For all $0\leqslant k \leqslant n$, the distribution of $Y_k$ given $(X_0,\ldots,X_n)$ depends on $X_k$ only and has density $\md{k;\parvec_}$ with respect to the Lebesgue measure. In this setting, common learning objectives are the \textit{state estimation problem}, which aims at recovering the underlying signal $X_k$ at time $t_k$ given the observations $Y_{0:n}$, where $a_{u:v}$ is a short-hand notation for $(a_u,\ldots,a_v)$, and the \textit{parameter inference  problem} which aims at approximating 
+For all $0\leqslant k \leqslant n$, the distribution of $Y_k$ given $(X_0,\ldots,X_n)$ depends on $X_k$ only and has density $\md{k;\parvec}$ with respect to the Lebesgue measure. In this setting, common learning objectives are the \textit{state estimation problem}, which aims at recovering the underlying signal $X_k$ at time $t_k$ given the observations $Y_{0:n}$, where $a_{u:v}$ is a short-hand notation for $(a_u,\ldots,a_v)$, and the \textit{parameter inference  problem} which aims at approximating 
 $$
 \widehat \parvec_n = \mathrm{argmax}_{\parvec\in\parspace}\eqsp\llh{n}(\parvec)\eqsp,
 $$
@@ -345,9 +345,7 @@ The next section describes a Sequential Monte Carlo algorithm \cite{doucet2013se
 
 \section{Online sequential Monte Carlo smoothing}
 \label{sec:bayesian:smoothing}
-In many situations \textcolor{red}{Add examples (taken from the paper with Jimmy)}, SMC methods cannot be used straightforwardly as the transition densities $\hd{k}$, $0\leqslant k \leqslant n-1$, are unknown. 
-To overcome these issues, following \cite{fearnhead2008particle, olsson2011particle, gloaguen2018online}, consider the following assumption. 
-%Let $(\marginalset,\mathcal{B}(\marginalset))$ be a general state space.
+In many situations \textcolor{red}{Add examples (taken from the paper with Jimmy)}, SMC methods cannot be used straightforwardly as the transition densities $\hd{k}$, $0\leqslant k \leqslant n-1$ and the marginal likelihood of the observations $\md{k}$, $0\leqslant k \leqslant n-1$, are unknown. Pseudo-marginalisation was originally proposed in \cite{beaumont:2003} in the framework of MCMC methods, and further analyzed in \cite{andrieu:robert:2009}.  Following \cite{fearnhead2008particle, olsson2011particle, gloaguen2018online}, while the target density is intractable we assume that there exists some additional state space$(\marginalset,\mathcal{B}(\marginalset))$ such that the following assumption holds.
 \begin{hypH} 
 \label{assum:unbiased}
 For all $\parvec \in\parspace$ and $k\geqslant 0$, there exists a Markov kernel on $(\Xset\times\Xset,\mathcal{B}(\marginalset))$ with density $\kernelmarg_{k;\parvec}$ with respect to a reference measure $\mu$ on a general state space $(\marginalset,\mathcal{B}(\marginalset))$,  and a positive mapping $\hatqg{k;\parvec}$ on $\Xset\times\Xset\times\marginalset$ such that, for all $(x,x')\in\Xset \times \Xset$,
@@ -355,8 +353,13 @@ For all $\parvec \in\parspace$ and $k\geqslant 0$, there exists a Markov kernel 
 \int \kernelmarg_{k;\parvec}(x,x';z)\hatqg{k;\parvec}\langle z\rangle(x,x')\mu(\rmd z) =  \qg{k;\parvec}(x,x')\eqsp.
 \end{equation*}
 % It is assumed that $\kernelmarg_{k;\parvec}$ has a probability density with respect to a reference measure on $(\marginalset,\mathcal{B}(\marginalset))$ which is also written $\kernelmarg_{k;\parvec}$.
-In other words, we assume that an unbiased estimator of $\qg{k;\parvec}(x,x')\eqsp$ is available.
+%In other words, we assume that an unbiased estimator of $\qg{k;\parvec}(x,x')\eqsp$ is available.
 \end{hypH}
+Thus, a pointwise estimate of $\qg{k;\parvec}(x,x')$ can be obtained by generating $\zeta$ from $\kernelmarg_{k;\parvec}(x,x';\rmd z)$ and computing the statistic $\hatqg{k;\parvec}\langle z\rangle(x,x')$. Interestingly, even though pseudo marginalisation is based on the plug-in principle, it preserves typically the consistency of an algorithm, see for instance in the case of pseudo-marginal SMC smoothers \cite{gloaguen2019pseudo}.
+
+%To overcome these issues,, consider the following assumption. 
+%Let $(\marginalset,\mathcal{B}(\marginalset))$ be a general state space.
+
 
 
 \subsection{Filtering}
