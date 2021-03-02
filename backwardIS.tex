@@ -592,17 +592,27 @@ The particle smoother is implemented using $N = 200$ particles and $\tilde{N}=20
 The replicates show that the variance of our estimator (for a given set of observations) is much smaller than the one of the {\em poor man smoother}. This algorithm approximates the smoothing distributions at time $n$ by the weighted samples  where the particle trajectories $\epart{0:n}{\ell}$, $1\leqslant \ell \leqslant N$,  are obtained using the ancestral line of each last sample. The variance of the estimates based on this ancestor tree is doomed to failure due to the degeneracy caused by the successive resampling steps.
 
 \subsection{Recurrent neural networks}
-Recurrent Neural Network (RNN) were first introduced in \cite{Mozer1989AFB} to model time series using a hidden context state  which is appealing to describe short time dependencies. Although they are lackluster in problems requiring long term memory due to vanishing and exploding gradient \cite{Bengio1994LearningLD} and they have been extended with Long Short Term Memory proposed in \cite{Hochreiter1997LongSM} and Gated Recurrent Unit (GRU) introduced in  \cite{Cho2014LearningPR}, they define robust many to many backbone architectures which are widely used in practice \cite{}.
+Recurrent Neural Network (RNN) were first introduced in \cite{Mozer1989AFB} to model time series using a hidden context state  which is appealing to describe short time dependencies. Although they are lackluster in problems requiring long term memory due to vanishing and exploding gradient \cite{Bengio1994LearningLD} and they have been extended by Long Short Term Memory  \cite{Hochreiter1997LongSM} and Gated Recurrent Unit (GRU) \cite{Cho2014LearningPR}, they define robust many to many backbone architectures which are widely used in practice \cite{}.
 
 
 In this section, we propose a general state space model based on a RNN architecture, as follows.  The hidden state is initialized as $X_0 \sim \mathcal{N}(0,\Sigma)$ and for all $k\geqslant 1$,
 $$
 X_k = \tanh(W_{1} Y_{k-1} + W_{2} X_{k-1} + b + \eta_k)\quad\mathrm{and} \quad Y_k = W_{3} X_{k}  + c + \varepsilon_k\eqsp,
 $$
-where where $W_{1}$, $W_{2}$, $W_3$ and $b$ and $c$ are the weight matrices and bias learned during training, and initialized with random values. The random 
+where where $W_{1}$, $W_{2}$, $W_3$ and $b$ and $c$ are the weight matrices and bias,  $\Sigma$ is an unknown covariance matrix and $(\eta_k)_{k\geqslant 1}$ and $(\varepsilon_k)_{k\geqslant 1}$ are independen Gaussian random variables with covaraince matrices $Q$ and $R$.
 
+\textcolor{red}{Expain that (i) multi-layer models  are easy extensions, (ii) even the bootstrap is hard since we can sample from the prior but we cannot evaluate it so we need Pseudo-Marginal and/or backward importance.}
 
-\textcolor{red}{Expain that (i) multilayer is an easy extension, (ii) even the bootstrap is hard since we can sample from the prior but we cannot evaluate it so we need Pseudo-Marginal and/or backward importance.}
+A simulation plan which could be nice and not too complex:
+\begin{enumerate}
+\item Learn a RNN without noise on a nice dataset (weather data ?).
+\item Then sample a sequence $(\{X_k,Y_k\})_{1\leqslant k\leqslant n}$, with $n=100$ or $n=1000$ and choosing $Q,R,\Sigma$ as diagonal matrices. (Check that the choice leads to realistic observations).
+\item Run the backward IS and the Poorman smoother to estimate a conditional expectation $\mathbb{E}[X_0|Y_{1:n}]$ if we do similarly as in the other cases.
+\item Display for both algorithms $\|X_0 - \mathbb{E}[X_0|Y_{1:n}]\|^2$.
+\end{enumerate}
+
+If this works well, then we illustrate our claims and we can perform parameter estimation for the stochastic RNN using backward IS to illustrate score estimation. And we are good ?
+
 
 \section{Tangent filters and online recursive maximum likelihood}
 \label{sec:tangent:filter}
