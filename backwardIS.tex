@@ -237,9 +237,9 @@ and engineering domains such as movement ecology \cite{michelot2016movehmm}, ene
 %\textcolor{red}{Ne pas orienter vers les EDS uniquement. Mettre en avant les modeles complexes et l'impossibilite de faire de l'acceptation rejet, et mettre en avant la possibilite d'avoir un biais dans les poids. Les EDS seront une application parmi d'autres. Mettre en avant les differents points : utilisation d'estimateur des poids, importance sampling au lieu de l'AR pour un enorme gain numerique, application au gradient pour l'estimation en ligne.}
 
 
-Markov chain Monte Carlo (MCMC) and sequential Monte Carlo (SMC) methods (also known as particle filters or smoothers) are widespread solutions to propose consistent estimators of such distributions. A pivotal step of SMC approaches is the evaluation of the transition density of the hidden signal and of the density of the conditional distribution of an observation given the corresponding latent state (the marginal conditional likelihood). However, in many practical settings, no closed-form expressions of these distributions are available for instance in the case of partially observed diffusions \cite{} or in the context of  approximate Bayesian computation smoothing \cite{}. A first step to bypass this shortcoming was proposed \cite{} where the authors proposed an important contribution by showing that it is possible to implement importance sampling and filtering recursions, when the unavailable importance weights are replaced by random estimators. Standard data augmentation schemes were then used to extend this random-weight particle filter to provide new inference procedures for partially observed diffusion models \cite{}. 
+Markov chain Monte Carlo (MCMC) and sequential Monte Carlo (SMC) methods (also known as particle filters or smoothers) are widespread solutions to propose consistent estimators of such distributions. A pivotal step of SMC approaches is the evaluation of the transition density of the hidden signal and of the density of the conditional distribution of an observation given the corresponding latent state (the marginal conditional likelihood). However, in many practical settings, no closed-form expressions of these distributions are available for instance in the case of partially observed diffusions \cite{andersson2017unbiased,fearnhead2017continuous} or in the context of  approximate Bayesian computation smoothing \cite{martin:jasra:singh:whiteley:delmoral:maccoy:2014}. A first step to bypass this shortcoming was proposed \cite{fearnhead2010random} where the authors proposed an important contribution by showing that it is possible to implement importance sampling and filtering recursions, when the unavailable importance weights are replaced by random estimators. Standard data augmentation schemes were then used to extend this random-weight particle filter to provide new inference procedures for partially observed diffusion models \cite{yonekura:beskos:2020}. 
 
-More recently,  \cite{gloaguen2019pseudo} introduced a pseudo-marginal online smoother to approximate conditional expectations of additive functionals of the hidden states  in  a very general setting where the user can only evaluate (possibly biased) approximations of the transition density and/or of the marginal conditional likelihood. The online algorithm of \cite{gloaguen2019pseudo} may be used to approximate expectations of additive functionals under the smoothing distributions by processing the data stream online. This algorithm extends the particle-based rapid incremental smoother (PaRIS) of \cite{olsson2017efficient}. This approach is an online version of the Forward Filtering Backward Simulation algorithm \cite{douc2011sequential} specifically designed to approximate conditional expectations of additive functionals. Other smoothing algorithms such as two-filter based approaches \cite{briers2010smoothing, fearnhead2010sequential, nguyen2017two}  could be extended  but they are intrisically not online procedures as they require the time horizon and all observations to be available  to initialize a backward information filter. In \cite{gloaguen2019pseudo}, the authors proposed several theoretical guarantees for this pseudo-marginal smoothing algorithm to assess the reach of its efficiency: strong consistency, asymptotic normality when the number of particles grows to infinity and control of the asymptotic variance. %This makes this pseudo marginal smoother the first algorithm to approximate such expectations in such a  general setting  with theoretical guarantees and an explicit expression of the asymptotic variance. 
+More recently,  \cite{gloaguen2021pseudo} introduced a pseudo-marginal online smoother to approximate conditional expectations of additive functionals of the hidden states  in  a very general setting where the user can only evaluate (possibly biased) approximations of the transition density and/or of the marginal conditional likelihood. The online algorithm of \cite{gloaguen2021pseudo} may be used to approximate expectations of additive functionals under the smoothing distributions by processing the data stream online. This algorithm extends the particle-based rapid incremental smoother (PaRIS) of \cite{olsson2017efficient}. This approach is an online version of the Forward Filtering Backward Simulation algorithm \cite{douc2011sequential} specifically designed to approximate conditional expectations of additive functionals. Other smoothing algorithms such as two-filter based approaches \cite{briers2010smoothing, fearnhead2010sequential, nguyen2017two}  could be extended  but they are intrisically not online procedures as they require the time horizon and all observations to be available  to initialize a backward information filter. In \cite{gloaguen2021pseudo}, the authors proposed several theoretical guarantees for this pseudo-marginal smoothing algorithm to assess the reach of its efficiency: strong consistency, asymptotic normality when the number of particles grows to infinity and control of the asymptotic variance. %This makes this pseudo marginal smoother the first algorithm to approximate such expectations in such a  general setting  with theoretical guarantees and an explicit expression of the asymptotic variance. 
   This extended the result of \cite{olsson2017efficient}, written only in the case of the bootstrap filter \cite{gordon1993novel}, and the theoretical guarantees obtained for online sequential Monte Carlo smoothers given in \cite{delmoral2010backward, douc2011sequential, dubarry2013nonasymptotic, gerber2017convergence}.
 
 
@@ -255,13 +255,17 @@ More recently,  \cite{gloaguen2019pseudo} introduced a pseudo-marginal online sm
   
 
 
-However, a requirement to use this algorithm is that the estimate of the transition density and of the marginal likelihood  is almost surely positive and upper bounded.  This condition is required to perform a pivotal backward  acceptance-rejection sampling procedure. 
-In the context of diffusion processes, this assumption is very restrictive and narrows the possible models to the class of diffusions satisfying the Exact algorithm conditions of \cite{beskos2006retrospective}, for which  General Poisson Estimators (GPEs) \cite{fearnhead2008particle} lead to eligible unbiased estimators.  \textcolor{red}{Add other settings where accept-reject is not a valid option.}
+However, a requirement to use this pseudo-marginal algorithm where transition densities are intractable but  estimated by means of simulation, is that the associated pseudo-marginal backward kernel can be sampled from exactly. In  \cite{gloaguen2021pseudo}, the authors proposed to use rejection sampling to sample from this kernel, following for instance \cite{gloaguen2018online}. Rejection sampling is then based on the assumption that the estimate of the transition density and of the marginal likelihood  are almost surely positive and upper bounded.  
+In the context of diffusion processes, this assumption is very restrictive and narrows the possible models to the class of diffusions satisfying the Exact algorithm conditions of \cite{beskos2006retrospective}, for which  General Poisson Estimators (GPEs) \cite{fearnhead2008particle} lead to eligible unbiased estimators.  
 
-In this paper, a new procedure is introduced to  replace the backward acceptance-rejection step by an importance sampling estimate which leads to a smoothing algorithm that only requires an almost surely positive estimator of the transition density. In the context of partially observed diffusion processes, it is shown that such an estimator can be obtained for a wide range of models, using the parametrix estimators of \cite{andersson2017unbiased} and \cite{fearnhead2017continuous}.  In this paper, we propose to use Wald's trick to obtain positive estimates of the transition densities as this is not guaranteed in the original parametrix estimators.
+In this paper, a new procedure is introduced to  replace the backward acceptance-rejection step by an importance sampling estimate which leads to a smoothing algorithm that only requires an almost surely positive estimator of the unknwon transition density. In the context of partially observed diffusion processes, it is shown that such an estimator can be obtained for a wide range of models, using for instance the parametrix estimators of \cite{andersson2017unbiased} and \cite{fearnhead2017continuous}.  We propose to use Wald's trick to obtain positive estimates of the transition densities as this is not guaranteed in the original parametrix estimators.
 %The overall method therefore provides a consistent estimator of expectations under the smoothing distributions in the context of generic POD, where the hidden diffusion process can belong to a wide range of multivariate models. 
-The proposed method does not rely on any acceptance rejection procedure which reduces very significantly the computational time and its variance, as illustrated in extensive numerical experiments. \textcolor{red}{Add bias.}
-
+The proposed method is furnished with extensive numerical experiments to illustrate its performance, the empirical results can be summarised as follows.
+\begin{itemize}
+\item The proposed approach can be used for any latent data models such as hidden Markov models. Even when the transition densities are availaible, we show empirically that our backward importance sampling is a computationally efficient solution to solve the online smoothing problem, in cases where rejection sampling is  traditionally used in the PaRIS algorithm of \cite{olsson2017efficient}.
+\item When considering the pseudo-marginal approach, we extend the use of Wald's trick to the backward kernel to use importance sampling in cases where the estimators of the unknown densities  are not positive by construction.
+\item The proposed method does not rely on any acceptance rejection procedure which reduces very significantly the computational time. 
+\end{itemize}
 
 \section{Model and objectives}
 \label{sec:model}
@@ -278,7 +282,7 @@ The proposed method does not rely on any acceptance rejection procedure which re
 %where $\parvec\in\parspace$, $(W_t)_{t\geqslant 0}$ is a standard Brownian motion in $\mathbb{R}^{\sfd}$, $\alpha_{\parvec_*}: \mathbb{R}^d\to\mathbb{R}^d$ is the drift function and $\sigma_{\parvec_*}:\mathbb{R}^d\to\mathbb{R}^{d\times \sfd}$ is the diffusion. 
 Let $(X_k)_{k\geq 0}$ be a Markov chain on $\rset^d$ such that the distribution of $X_0$ has density $\chi$ with respect to the Lebesgue measure and for all $0\leqslant k \leqslant n-1$, the conditional distribution of $X_{k+1} $ given $(X_{0},\ldots, X_k)$ has density $\hd{k+1;\parvec}(X_{k},\cdot)$. 
 It is assumed that this state  is partially observed  through an observation process $(Y_k)_{0\leqslant k \leqslant n}$ taking values in $\mathbb{R}^m$. 
-For all $0\leqslant k \leqslant n$, the distribution of $Y_k$ given $(X_0,\ldots,X_n)$ depends on $X_k$ only and has density $\md{k;\parvec}$ with respect to the Lebesgue measure. In this setting, common learning objectives are the \textit{state estimation problem}, which aims at recovering the underlying signal $X_k$ at time $t_k$ given the observations $Y_{0:n}$, where $a_{u:v}$ is a short-hand notation for $(a_u,\ldots,a_v)$, and the \textit{parameter inference  problem} which aims at approximating 
+For all $0\leqslant k \leqslant n$, the distribution of $Y_k$ given $(X_0,\ldots,X_n)$ depends on $X_k$ only and has density $\md{k;\parvec}(X_k,\cdot)$ with respect to the Lebesgue measure. In this setting, common learning objectives are the \textit{state estimation problem}, which aims at recovering the underlying signal $X_k$ at time $t_k$ given the observations $Y_{0:n}$, where $a_{u:v}$ is a short-hand notation for $(a_u,\ldots,a_v)$, and the \textit{parameter inference  problem} which aims at approximating 
 $$
 \widehat \parvec_n = \mathrm{argmax}_{\parvec\in\parspace}\eqsp\llh{n}(\parvec)\eqsp,
 $$
@@ -298,7 +302,7 @@ The pivotal concept of the EM algorithm is that the intermediate quantity define
 \end{equation}
 may be used as a surrogate for $\llh{n}(\parvec)$ in the maximization procedure,  where $\pE_{\parvec'}$ is the expectation under the joint distribution of the latent states and the observations when the model is parameterized by $\parvec$. 
 Therefore, the EM algorithm iteratively builds a sequence $(\parvec_{p})_{p\geqslant 0}$ of parameter estimates following the two steps: (i) compute $\parvec\mapsto Q(\parvec,\parvec_{p})$ and (ii) choose $\parvec_{p+1}$ as a maximizer of $\parvec \mapsto Q(\parvec,\parvec_{p})$. Gradient ascent algorithms are compelling alternatives to the EM algorithm. 
-In the context of HMMs, the gradient of the log-likelihood can also be expressed  as an expectation of an additive functional of the hidden states given $Y_{0:n}$ (\cite{cappe2005inference}, Chapter~10, or \cite{gloaguen2019pseudo} in the context of SDEs). A key feature here is that all the relevant estimators rely on computing, for some parameters $\parvec$ and $\parvec'$:
+In the context of HMMs, the gradient of the log-likelihood can also be expressed  as an expectation of an additive functional of the hidden states given $Y_{0:n}$ (\cite{cappe2005inference}, Chapter~10, or \cite{gloaguen2018online} in the context of SDEs). A key feature here is that all the relevant estimators rely on computing, for some parameters $\parvec$ and $\parvec'$:
 $$\pE_{\parvec'}\left[\af{0:n,\parvec}(X_{0:n})\middle | Y_{0:n}\right],$$
 where $\af{0:n,\parvec}$ is an \textit{additive functional}, \textit{i.e.} satisfying:
 $$\af{0:n,\parvec}: x_{0:n} \mapsto \sum_{k=0}^{n-1}\addf{k;\parvec}(x_{k},x_{k+1}),$$
@@ -323,23 +327,23 @@ For any $\parvec\in\parspace$, $0 \leqslant k_1 \leqslant k_2 \leqslant n$ and a
 For all $0\leqslant k\leqslant n$, $\post{k;\parvec}=\post{k:k\mid k;\parvec}$ are the \textit{filtering distributions}.
 %This expression of the EM intermediate quantity supports the keen interest for efficient algorithms to estimate conditional expectation of additive functionals  of the latent states given the observations. 
 
-In the following, $\parvec$ is dropped from the notations for better clarity when there is no possible confusion. As noted for instance in \cite{cappe2005inference}, although the objective is to  obtain approximation of smoothing distributions, the filtering distribution is crucial as, for additive functionals,
-\begin{align}
-\post{0:n \mid n}[\af{0:n}] &= \post{n}\left[\tstat{n}[\af{0:n}]\right] \nonumber,
-\intertext{where}
-\tstat{n}[\af{0:n}](X_n) &= \pE_{}\left[\af{n}(X_{0:n})\middle | X_n, Y_{0:n}\right]. \label{eq:T:stat}
-\end{align}
-As a key consequence of the additive property, for all $1\leqslant k\leqslant n$
-\begin{equation}
-\tstat{k}[\af{0:k}](X_k) = \pE_{}\left[\tstat{k - 1}[\af{0:(k - 1)}](X_{k - 1}) + \addf{k-1}(X_{k-1}, X_k)\middle | X_k, Y_{0:{k - 1}}\right]. \label{eq:T:add:recursion}
-\end{equation}
-However, the exact computation of all these key expectations is not possible in general state spaces. 
-
-The next section describes a Sequential Monte Carlo algorithm \cite{doucet2013sequential} to approximate $\post{n}$ by weighted samples $\{(\ewght{n}{\ell},\epart{n}{\ell})\}_{\ell=1}^{\N}$ and the algorithm of \cite{gloaguen2018online} to compute recursively, for each $1\leqslant \ell \leqslant N$ an approximation $\tstat[\ell]{n}$ of $\tstat{n}[\af{0:n}](\epart{n}{\ell})$ so that the estimator of $\post{0:n \mid n}[\af{0:n}]$ is defined as
-\begin{align}
-\label{eq:paris:estimator}
-\post{0:n \mid n}^N[\af{0:n}]&\eqdef \sum_{\ell=1}^N \frac{\ewght{n}{\ell}}{\sum_{j=1}^N \ewght{n}{j}}\tstat[\ell]{n}\eqsp.
-\end{align}
+%In the following, $\parvec$ is dropped from the notations for better clarity when there is no possible confusion. As noted for instance in \cite{cappe2005inference}, although the objective is to  obtain approximation of smoothing distributions, the filtering distribution is crucial as, for additive functionals,
+%\begin{align}
+%\post{0:n \mid n}[\af{0:n}] &= \post{n}\left[\tstat{n}[\af{0:n}]\right] \nonumber,
+%\intertext{where}
+%\tstat{n}[\af{0:n}](X_n) &= \pE_{}\left[\af{n}(X_{0:n})\middle | X_n, Y_{0:n}\right]. \label{eq:T:stat}
+%\end{align}
+%As a key consequence of the additive property, for all $1\leqslant k\leqslant n$
+%\begin{equation}
+%\tstat{k}[\af{0:k}](X_k) = \pE_{}\left[\tstat{k - 1}[\af{0:(k - 1)}](X_{k - 1}) + \addf{k-1}(X_{k-1}, X_k)\middle | X_k, Y_{0:{k - 1}}\right]. \label{eq:T:add:recursion}
+%\end{equation}
+%However, the exact computation of all these key expectations is not possible in general state spaces. 
+%
+%The next section describes a Sequential Monte Carlo algorithm \cite{doucet2013sequential} to approximate $\post{n}$ by weighted samples $\{(\ewght{n}{\ell},\epart{n}{\ell})\}_{\ell=1}^{\N}$ and the algorithm of \cite{gloaguen2018online} to compute recursively, for each $1\leqslant \ell \leqslant N$ an approximation $\tstat[\ell]{n}$ of $\tstat{n}[\af{0:n}](\epart{n}{\ell})$ so that the estimator of $\post{0:n \mid n}[\af{0:n}]$ is defined as
+%\begin{align}
+%\label{eq:paris:estimator}
+%\post{0:n \mid n}^N[\af{0:n}]&\eqdef \sum_{\ell=1}^N \frac{\ewght{n}{\ell}}{\sum_{j=1}^N \ewght{n}{j}}\tstat[\ell]{n}\eqsp.
+%\end{align}
 
 
 
@@ -348,7 +352,7 @@ The next section describes a Sequential Monte Carlo algorithm \cite{doucet2013se
 
 \section{Online sequential Monte Carlo smoothing}
 \label{sec:bayesian:smoothing}
-In many situations \textcolor{red}{Add examples (taken from the paper with Jimmy)}, SMC methods cannot be used straightforwardly as the transition densities $\hd{k}$, $0\leqslant k \leqslant n-1$ and the marginal likelihood of the observations $\md{k}$, $0\leqslant k \leqslant n-1$, are unknown. Pseudo-marginalisation was originally proposed in \cite{beaumont:2003} in the framework of MCMC methods, and further analyzed in \cite{andrieu:robert:2009}.  Following \cite{fearnhead2008particle, olsson2011particle, gloaguen2018online}, while the target density is intractable we assume that there exists some additional state space$(\marginalset,\mathcal{B}(\marginalset))$ such that the following assumption holds.
+In the following, $\parvec$ is dropped from the notations for better clarity when there is no possible confusion. In many situations, SMC methods cannot be used straightforwardly as the transition densities $\hd{k}$, $0\leqslant k \leqslant n-1$ and the marginal likelihood of the observations $\md{k}$, $0\leqslant k \leqslant n-1$, are unknown. Pseudo-marginalisation was originally proposed in \cite{beaumont:2003} in the framework of MCMC methods, and further analyzed in \cite{andrieu:robert:2009}.  Following \cite{fearnhead2008particle, olsson2011particle, gloaguen2018online}, while the target density is intractable we assume that there exists some additional state space$(\marginalset,\mathcal{B}(\marginalset))$ such that the following assumption holds.
 \begin{hypH} 
 \label{assum:unbiased}
 For all $\parvec \in\parspace$ and $k\geqslant 0$, there exists a Markov kernel on $(\Xset\times\Xset,\mathcal{B}(\marginalset))$ with density $\kernelmarg_{k;\parvec}$ with respect to a reference measure $\mu$ on a general state space $(\marginalset,\mathcal{B}(\marginalset))$,  and a positive mapping $\hatqg{k;\parvec}$ on $\Xset\times\Xset\times\marginalset$ such that, for all $(x,x')\in\Xset \times \Xset$,
@@ -358,7 +362,7 @@ For all $\parvec \in\parspace$ and $k\geqslant 0$, there exists a Markov kernel 
 % It is assumed that $\kernelmarg_{k;\parvec}$ has a probability density with respect to a reference measure on $(\marginalset,\mathcal{B}(\marginalset))$ which is also written $\kernelmarg_{k;\parvec}$.
 %In other words, we assume that an unbiased estimator of $\qg{k;\parvec}(x,x')\eqsp$ is available.
 \end{hypH}
-Thus, a pointwise estimate of $\qg{k;\parvec}(x,x')$ can be obtained by generating $\zeta$ from $\kernelmarg_{k;\parvec}(x,x';\rmd z)$ and computing the statistic $\hatqg{k;\parvec}\langle z\rangle(x,x')$. Interestingly, even though pseudo marginalisation is based on the plug-in principle, it preserves typically the consistency of an algorithm, see for instance in the case of pseudo-marginal SMC smoothers \cite{gloaguen2019pseudo}.
+Thus, a pointwise estimate of $\qg{k;\parvec}(x,x')$ can be obtained by generating $\zeta$ from $\kernelmarg_{k;\parvec}(x,x';\rmd z)$ and computing the statistic $\hatqg{k;\parvec}\langle \zeta\rangle(x,x')$. Interestingly, even though pseudo marginalisation is based on the plug-in principle, it preserves typically the consistency of an algorithm, see for instance in the case of pseudo-marginal SMC smoothers \cite{gloaguen2021pseudo}.
 
 %To overcome these issues,, consider the following assumption. 
 %Let $(\marginalset,\mathcal{B}(\marginalset))$ be a general state space.
@@ -389,7 +393,7 @@ $\kissforward{k-1}{k-1}$ is a Markovian transition density.  In practice, this s
 \}_{1\leqslant j\leqslant \N}$.
 \item Sample $\epart{k}{\ell}$ with distribution $\kissforward{k-1}{k-1}(\epart{k-1}{I_k^{\ell}},\cdot)$ and sample $\zeta_k^{\ell}$ with distribution $\kernelmarg_{k}(\epart{k-1}{I_k^{\ell}},\epart{k}{\ell};\cdot)$.
 \end{enumerate}
-The choice of the proposal distribution $\kissforward{k-1}{k-1}$ is a pivotal tuning step to obtain efficient estimations of the filtering distributions. In the context of this paper, a natural choice for $p_k$ could be to use an approximation of the bootstrap filter, i.e. an approximation of $q_{k-1}$ based for instance on a Euler discretization scheme. In the numerical section of this paper, we propose to use an approximation of the optimal filter which accounts for the newly obtained observation to propose new particles, see \eqref{eq:optimal:filter}. 
+The choice of the proposal distribution $\kissforward{k-1}{k-1}$ is a pivotal tuning step to obtain efficient estimations of the filtering distributions. In the context of diffusion processes, a natural choice for $p_k$ could be to use an approximation of the bootstrap filter, i.e. an approximation of $q_{k-1}$ based for instance on a Euler discretization scheme. In the numerical section of this paper, we propose to use an approximation of the optimal filter which accounts for the newly obtained observation to propose new particles, see \eqref{eq:optimal:filter}. 
 For any  $\ell \in\{1, \dots, \N\}$, $\epart{k}{\ell}$ is associated with the  importance weight defined by:
 \begin{equation}
 \label{eq:weight-update-filtering}
@@ -404,7 +408,13 @@ to produce the following approximation of $\post{k}[f]$:
 
 \subsection{Smoothing}
 \label{sec:AR}
-In the context of additive functionals, the forward-only smoothing algorithm introduced in \cite{delmoral2010backward} proposes a particle approximation of \eqref{eq:T:stat} that can be computed \textit{online} using the recursion \eqref{eq:T:add:recursion}. 
+In the context of additive functionals, we aim at obtaining a Monte Carlo approximation of $\post{0:n \mid n}[\af{0:n}]$, where $\af{0:n}$ is of the form $\af{0:n}: x_{0:n} \mapsto \sum_{k=0}^{n-1}\addf{k}(x_{k},x_{k+1})$, where $\addf{k}$ is a functional depending on the estimator. 
+
+
+
+
+
+The forward-only smoothing algorithm introduced in \cite{delmoral2010backward} proposes a particle approximation of \eqref{eq:T:stat} that can be computed \textit{online} using the recursion \eqref{eq:T:add:recursion}. 
 This algorithm has a computational complexity which  grows \emph{quadratically} with the number of particles $\N$. 
 This computational cost can be reduced when the transition density of the hidden states is upper bounded following \cite{olsson2017efficient}  by applying the accept-reject sampling approach proposed in~\cite{douc2011sequential} and illustrated in \cite{dubarry2011fast}. 
 Following \cite{gloaguen2019pseudo}, the backward statistics 
