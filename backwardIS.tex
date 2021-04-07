@@ -10,13 +10,15 @@
 \title{Backward importance sampling for online estimation of models with intractable likelihood}
 \date{}
 
-%\author[$\wr$]{Mathis Chagneux}
+
 \author[$\dag\,\amalg$]{Alice Martin}
+\author[$\wr$]{Marie-Pierre \'Etienne}
 \author[$\star$]{Pierre Gloaguen}
 \author[$\dag$]{Sylvain Le Corff}
 \author[$\ddag$]{Jimmy Olsson}
-%\affil[$\wr$]{{\small LTCI, T\'el\'ecom Paris, Institut Polytechnique de Paris, Palaiseau.}}
+
 \affil[$\dag$]{{\small Samovar, T\'el\'ecom SudParis, d\'epartement CITI, TIPIC, Institut Polytechnique de Paris, Palaiseau.}}
+\affil[$\wr$]{{\small Agrocampus Ouest, CNRS, IRMAR - UMR 6625, F-35000 Rennes.}}
 \affil[$\amalg$]{{\small CMAP, \'Ecole Polytechnique, Institut Polytechnique de Paris, Palaiseau.}}
 \affil[$\star$]{{\small AgroParisTech, UMR MIA 518.}}
 \affil[$\ddag$]{{\small Department of Mathematics, KTH Royal Institute of Technology, Stockholm.}}
@@ -222,7 +224,7 @@
 \maketitle
 
 \begin{abstract}
-This paper proposes a new Sequential Monte Carlo algorithm to perform maximum likelihood estimation in partially observed dynamical systems whose dynamics is unknown. Training such generative models and obtaining low variance estimators of the posterior distributions of the unobserved states given the observations is challenging as the transition densities of the states  cannot be evaluated pointwise. In this paper, a backward importance sampling step is introduced to estimate such posterior distributions instead of the acceptance-rejection procedure used in the usual approach. In the context of multivariate stochastic differential equations, the proposed algorithm makes  use of unbiased estimates of the unknown transition densities  under much weaker assumptions than standard alternatives. The performance of this estimator is assessed in the case of a partially observed stochastic Lotka-Volterra model \textcolor{red}{and more!}
+This paper proposes a new Sequential Monte Carlo algorithm to perform maximum likelihood estimation in partially observed dynamical systems whose dynamics is unknown. Training such generative models and obtaining low variance estimators of the posterior distributions of the unobserved states given the observations is challenging as the transition densities of the states  cannot be evaluated pointwise. In this paper, a backward importance sampling step is introduced to estimate such posterior distributions instead of the acceptance-rejection procedure used in the usual approach. Te proposed algorithm reduces very significantly the computational time for similar performance. In the context of multivariate stochastic differential equations, the proposed algorithm makes  use of unbiased estimates of the unknown transition densities  under much weaker assumptions than standard alternatives. The performance of this estimator is assessed in particular in the case of a partially observed stochastic Lotka-Volterra model. The algorithm is also evaluated in the case of high-dimensional discrete-time latent data models and for recursive maximum likelihood estimation.
 \end{abstract}
 
 
@@ -352,7 +354,7 @@ For all $0\leqslant k\leqslant n$, $\post{k;\parvec}=\post{k:k\mid k;\parvec}$ a
 
 \section{Online sequential Monte Carlo smoothing}
 \label{sec:bayesian:smoothing}
-In the following, $\parvec$ is dropped from the notations for better clarity when there is no possible confusion. In many situations, SMC methods cannot be used straightforwardly as the transition densities $\hd{k}$, $0\leqslant k \leqslant n-1$ and the marginal likelihood of the observations $\md{k}$, $0\leqslant k \leqslant n-1$, are unknown. Pseudo-marginalisation was originally proposed in \cite{beaumont:2003} in the framework of MCMC methods, and further analyzed in \cite{andrieu:robert:2009}.  Following \cite{fearnhead2008particle, olsson2011particle, gloaguen2018online}, while the target density is intractable we assume that there exists some additional state space$(\marginalset,\mathcal{B}(\marginalset))$ such that the following assumption holds.
+In the following, $\parvec$ may be  dropped from the notations for better clarity when there is no possible confusion. In many situations, SMC methods cannot be used straightforwardly as the transition densities $\hd{k}$, $0\leqslant k \leqslant n-1$ and the marginal likelihood of the observations $\md{k}$, $0\leqslant k \leqslant n-1$, are unknown. Pseudo-marginalisation was originally proposed in \cite{beaumont:2003} in the framework of MCMC methods, and further analyzed in \cite{andrieu:robert:2009}.  Following \cite{fearnhead2008particle, olsson2011particle, gloaguen2018online}, while the target density is intractable we assume that there exists some additional state space$(\marginalset,\mathcal{B}(\marginalset))$ such that the following assumption holds.
 \begin{hypH} 
 \label{assum:unbiased}
 For all $\parvec \in\parspace$ and $k\geqslant 0$, there exists a Markov kernel on $(\Xset\times\Xset,\mathcal{B}(\marginalset))$ with density $\kernelmarg_{k;\parvec}$ with respect to a reference measure $\mu$ on a general state space $(\marginalset,\mathcal{B}(\marginalset))$,  and a positive mapping $\hatqg{k;\parvec}$ on $\Xset\times\Xset\times\marginalset$ such that, for all $(x,x')\in\Xset \times \Xset$,
@@ -408,15 +410,9 @@ to produce the following approximation of $\post{k}[f]$:
 
 \subsection{Smoothing}
 \label{sec:AR}
-In the context of additive functionals, we aim at obtaining a Monte Carlo approximation of $\post{0:n \mid n}[\af{0:n}]$, where $\af{0:n}$ is of the form $\af{0:n}: x_{0:n} \mapsto \sum_{k=0}^{n-1}\addf{k}(x_{k},x_{k+1})$, where $\addf{k}$ is a functional depending on the estimator. 
-
-
-
-
-
-The forward-only smoothing algorithm introduced in \cite{delmoral2010backward} proposes a particle approximation of \eqref{eq:T:stat} that can be computed \textit{online} using the recursion \eqref{eq:T:add:recursion}. 
+In the context of additive functionals, we aim at obtaining a Monte Carlo approximation of $\post{0:n \mid n}[\af{0:n}]$, where $\af{0:n}$ is of the form $\af{0:n}: x_{0:n} \mapsto \sum_{k=0}^{n-1}\addf{k}(x_{k},x_{k+1})$, where $\addf{k}$ is a functional depending on the estimator. The forward-only smoothing algorithm introduced in \cite{delmoral2010backward} proposes a particle approximation of  $\post{0:n \mid n}[\af{0:n}]$ that can be computed \textit{online}. 
 This algorithm has a computational complexity which  grows \emph{quadratically} with the number of particles $\N$. 
-This computational cost can be reduced when the transition density of the hidden states is upper bounded following \cite{olsson2017efficient}  by applying the accept-reject sampling approach proposed in~\cite{douc2011sequential} and illustrated in \cite{dubarry2011fast}. 
+This computational cost can be reduced when the transition density of the hidden states is upper bounded following \cite{olsson2017efficient}  by applying the rejection sampling approach proposed in~\cite{douc2011sequential} and illustrated in \cite{dubarry2011fast}. 
 Following \cite{gloaguen2019pseudo}, the backward statistics 
 $\tstat{k + 1}[\af{0:k+1}](\epart{k+1}{i})$, where $\tstat{k + 1}$ is defined in \eqref{eq:T:stat},  are estimated, for all $1\leqslant i\leqslant \N$, as follows,
 \begin{equation*}
@@ -453,9 +449,8 @@ This algorithm is the only SMC smoother proposed in the literature with  theoret
 
 
 \subsection{Positive transition densities estimates}
-\textcolor{red}{Parler d'estimateur positifs au sens large, pas necessairement parametrix et pour les EDS. }
-In this section, we propose to use Wald’s identity for martingales to obtain a new estimator which is guaranteed to be positive based on any estimator of the transition density.  This identity was applied in \cite{fearnhead2010random} to Poisson based estimators. Our estimator is defined up to an unknown constant of proportionality, which is removed when the importance weights are normalized in equation \eqref{eq:update:paris:marginal:is}. 
-This approach, rather than setting negative weights to 0, which would lead to a biased estimate, uses extra simulation to obtain positiveness. This is done while ensuring that the weights remain unbiased up to a common constant of proportionality. Assume that the distribution $\kernelmarg_{k}$ of the additional random variables $\zeta_k$ and the estimator $\hatqg{k}$ are obtained with the parametrix estimator.
+In this section, we propose to use Wald’s identity for martingales to obtain an  estimator which is guaranteed to be positive based on any estimator of the transition density.  This step is not required if $\hatqg{k}\langle z\rangle(x,x')$ is positive by construction but this is not necessarily true, Wald's trick was for instance applied in \cite{fearnhead2010random} to Poisson based estimators in the context of partially observed diffusions. Our estimator is defined up to an unknown constant of proportionality, which is removed when the importance weights are normalized in equation \eqref{eq:update:paris:marginal:is}. 
+This approach, rather than setting negative weights to 0, which would lead to a biased estimate, uses extra simulation to obtain positiveness. This is done while ensuring that the weights remain unbiased up to a common constant of proportionality.% Assume that the distribution $\kernelmarg_{k}$ of the additional random variables $\zeta_k$ and the estimator $\hatqg{k}$ are obtained with the parametrix estimator.
 
 \paragraph{Particle filtering.}  
 For all $k\geqslant 0$, the Wald-based random weight particle filtering proceeds as follows.
@@ -468,7 +463,7 @@ For all $k\geqslant 0$, the Wald-based random weight particle filtering proceeds
 \item Sample $\epart{k}{i}$ with distribution $\kissforward{k-1}{k-1}(\epart{k-1}{I_k^{i}},\cdot)$.
 \end{enumerate}
 \item For all $1\leqslant i\leqslant \N$, set  $\ewght{k}{i}= 0$.
-\item While there exists $i_* \in\{1,\ldots,\N\}$ such that $\ewght{k}{i_*} \leqslant 0$, for all $1\leqslant i\leqslant \N$, sample $\zeta_k^{i}$ with distribution $\kernelmarg_{k}(\epart{k-1}{I_k^{i}},\epart{k}{i};\cdot)$ (i.e. compute a parametrix estimator of the transition density) and set 
+\item While there exists $i_* \in\{1,\ldots,\N\}$ such that $\ewght{k}{i_*} \leqslant 0$, for all $1\leqslant i\leqslant \N$, sample $\zeta_k^{i}$ with distribution $\kernelmarg_{k}(\epart{k-1}{I_k^{i}},\epart{k}{i};\cdot)$ (i.e. compute an estimator of the transition density) and set 
 $$
 \ewght{k}{i}  = \ewght{k}{i} + \frac{\hatqg{k-1}\langle \zeta_k^i\rangle(\epart{k-1}{I_k^{i}},\epart{k}{i}) }{\kissforward{k-1}{k-1}(\epart{k-1}{I_k^{i}},\epart{k}{i})}\eqsp.
 $$
@@ -506,6 +501,28 @@ This estimator does not rely on an accept reject mechanism and is therefore less
 
 \section{Application to smoothing expectations and score estimation}
 
+\subsection{Recurrent neural networks}
+\textcolor{red}{Ici on n'a pas besoin du Pseudo-marginal. On illustre que l'on fait mieux que le Poor man's pour pas plus cher.}
+Recurrent Neural Network (RNN) were first introduced in \cite{Mozer1989AFB} to model time series using a hidden context state  which is appealing to describe short time dependencies. Although they are lackluster in problems requiring long term memory due to vanishing and exploding gradient \cite{Bengio1994LearningLD} and they have been extended by Long Short Term Memory  \cite{Hochreiter1997LongSM} and Gated Recurrent Unit (GRU) \cite{Cho2014LearningPR}, they define robust many to many backbone architectures which are widely used in practice \cite{}.
+
+
+In this section, we propose a general state space model based on a RNN architecture, as follows.  The hidden state is initialized as $X_0 \sim \mathcal{N}(0,\Sigma)$ and for all $k\geqslant 1$,
+$$
+X_k = \tanh(W_{1} Y_{k-1} + W_{2} X_{k-1} + b + \eta_k)\quad\mathrm{and} \quad Y_k = W_{3} X_{k}  + c + \varepsilon_k\eqsp,
+$$
+where where $W_{1}$, $W_{2}$, $W_3$ and $b$ and $c$ are the weight matrices and bias,  $\Sigma$ is an unknown covariance matrix and $(\eta_k)_{k\geqslant 1}$ and $(\varepsilon_k)_{k\geqslant 1}$ are independen Gaussian random variables with covaraince matrices $Q$ and $R$.
+
+\textcolor{red}{Expain that (i) multi-layer models  are easy extensions, (ii) even the bootstrap is hard since we can sample from the prior but we cannot evaluate it so we need Pseudo-Marginal and/or backward importance.}
+
+A simulation plan which could be nice and not too complex:
+\begin{enumerate}
+\item Learn a RNN without noise on a nice dataset (weather data ?).
+\item Then sample a sequence $(\{X_k,Y_k\})_{1\leqslant k\leqslant n}$, with $n=100$ or $n=1000$ and choosing $Q,R,\Sigma$ as diagonal matrices. (Check that the choice leads to realistic observations).
+\item Run the backward IS and the Poorman smoother to estimate a conditional expectation $\mathbb{E}[X_0|Y_{1:n}]$ if we do similarly as in the other cases.
+\item Display for both algorithms $\|X_0 - \mathbb{E}[X_0|Y_{1:n}]\|^2$.
+\end{enumerate}
+
+If this works well, then we illustrate our claims and we can perform parameter estimation for the stochastic RNN using backward IS to illustrate score estimation. And we are good ?
 
 \subsection{Sine model}
 This section investigates the performance of the proposed algorithm to compute  expectations under the smoothing distributions in a context where  alternatives are available for comparison. Consider the Sine model where $(X_t)_{t\geqslant 0}$ is assumed to be a weak solution to
@@ -601,27 +618,7 @@ At each iteration, the estimator $\theta_k$ is updated by finding a parameter $\
 The particle smoother is implemented using $N = 200$ particles and $\tilde{N}=20$. 
 The replicates show that the variance of our estimator (for a given set of observations) is much smaller than the one of the {\em poor man smoother}. This algorithm approximates the smoothing distributions at time $n$ by the weighted samples  where the particle trajectories $\epart{0:n}{\ell}$, $1\leqslant \ell \leqslant N$,  are obtained using the ancestral line of each last sample. The variance of the estimates based on this ancestor tree is doomed to failure due to the degeneracy caused by the successive resampling steps.
 
-\subsection{Recurrent neural networks}
-Recurrent Neural Network (RNN) were first introduced in \cite{Mozer1989AFB} to model time series using a hidden context state  which is appealing to describe short time dependencies. Although they are lackluster in problems requiring long term memory due to vanishing and exploding gradient \cite{Bengio1994LearningLD} and they have been extended by Long Short Term Memory  \cite{Hochreiter1997LongSM} and Gated Recurrent Unit (GRU) \cite{Cho2014LearningPR}, they define robust many to many backbone architectures which are widely used in practice \cite{}.
 
-
-In this section, we propose a general state space model based on a RNN architecture, as follows.  The hidden state is initialized as $X_0 \sim \mathcal{N}(0,\Sigma)$ and for all $k\geqslant 1$,
-$$
-X_k = \tanh(W_{1} Y_{k-1} + W_{2} X_{k-1} + b + \eta_k)\quad\mathrm{and} \quad Y_k = W_{3} X_{k}  + c + \varepsilon_k\eqsp,
-$$
-where where $W_{1}$, $W_{2}$, $W_3$ and $b$ and $c$ are the weight matrices and bias,  $\Sigma$ is an unknown covariance matrix and $(\eta_k)_{k\geqslant 1}$ and $(\varepsilon_k)_{k\geqslant 1}$ are independen Gaussian random variables with covaraince matrices $Q$ and $R$.
-
-\textcolor{red}{Expain that (i) multi-layer models  are easy extensions, (ii) even the bootstrap is hard since we can sample from the prior but we cannot evaluate it so we need Pseudo-Marginal and/or backward importance.}
-
-A simulation plan which could be nice and not too complex:
-\begin{enumerate}
-\item Learn a RNN without noise on a nice dataset (weather data ?).
-\item Then sample a sequence $(\{X_k,Y_k\})_{1\leqslant k\leqslant n}$, with $n=100$ or $n=1000$ and choosing $Q,R,\Sigma$ as diagonal matrices. (Check that the choice leads to realistic observations).
-\item Run the backward IS and the Poorman smoother to estimate a conditional expectation $\mathbb{E}[X_0|Y_{1:n}]$ if we do similarly as in the other cases.
-\item Display for both algorithms $\|X_0 - \mathbb{E}[X_0|Y_{1:n}]\|^2$.
-\end{enumerate}
-
-If this works well, then we illustrate our claims and we can perform parameter estimation for the stochastic RNN using backward IS to illustrate score estimation. And we are good ?
 
 
 \section{Tangent filters and online recursive maximum likelihood}
@@ -697,147 +694,6 @@ In \eqref{eq:zeta:terms}, the measures $\pred{n+1;\parvec_n}$ and $\filtderiv{n+
 
 
 
-
-\subsection{Application to partially observed SDE}
-\label{sec:filter:SDE}
-
-\subsubsection{Unbiased estimators of the transition densities}
-
-The algorithm described above strongly relies on assumption H\ref{assum:unbiased}. 
-In the context of SDEs, when $\md{k+1;\parvec}$ is available explicitly, this boils down to finding an unbiased estimate $\hdhat{k+1;\parvec}\langle \zeta\rangle(x,y)$ of $\hd{k+1;\parvec}(x,y)$ and defining
-\[
-\hatqg{k;\parvec}\langle \zeta\rangle(x,y) = \hdhat{k+1;\parvec}\langle \zeta\rangle(x,y)\md{k+1;\parvec}(x_{k+1},Y_{k+1})\eqsp.
-\]
-\subsubsection{General Poisson Estimators}
-
-In \cite{olsson2011particle}, \cite{gloaguen2018online} and \cite{gloaguen2019pseudo}, General Poisson Estimators (GPEs) are used to obtain an unbiased estimate of the transition density.  However, designing such estimators requires three strong assumptions \cite{beskos2006retrospective}.
-
-\begin{enumerate}
-\item The diffusion defined by \eqref{eq:sde} can be transformed into a unit diffusion through the Lamperti transform, with drift function $\tilde{\alpha}_\parvec(x)$.
-\item The drift of this unit diffusion can be expressed as the gradient of a potential function, i.e., there exists a twice differentiable function $A_{\parvec}:\mathbb{R}^d \to \rset$ such $\tilde{\alpha}_{\parvec} = \nabla_x A_{\parvec}$.
-\item The function $x\mapsto (\|\tilde{\alpha}_{\parvec}(x)\|^2 + \Delta A_{\parvec}(x))/2$ (where $\Delta$ denotes the Laplacian) is lower bounded.
-\end{enumerate}
-
-Assumption (1)
-%(\ref{CIS:lamperti})
- is used to define a proposal distribution absolutely continuous with respect to the target which is easy to sample from. 
-Assumption (2)
-%(\ref{CIS:diffcoeff})
- is necessary to obtain a tractable Radon-Nikodym derivative between the proposal and the target distributions using the Girsanov transformation. 
- While these assumptions can be proved under mild assumptions for scalar diffusions, much stronger conditions are required in the multidimensional case \cite{ait-sahalia2008closed}. 
-
-% for all $\parvec\in\parspace$, $\alpha_{\parvec}$ is of a gradient form $\alpha_{\parvec} = \nabla_x A_{\parvec}$ where $A_{\parvec}:\mathbb{R}^d \to \rset$ is a twice continuously differentiable function and that $x\mapsto (\|\alpha_{\parvec}(x)\|^2 + \Delta A_{\parvec}(x))/2$ is lower bounded by $\ell_{\parvec}$ where $\Delta$ is the Laplace operator. 
-%By Girsanov theorem, for all $x$, $y$,
-%\begin{multline*}
-%%\label{eq:q:girsanov}
-%\hd{k+1;\parvec}(x,y) = \varphi_{\Delta_k}(x-y)\mathrm{e}^{A_{\parvec}(y) - A_{\parvec}(x) - \ell(\parvec)\Delta_k}\\
-%\pE_{\mathbb{W}_x^{\Delta_k,y}}\left[\mathrm{exp}\left(-\int_0^{\Delta_k} \psi_{\parvec}(\omega_s)\rmd s\right)\right]\eqsp,
-%\end{multline*}
-%where $\psi_{\parvec}: x \mapsto (\|\alpha_{\parvec}(x)\|^2 + \Delta A_{\parvec}(x))/2 - \ell_{\parvec}$, $\Delta_k = t_{k+1}-t_k$, for all $a>0$, $\varphi_a$ is the probability density function of a centered Gaussian random variable with variance $a$ and for all $t>0$, $\mathbb{W}_x^{t,y}$ is the law of Brownian bridge starting at 0 at time 0 and ending at $y$ at time $t$. 
-%Assume that there exist random variables $L_W$ and $U_W$ such that for all $0\leqslant s \leqslant \Delta_k$, $L_W \leqslant \psi_{\parvec}(\omega_s) \leqslant U_W$. Let $\kappa$ be a random variable taking values in $\mathbb{N}$ with distribution $\mu$, $\omega = (\omega_s)_{0 \leq s \leq t}$ be the realization of a Brownian Bridge with distribution  $\mathbb{W}_x^{t,y}$, and $(U_j)_{1\leqslant j \leqslant \kappa}$ be independent uniform random
-%variables on $(0,\Delta_k)$ and $\zeta = (\kappa,\omega, U_1, \ldots , U_{\kappa})$. As
-%shown in \cite{fearnhead2008particle}, the Girsanov transform leads to a positive unbiased estimator given by
-%\begin{multline*}
-%\hdhat{k+1;\parvec}(x,y;\zeta) = \varphi_{\Delta_k}(x-y)\mathrm{e}^{A_{\parvec}(y) - A_{\parvec}(x) - L_W\Delta_k}\\
-%\times \prod_{j=1}^{\kappa}\frac{U_W-\varphi_{\parvec}(\omega_{{U_j}})}{U_W-L_W}
-%\end{multline*}
-%and
-%\[
-%\hatqg{k;\parvec}(x,y;\zeta) = \hdhat{k+1;\parvec}(x,y;\zeta)\md{k+1;\parvec}(x_{k+1},Y_{k+1})\eqsp.
-%\]
-
-\subsubsection{Parametrix estimators}
-
-More recently, \cite{andersson2017unbiased} and \cite{fearnhead2017continuous} proposed an algorithm which can be used under weaker assumptions. 
-This parametrix algorithm draws weighted skeletons using an importance sampling mechanism for diffusion processes. 
-In this case, the sampled paths are not distributed as the target process but the weighted samples produce unbiased estimates of expectations of functionals of this process. To obtain an unbiased estimator $\hdhat{k+1}\langle \zeta\rangle(x,y)$, the parametrix algorithm draws weighted skeletons at random times $s_0 = 0 < s_1<\dots<s_j $, denoted by $\left\{(x_{s_j},\mathsf{w}_{s_j})\right\}_{j\geqslant 0}$, where $x_0 = x$ and $\mathsf{w}_0=1$. 
-The update times $(s_j)_{j\geqslant 0}$ are instances of an inhomogeneous Poisson process of intensity $\lambda(t)$. 
-Let $(x_{s_j},\mathsf{w}_{s_j})$ be the last weighted sample and $s_{j+1}$ be the next update time of the trajectory.  While $s_{j+1}<\Delta t_{k}$, the new state is sampled using a simple Euler scheme, namely:
-\begin{align*}
-x_{s_{j+1}} &\eqdef x_{s_j} + \Delta s_j\alpha_{\parvec}(x_{s_j}) + (\Delta s_j)^{1/2}\sigma_{\parvec}(x_{s_j})\varepsilon_{j+1}\eqsp,
-\end{align*}
-where $\Delta s_j \eqdef s_{j+1}-s_j$, $\Delta t_{k} = t_{k+1} - t_{k}$ and $\varepsilon_{j+1}\sim\mathcal{N}_d(0,I_d)$. 
-The proposal density associated with this procedure is denoted by $m_{j;\parvec}\left(x_{s_j},\cdot,\Delta\tau_j\right)$. 
-Let $\mathcal{K}^{\parvec}$ (resp. $\mathcal{K}^{j,\parvec}_{\mathrm{prop}}$) denote the Kolmogorov forward operator of the diffusion  (resp. the Kolmogorov forward operator of the proposal distribution $m_{j;\parvec}\left(x_{s_j},\cdot,\Delta s_j
-\right)$). 
-The forward operators write, for any function $h:\mathbb{R}^d\rightarrow\mathbb{R}$,
-$$
-\mathcal{K}^{\theta}h\left(y\right) \eqdef -\sum_{i=1}^d\frac{\partial}{\partial y_i}\left\{\alpha_{\parvec,i}(y)h\left(y\right)\right\} + \sum_{i,\ell=1}^d\frac{1}{2}\frac{\partial^2}{\partial y_i\partial y_\ell}\left\{\gamma_{\parvec,i,\ell}(y)h\left(y\right)\right\}\eqsp,
-$$
-where $\gamma_\parvec = \sigma_\parvec \sigma_\parvec^T$.
-Then, following \cite{fearnhead2017continuous}, the weight is updated by
-\[
-\mathsf{w}_{s_{j+1}}\eqdef\mathsf{w}_{s_j}\rho^{\lambda}_j\left(x_{s_j},x_{s_{j+1}},\Delta s_j\right)\eqsp,
-\]
-where
-\begin{equation}
-\label{CIS:eq:rho}
-\rho^{\lambda}_j\left(x,y,u\right)\eqdef 1+\frac{\left(\mathcal{K}-\mathcal{K}^{j,\theta}_{\mathrm{prop}}\right)m_{j;\parvec}\left(x,z,u\right)_{|z=y}}{\lambda(u)m_{j;\parvec}\left(x,y,u\right)}\eqsp.
-\end{equation}
-It is worth noting that \eqref{CIS:eq:rho} can be computed using only first derivatives of $\alpha_{\parvec}$ and second derivatives of $\sigma_\parvec$. 
-If $N_k$ is the number of Poisson events between $0$ and $\Delta t_{k}$, the parametrix unbiased estimate is then given by 
-\[
-\hdhat{k+1}\langle \zeta_k\rangle(x,y) = \mathsf{w}_{s_{N_k}}m_{k;\parvec}\left(x_{s_{N_k}},y,t_{k+1} - s_{N_k}\right) \eqsp,
-\]
-where $\zeta_k$ stands for all the randomness required to produce the parametrix estimator (Poisson process and Gaussian random variables).
-
-The stability of this estimator is studied in \cite{fearnhead2017continuous} which provides $\mathrm{L}_p$ controls for the weight $\mathsf{w}_{s_{N_k}}$. 
-The parametrix algorithm mentioned above is a highly flexible procedure to obtain such an unbiased estimate for a much broader class of diffusions than Poisson based estimations which require strong assumptions. 
-However, as the update \eqref{CIS:eq:rho} involves the difference of two Kolmogorov operators, the parametrix estimator of the transition density may be negative, and has no reason to satisfy \eqref{eq:AR:bound}.
-Thus, the SMC algorithms described above cannot be implemented.
-Let $(X_t)_{t\ge 0}$ be defined as a weak solution to the following Stochastic Differential Equation (SDE) in $\mathbb{R}^d$:
-\begin{equation}
-\label{eq:sde}
-X_0 = x_0 \quad\mbox{and}\quad \rmd X_t = \alpha_{\parvec}(X_t)\rmd t + \rmd W_t\eqsp,
-\end{equation}
-where $(W_t)_{t\geqslant 0}$ is a standard Brownian motion, $\alpha_{\parvec}: \Xset\to\Xset$ is the drift function
-% and $\Sigma_{\parvec}:\Xset\to\mathbb{R}^{2\dimX}$ is the diffusion
-. The inference procedure presented in this paper is applied in the case where the solution to \eqref{eq:sde} is supposed to be partially observed at times $t_0 = 0,\ldots,t_n$, for a given $n\geqslant 1$, through an observation process $(Y_k)_{0\leqslant k \leqslant n}$ taking values in $\mathbb{R}^m$. For all $0\leqslant k \leqslant n$, the distribution of $Y_k$ given $(X_t)_{t\geqslant 0}$ depends on $X_k = X_{t_k}$ only and has density $\md{k;\parvec}$ with respect to $\nu$. The distribution of $X_0$ has density $\chi$ with respect to $\mu$ and for all $0\leqslant k \leqslant n-1$, the conditional distribution of $X_{k+1} $ given $(X_{t})_{0\leqslant t\leqslant k}$ has density $\hd{k+1;\parvec}(X_{k},\cdot)$ with respect to $\mu$. 
-This unknown density can be expressed as an expectation of a Brownian Bridge functional \cite{dacunha1986estimation}.
-
-Let $\omega = (\omega_s)_{0 \leq s \leq t}$ be the realization of a Brownian Bridge starting at $x$ at time 0 and ending in $y$ at time $\Delta$. The distribution of $\omega$ is denoted by  $\mathbb{W}_x^{\Delta,y}$. 
-Moreover, suppose that for all $\parvec\in\parspace$, $\alpha_{\parvec}$ is of a gradient form $\alpha_{\parvec} = \nabla_x A_{\parvec}$ where $A_{\parvec}:\Xset \to \rset$ is a twice continuously differentiable function. Denoting, $ \psi_\theta:~~x \mapsto  \psi_\theta(x) = (\|\alpha_{\parvec}(x)\|^2 + \Delta A_{\parvec}(x))/2$, by Girsanov theorem, for all $x, y \in \mathbb{R}^d \times \mathbb{R}^d$
-\begin{equation}
-\label{eq:q:girsanov}
-\hd{k+1;\parvec}(x,y) = \phi_{\Delta_k}(x-y)\mathrm{exp}\left(A_{\parvec}(y) - A_{\parvec}(x)\right)\mathbb{E}_{\mathbb{W}_x^{\Delta_k,y}}\left[\mathrm{exp}\left(-\int_0^{\Delta_k} \psi_{\parvec}(\omega_s)\rmd s\right)\right]\eqsp,
-\end{equation}
-where $\Delta_k = t_{k+1}-t_k$, for all $a>0$, $\phi_a$ is the probability density function of a centered Gaussian random variable with variance $a$.
-
-The transition density then cannot be computed as it involves an integration over the whole path between $x$ and $y$. 
-To perform the algorithm proposed in this paper, we therefore have to design a positive an unbiased estimator of $\hd{k+1;\parvec}(x,y)$. 
-Moreover, maximum likelihood estimation of $\theta$ requires an unbiased estimator of $\nabla_{\parvec}\log\hd{k+1;\parvec}(x,y)$. 
-Such two estimators can be obtained using the General Poisson Estimator (GPE, \cite{fearnhead:papaspiliopoulos:roberts:2008}).
-
-\paragraph{Unbiased GPE estimator for $\hd{k+1;\parvec}(x,y;\zeta)$.}
-
-Assume that there exist random variables $\gpeLB$ and $\gpeUB$ such that for all $0\leqslant s \leqslant \Delta_k$, $\gpeLB \leqslant \psi_{\parvec}(\omega_s) \leqslant \gpeUB$. Let $\kappa$ be a random variable taking values in $\mathbb{N}$ with distribution $\mu$, $\omega = (\omega_s)_{0 \leq s \leq \Delta_k}$ be the realization of a Brownian Bridge, and $(U_j)_{1\leqslant j \leqslant \kappa}$ be independent uniform random
-variables on $(0,\Delta_k)$ and $\zeta = (\kappa,\omega, U_1, \ldots , U_{\kappa})$. As
-shown in \cite{fearnhead:papaspiliopoulos:roberts:2008}, equation \eqref{eq:q:girsanov} leads to a positive unbiased estimator given by
-\[
-\hdhat{k+1;\parvec}(x,y;\zeta) = \phi_{\Delta_k}(x-y)\mathrm{exp}\left(A_{\parvec}(y) - A_{\parvec}(x) - \gpeLB\Delta_k\right)\prod_{j=1}^{\kappa}\frac{\gpeUB-\psi_{\parvec}(\omega_{{U_j}})}{\gpeUB-\gpeLB}\eqsp.
-\]
-
-\paragraph{Unbiased GPE estimator of $\nabla_{\parvec}\log\hd{k+1;\parvec}(x,y)$.}
-Let's denote $\varphi_{\parvec}:~x \mapsto \psi_{\parvec}(x) - \gpeLB$. 
-By \eqref{eq:q:girsanov},
-\begin{multline*}
-\nabla_{\parvec}\log\hd{k+1;\parvec}(x,y) = \nabla_{\parvec}A_{\parvec}(y) - \nabla_{\parvec}A_{\parvec}(x) - \nabla_{\parvec}\gpeLB \Delta_k\\
--\frac{\mathbb{E}_{\mathbb{W}_x^{\Delta_k,y}}\left[\left(\int_0^{\Delta_k} \nabla_{\parvec}\varphi_{\parvec}(\omega_s)\rmd s\right)\mathrm{exp}\left(-\int_0^{\Delta_k} \varphi_{\parvec}(\omega_s)\rmd s\right)\right]}{\mathbb{E}_{\mathbb{W}_x^{\Delta_k,y}}\left[\mathrm{exp}\left(-\int_0^{\Delta_k} \varphi_{\parvec}(\omega_s)\rmd s\right)\right]}\eqsp.
-\end{multline*}
- On the other hand, the diffusion bridge $\mathbb{S}^{\Delta_k,y}_{\parvec,x}$ associated with the SDE \eqref{eq:sde} is absolutely continuous with respect to $\mathbb{W}_x^{\Delta_k,y}$ with Radon-Nikodym derivative given by
-\begin{align*}
-\frac{\rmd \mathbb{S}^{\Delta_k,y}_{\parvec,x}}{\rmd \mathbb{W}_x^{\Delta_k,y}}(\omega) &= \left[\hd{k+1;\parvec}(x,y)\right]^{-1}\phi_{\Delta_k}(x-y)\mathrm{exp}\left(A_{\parvec}(y) - A_{\parvec}(x) - \gpeLB\Delta_k-\int_0^{\Delta_k} \varphi_{\parvec}(\omega_s)\rmd s\right)\eqsp,\\
-&=\mathbb{E}_{\mathbb{W}_x^{\Delta_k,y}}\left[\mathrm{exp}\left(-\int_0^{\Delta_k} \varphi_{\parvec}(\omega_s)\rmd s\right)\right]^{-1}\mathrm{exp}\left(-\int_0^{\Delta_k} \varphi_{\parvec}(\omega_s)\rmd s\right)\eqsp.
-\end{align*}
-This yields
-\[
-\nabla_{\parvec}\log\hd{k+1;\parvec}(x,y) = \left(\nabla_{\parvec}A_{\parvec}(y) - \nabla_{\parvec}A_{\parvec}(x) - \nabla_{\parvec}\gpeLB\Delta_k\right) - \mathbb{E}_{\mathbb{S}_{\parvec,x}^{\Delta_k,y}} \left[\int_0^{\Delta_k} \nabla_{\parvec}\varphi_{\parvec}(\omega_s)\rmd s\right]
-\]
-and an unbiased estimator of $\nabla_{\parvec}\log\hd{k+1;\parvec}(x,y)$ is given by
-\[
-\mathsf{l}_{k+1;\parvec}(x,y,\mathsf{s}^{\parvec,x,y,\Delta_k}_U) = \left(\nabla_{\parvec}A_{\parvec}(y) - \nabla_{\parvec}A_{\parvec}(x) - \nabla_{\parvec}\gpeLB\Delta_k\right) - \Delta_k\nabla_{\parvec}\varphi_{\parvec}(\mathsf{s}^{\parvec,x,y,\Delta_k}_U)\eqsp,
-\]
-where $U$ is uniform on $(0,1)$ and independent of $\mathsf{s}^{\parvec,x,y,\Delta_k}\sim \mathbb{S}_{\parvec,x}^{\Delta_k,y}$. In the context of GPE, $\mathsf{s}^{\parvec,x,y,\Delta_k}$ can be simulated exactly using exact algorithms for diffusion processes proposed in \cite{beskos2006retrospective}.
 
 
 \paragraph{Experiments.}
@@ -943,6 +799,149 @@ However, the empirical study illustrates that $\K$ may be chosen to increase wit
 
 \bibliographystyle{apalike}
 \bibliography{backwardIS}
+
+\appendix 
+
+\section{Application to partially observed SDE}
+\label{sec:filter:SDE}
+
+\subsection{Unbiased estimators of the transition densities}
+
+The algorithm described above strongly relies on assumption H\ref{assum:unbiased}. 
+In the context of SDEs, when $\md{k+1;\parvec}$ is available explicitly, this boils down to finding an unbiased estimate $\hdhat{k+1;\parvec}\langle \zeta\rangle(x,y)$ of $\hd{k+1;\parvec}(x,y)$ and defining
+\[
+\hatqg{k;\parvec}\langle \zeta\rangle(x,y) = \hdhat{k+1;\parvec}\langle \zeta\rangle(x,y)\md{k+1;\parvec}(x_{k+1},Y_{k+1})\eqsp.
+\]
+
+\subsection{General Poisson Estimators}
+In \cite{olsson2011particle} and \cite{gloaguen2018online}, General Poisson Estimators (GPEs) are used to obtain an unbiased estimate of the transition density.  However, designing such estimators requires three strong assumptions \cite{beskos2006retrospective}.
+
+\begin{enumerate}
+\item The diffusion defined by \eqref{eq:sde} can be transformed into a unit diffusion through the Lamperti transform, with drift function $\tilde{\alpha}_\parvec(x)$.
+\item The drift of this unit diffusion can be expressed as the gradient of a potential function, i.e., there exists a twice differentiable function $A_{\parvec}:\mathbb{R}^d \to \rset$ such $\tilde{\alpha}_{\parvec} = \nabla_x A_{\parvec}$.
+\item The function $x\mapsto (\|\tilde{\alpha}_{\parvec}(x)\|^2 + \Delta A_{\parvec}(x))/2$ (where $\Delta$ denotes the Laplacian) is lower bounded.
+\end{enumerate}
+
+Assumption (1)
+%(\ref{CIS:lamperti})
+ is used to define a proposal distribution absolutely continuous with respect to the target which is easy to sample from. 
+Assumption (2)
+%(\ref{CIS:diffcoeff})
+ is necessary to obtain a tractable Radon-Nikodym derivative between the proposal and the target distributions using the Girsanov transformation. 
+ While these assumptions can be proved under mild assumptions for scalar diffusions, much stronger conditions are required in the multidimensional case \cite{ait-sahalia2008closed}. 
+
+% for all $\parvec\in\parspace$, $\alpha_{\parvec}$ is of a gradient form $\alpha_{\parvec} = \nabla_x A_{\parvec}$ where $A_{\parvec}:\mathbb{R}^d \to \rset$ is a twice continuously differentiable function and that $x\mapsto (\|\alpha_{\parvec}(x)\|^2 + \Delta A_{\parvec}(x))/2$ is lower bounded by $\ell_{\parvec}$ where $\Delta$ is the Laplace operator. 
+%By Girsanov theorem, for all $x$, $y$,
+%\begin{multline*}
+%%\label{eq:q:girsanov}
+%\hd{k+1;\parvec}(x,y) = \varphi_{\Delta_k}(x-y)\mathrm{e}^{A_{\parvec}(y) - A_{\parvec}(x) - \ell(\parvec)\Delta_k}\\
+%\pE_{\mathbb{W}_x^{\Delta_k,y}}\left[\mathrm{exp}\left(-\int_0^{\Delta_k} \psi_{\parvec}(\omega_s)\rmd s\right)\right]\eqsp,
+%\end{multline*}
+%where $\psi_{\parvec}: x \mapsto (\|\alpha_{\parvec}(x)\|^2 + \Delta A_{\parvec}(x))/2 - \ell_{\parvec}$, $\Delta_k = t_{k+1}-t_k$, for all $a>0$, $\varphi_a$ is the probability density function of a centered Gaussian random variable with variance $a$ and for all $t>0$, $\mathbb{W}_x^{t,y}$ is the law of Brownian bridge starting at 0 at time 0 and ending at $y$ at time $t$. 
+%Assume that there exist random variables $L_W$ and $U_W$ such that for all $0\leqslant s \leqslant \Delta_k$, $L_W \leqslant \psi_{\parvec}(\omega_s) \leqslant U_W$. Let $\kappa$ be a random variable taking values in $\mathbb{N}$ with distribution $\mu$, $\omega = (\omega_s)_{0 \leq s \leq t}$ be the realization of a Brownian Bridge with distribution  $\mathbb{W}_x^{t,y}$, and $(U_j)_{1\leqslant j \leqslant \kappa}$ be independent uniform random
+%variables on $(0,\Delta_k)$ and $\zeta = (\kappa,\omega, U_1, \ldots , U_{\kappa})$. As
+%shown in \cite{fearnhead2008particle}, the Girsanov transform leads to a positive unbiased estimator given by
+%\begin{multline*}
+%\hdhat{k+1;\parvec}(x,y;\zeta) = \varphi_{\Delta_k}(x-y)\mathrm{e}^{A_{\parvec}(y) - A_{\parvec}(x) - L_W\Delta_k}\\
+%\times \prod_{j=1}^{\kappa}\frac{U_W-\varphi_{\parvec}(\omega_{{U_j}})}{U_W-L_W}
+%\end{multline*}
+%and
+%\[
+%\hatqg{k;\parvec}(x,y;\zeta) = \hdhat{k+1;\parvec}(x,y;\zeta)\md{k+1;\parvec}(x_{k+1},Y_{k+1})\eqsp.
+%\]
+
+\subsection{Parametrix estimators}
+
+More recently, \cite{andersson2017unbiased} and \cite{fearnhead2017continuous} proposed an algorithm which can be used under weaker assumptions. 
+This parametrix algorithm draws weighted skeletons using an importance sampling mechanism for diffusion processes. 
+In this case, the sampled paths are not distributed as the target process but the weighted samples produce unbiased estimates of expectations of functionals of this process. To obtain an unbiased estimator $\hdhat{k+1}\langle \zeta\rangle(x,y)$, the parametrix algorithm draws weighted skeletons at random times $s_0 = 0 < s_1<\dots<s_j $, denoted by $\left\{(x_{s_j},\mathsf{w}_{s_j})\right\}_{j\geqslant 0}$, where $x_0 = x$ and $\mathsf{w}_0=1$. 
+The update times $(s_j)_{j\geqslant 0}$ are instances of an inhomogeneous Poisson process of intensity $\lambda(t)$. 
+Let $(x_{s_j},\mathsf{w}_{s_j})$ be the last weighted sample and $s_{j+1}$ be the next update time of the trajectory.  While $s_{j+1}<\Delta t_{k}$, the new state is sampled using a simple Euler scheme, namely:
+\begin{align*}
+x_{s_{j+1}} &\eqdef x_{s_j} + \Delta s_j\alpha_{\parvec}(x_{s_j}) + (\Delta s_j)^{1/2}\sigma_{\parvec}(x_{s_j})\varepsilon_{j+1}\eqsp,
+\end{align*}
+where $\Delta s_j \eqdef s_{j+1}-s_j$, $\Delta t_{k} = t_{k+1} - t_{k}$ and $\varepsilon_{j+1}\sim\mathcal{N}_d(0,I_d)$. 
+The proposal density associated with this procedure is denoted by $m_{j;\parvec}\left(x_{s_j},\cdot,\Delta\tau_j\right)$. 
+Let $\mathcal{K}^{\parvec}$ (resp. $\mathcal{K}^{j,\parvec}_{\mathrm{prop}}$) denote the Kolmogorov forward operator of the diffusion  (resp. the Kolmogorov forward operator of the proposal distribution $m_{j;\parvec}\left(x_{s_j},\cdot,\Delta s_j
+\right)$). 
+The forward operators write, for any function $h:\mathbb{R}^d\rightarrow\mathbb{R}$,
+$$
+\mathcal{K}^{\theta}h\left(y\right) \eqdef -\sum_{i=1}^d\frac{\partial}{\partial y_i}\left\{\alpha_{\parvec,i}(y)h\left(y\right)\right\} + \sum_{i,\ell=1}^d\frac{1}{2}\frac{\partial^2}{\partial y_i\partial y_\ell}\left\{\gamma_{\parvec,i,\ell}(y)h\left(y\right)\right\}\eqsp,
+$$
+where $\gamma_\parvec = \sigma_\parvec \sigma_\parvec^T$.
+Then, following \cite{fearnhead2017continuous}, the weight is updated by
+\[
+\mathsf{w}_{s_{j+1}}\eqdef\mathsf{w}_{s_j}\rho^{\lambda}_j\left(x_{s_j},x_{s_{j+1}},\Delta s_j\right)\eqsp,
+\]
+where
+\begin{equation}
+\label{CIS:eq:rho}
+\rho^{\lambda}_j\left(x,y,u\right)\eqdef 1+\frac{\left(\mathcal{K}-\mathcal{K}^{j,\theta}_{\mathrm{prop}}\right)m_{j;\parvec}\left(x,z,u\right)_{|z=y}}{\lambda(u)m_{j;\parvec}\left(x,y,u\right)}\eqsp.
+\end{equation}
+It is worth noting that \eqref{CIS:eq:rho} can be computed using only first derivatives of $\alpha_{\parvec}$ and second derivatives of $\sigma_\parvec$. 
+If $N_k$ is the number of Poisson events between $0$ and $\Delta t_{k}$, the parametrix unbiased estimate is then given by 
+\[
+\hdhat{k+1}\langle \zeta_k\rangle(x,y) = \mathsf{w}_{s_{N_k}}m_{k;\parvec}\left(x_{s_{N_k}},y,t_{k+1} - s_{N_k}\right) \eqsp,
+\]
+where $\zeta_k$ stands for all the randomness required to produce the parametrix estimator (Poisson process and Gaussian random variables).
+
+The stability of this estimator is studied in \cite{fearnhead2017continuous} which provides $\mathrm{L}_p$ controls for the weight $\mathsf{w}_{s_{N_k}}$. 
+The parametrix algorithm mentioned above is a highly flexible procedure to obtain such an unbiased estimate for a much broader class of diffusions than Poisson based estimations which require strong assumptions. 
+However, as the update \eqref{CIS:eq:rho} involves the difference of two Kolmogorov operators, the parametrix estimator of the transition density may be negative, and has no reason to satisfy \eqref{eq:AR:bound}.
+Thus, the SMC algorithms described above cannot be implemented.
+Let $(X_t)_{t\ge 0}$ be defined as a weak solution to the following Stochastic Differential Equation (SDE) in $\mathbb{R}^d$:
+\begin{equation}
+\label{eq:sde}
+X_0 = x_0 \quad\mbox{and}\quad \rmd X_t = \alpha_{\parvec}(X_t)\rmd t + \rmd W_t\eqsp,
+\end{equation}
+where $(W_t)_{t\geqslant 0}$ is a standard Brownian motion, $\alpha_{\parvec}: \Xset\to\Xset$ is the drift function
+% and $\Sigma_{\parvec}:\Xset\to\mathbb{R}^{2\dimX}$ is the diffusion
+. The inference procedure presented in this paper is applied in the case where the solution to \eqref{eq:sde} is supposed to be partially observed at times $t_0 = 0,\ldots,t_n$, for a given $n\geqslant 1$, through an observation process $(Y_k)_{0\leqslant k \leqslant n}$ taking values in $\mathbb{R}^m$. For all $0\leqslant k \leqslant n$, the distribution of $Y_k$ given $(X_t)_{t\geqslant 0}$ depends on $X_k = X_{t_k}$ only and has density $\md{k;\parvec}$ with respect to $\nu$. The distribution of $X_0$ has density $\chi$ with respect to $\mu$ and for all $0\leqslant k \leqslant n-1$, the conditional distribution of $X_{k+1} $ given $(X_{t})_{0\leqslant t\leqslant k}$ has density $\hd{k+1;\parvec}(X_{k},\cdot)$ with respect to $\mu$. 
+This unknown density can be expressed as an expectation of a Brownian Bridge functional \cite{dacunha1986estimation}.
+
+Let $\omega = (\omega_s)_{0 \leq s \leq t}$ be the realization of a Brownian Bridge starting at $x$ at time 0 and ending in $y$ at time $\Delta$. The distribution of $\omega$ is denoted by  $\mathbb{W}_x^{\Delta,y}$. 
+Moreover, suppose that for all $\parvec\in\parspace$, $\alpha_{\parvec}$ is of a gradient form $\alpha_{\parvec} = \nabla_x A_{\parvec}$ where $A_{\parvec}:\Xset \to \rset$ is a twice continuously differentiable function. Denoting, $ \psi_\theta:~~x \mapsto  \psi_\theta(x) = (\|\alpha_{\parvec}(x)\|^2 + \Delta A_{\parvec}(x))/2$, by Girsanov theorem, for all $x, y \in \mathbb{R}^d \times \mathbb{R}^d$
+\begin{equation}
+\label{eq:q:girsanov}
+\hd{k+1;\parvec}(x,y) = \phi_{\Delta_k}(x-y)\mathrm{exp}\left(A_{\parvec}(y) - A_{\parvec}(x)\right)\mathbb{E}_{\mathbb{W}_x^{\Delta_k,y}}\left[\mathrm{exp}\left(-\int_0^{\Delta_k} \psi_{\parvec}(\omega_s)\rmd s\right)\right]\eqsp,
+\end{equation}
+where $\Delta_k = t_{k+1}-t_k$, for all $a>0$, $\phi_a$ is the probability density function of a centered Gaussian random variable with variance $a$.
+
+The transition density then cannot be computed as it involves an integration over the whole path between $x$ and $y$. 
+To perform the algorithm proposed in this paper, we therefore have to design a positive an unbiased estimator of $\hd{k+1;\parvec}(x,y)$. 
+Moreover, maximum likelihood estimation of $\theta$ requires an unbiased estimator of $\nabla_{\parvec}\log\hd{k+1;\parvec}(x,y)$. 
+Such two estimators can be obtained using the General Poisson Estimator (GPE, \cite{fearnhead:papaspiliopoulos:roberts:2008}).
+
+\paragraph{Unbiased GPE estimator for $\hd{k+1;\parvec}(x,y;\zeta)$.}
+
+Assume that there exist random variables $\gpeLB$ and $\gpeUB$ such that for all $0\leqslant s \leqslant \Delta_k$, $\gpeLB \leqslant \psi_{\parvec}(\omega_s) \leqslant \gpeUB$. Let $\kappa$ be a random variable taking values in $\mathbb{N}$ with distribution $\mu$, $\omega = (\omega_s)_{0 \leq s \leq \Delta_k}$ be the realization of a Brownian Bridge, and $(U_j)_{1\leqslant j \leqslant \kappa}$ be independent uniform random
+variables on $(0,\Delta_k)$ and $\zeta = (\kappa,\omega, U_1, \ldots , U_{\kappa})$. As
+shown in \cite{fearnhead:papaspiliopoulos:roberts:2008}, equation \eqref{eq:q:girsanov} leads to a positive unbiased estimator given by
+\[
+\hdhat{k+1;\parvec}(x,y;\zeta) = \phi_{\Delta_k}(x-y)\mathrm{exp}\left(A_{\parvec}(y) - A_{\parvec}(x) - \gpeLB\Delta_k\right)\prod_{j=1}^{\kappa}\frac{\gpeUB-\psi_{\parvec}(\omega_{{U_j}})}{\gpeUB-\gpeLB}\eqsp.
+\]
+
+\paragraph{Unbiased GPE estimator of $\nabla_{\parvec}\log\hd{k+1;\parvec}(x,y)$.}
+Let's denote $\varphi_{\parvec}:~x \mapsto \psi_{\parvec}(x) - \gpeLB$. 
+By \eqref{eq:q:girsanov},
+\begin{multline*}
+\nabla_{\parvec}\log\hd{k+1;\parvec}(x,y) = \nabla_{\parvec}A_{\parvec}(y) - \nabla_{\parvec}A_{\parvec}(x) - \nabla_{\parvec}\gpeLB \Delta_k\\
+-\frac{\mathbb{E}_{\mathbb{W}_x^{\Delta_k,y}}\left[\left(\int_0^{\Delta_k} \nabla_{\parvec}\varphi_{\parvec}(\omega_s)\rmd s\right)\mathrm{exp}\left(-\int_0^{\Delta_k} \varphi_{\parvec}(\omega_s)\rmd s\right)\right]}{\mathbb{E}_{\mathbb{W}_x^{\Delta_k,y}}\left[\mathrm{exp}\left(-\int_0^{\Delta_k} \varphi_{\parvec}(\omega_s)\rmd s\right)\right]}\eqsp.
+\end{multline*}
+ On the other hand, the diffusion bridge $\mathbb{S}^{\Delta_k,y}_{\parvec,x}$ associated with the SDE \eqref{eq:sde} is absolutely continuous with respect to $\mathbb{W}_x^{\Delta_k,y}$ with Radon-Nikodym derivative given by
+\begin{align*}
+\frac{\rmd \mathbb{S}^{\Delta_k,y}_{\parvec,x}}{\rmd \mathbb{W}_x^{\Delta_k,y}}(\omega) &= \left[\hd{k+1;\parvec}(x,y)\right]^{-1}\phi_{\Delta_k}(x-y)\mathrm{exp}\left(A_{\parvec}(y) - A_{\parvec}(x) - \gpeLB\Delta_k-\int_0^{\Delta_k} \varphi_{\parvec}(\omega_s)\rmd s\right)\eqsp,\\
+&=\mathbb{E}_{\mathbb{W}_x^{\Delta_k,y}}\left[\mathrm{exp}\left(-\int_0^{\Delta_k} \varphi_{\parvec}(\omega_s)\rmd s\right)\right]^{-1}\mathrm{exp}\left(-\int_0^{\Delta_k} \varphi_{\parvec}(\omega_s)\rmd s\right)\eqsp.
+\end{align*}
+This yields
+\[
+\nabla_{\parvec}\log\hd{k+1;\parvec}(x,y) = \left(\nabla_{\parvec}A_{\parvec}(y) - \nabla_{\parvec}A_{\parvec}(x) - \nabla_{\parvec}\gpeLB\Delta_k\right) - \mathbb{E}_{\mathbb{S}_{\parvec,x}^{\Delta_k,y}} \left[\int_0^{\Delta_k} \nabla_{\parvec}\varphi_{\parvec}(\omega_s)\rmd s\right]
+\]
+and an unbiased estimator of $\nabla_{\parvec}\log\hd{k+1;\parvec}(x,y)$ is given by
+\[
+\mathsf{l}_{k+1;\parvec}(x,y,\mathsf{s}^{\parvec,x,y,\Delta_k}_U) = \left(\nabla_{\parvec}A_{\parvec}(y) - \nabla_{\parvec}A_{\parvec}(x) - \nabla_{\parvec}\gpeLB\Delta_k\right) - \Delta_k\nabla_{\parvec}\varphi_{\parvec}(\mathsf{s}^{\parvec,x,y,\Delta_k}_U)\eqsp,
+\]
+where $U$ is uniform on $(0,1)$ and independent of $\mathsf{s}^{\parvec,x,y,\Delta_k}\sim \mathbb{S}_{\parvec,x}^{\Delta_k,y}$. In the context of GPE, $\mathsf{s}^{\parvec,x,y,\Delta_k}$ can be simulated exactly using exact algorithms for diffusion processes proposed in \cite{beskos2006retrospective}.
 
 
 \end{document}
