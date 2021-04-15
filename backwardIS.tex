@@ -453,7 +453,7 @@ In \cite{gloaguen2018online} and \cite{gloaguen2019pseudo}, the authors assumes 
 \mathrm{sup}_{\ell,\zeta}\;\hatqg{k}\langle \zeta\rangle(\epart{k}{\ell},\epart{k+1}{i})\leqslant \hkup^i_k\eqsp. \label{eq:AR:bound}
 \end{equation}
 Approximation of the backward statistics (as defined in \eqref{eq:T:stat}) are compute recursively, for each simulated particles. 
-The computations starts with initializing a set $\tstat[1]{0} = 0,\dots \tstat[N]{0} = 0$, which consists in our approximation of $\tstat{0}(\epart{0}{1}), \dots, \tstat{0}(\epart{0}{N})$. \textbf{NOTE: JE PENSE QU'IL Y A UN SOUCI D'INDICE DANS LA DÉFINITION DE LA FONCTIONNELLE ADDITIVE. iL FAUDRAIT DECALER DE 1} 
+The computations starts with initializing a set $\tstat[1][\af{0}]{0} = 0,\dots \tstat[N][\af{0}]{0} = 0$, which consists in our approximation of $\tstat{0}(\epart{0}{1}), \dots, \tstat{0}(\epart{0}{N})$. \textbf{NOTE: JE PENSE QU'IL Y A UN SOUCI D'INDICE DANS LA DÉFINITION DE LA FONCTIONNELLE ADDITIVE. iL FAUDRAIT DECALER DE 1} 
 
 Then, for each $k\geqslant 0$, $1\leqslant i\leqslant \N$, the approximated statistics are updated with:
 \begin{equation*}
