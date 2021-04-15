@@ -464,11 +464,7 @@ where $\K\geqslant 1$ is a sample size which  is typically small compared to $\N
 $$
 \overline \upsilon_k^i(\ell,z)\propto\ewght{k}{\ell}\hatqg{k}\langle z\rangle(\epart{k}{\ell},\epart{k+1}{i})\kernelmarg_{k}(\epart{k}{\ell},\epart{k+1}{i};z)\eqsp.
 $$
-In \cite{gloaguen2018online}, it is assumed that, for all  $0\leqslant k\leqslant n$ and $0\leqslant i\leqslant N$, there exists an upper bound $\hkup^i_k$  such that
-\begin{equation}
-\mathrm{sup}_{\ell,\zeta}\;\hatqg{k}\langle \zeta\rangle(\epart{k}{\ell},\epart{k+1}{i})\leqslant \hkup^i_k\eqsp. \label{eq:AR:bound}
-\end{equation}
-Then, for all $(i, z) \in \lbrace 1,\dots,N\rbrace\times\marginalset$,
+The sampling from this specific distribution is possible thanks to condition \eqref{eq:AR:bound}, as, for all $(i, z) \in \lbrace 1,\dots,N\rbrace\times\marginalset$, it results in
 $$
 \ewght{k}{\ell}\hatqg{k}\langle z \rangle(\epart{k}{\ell},\epart{k+1}{i})\kernelmarg_{k}(\epart{k}{\ell},\epart{k+1}{i};z) \leqslant \hkup_k \ewght
 {k}{\ell} \kernelmarg_{k}(\epart{k}{\ell},\epart{k+1}{i};z)\eqsp. 
@@ -482,7 +478,10 @@ Therefore, the following  accept-reject mechanism algorithm may be used to sampl
 \end{enumerate}
 \item  $(J^\ast,\zeta^\ast)$ is then accepted with probability $\hatqg{k}\langle \zeta^\ast\rangle(\epart{k}{J^\ast}, \epart{k+1}{i})/\hkup_k^i$ and, upon acceptance, $\bi{k+1}{i}{j} = J^*$.
 \end{enumerate}
-This algorithm is the only SMC smoother proposed in the literature with  theoretical guarantees when no closed-form expressions of  the  transition  densities and the conditional likelihood of the observations are available,  assuming that the user  can only evaluate  approximations of these densities. This pseudo-marginal particle smoothing algorithm  requires that the backward sampling step  generates samples exactly according to $\overline \upsilon_k^i$.  This leads in practice to strong assumptions to implement the accept-reject step: positiveness of the pseudo-marginal likelihood and the existence of the uper bound  \eqref{eq:AR:bound}. In the next section, we propose an alternative to this step to obtain a computationally efficient pseudo-marginal smoother in a much wider range of applications in which such assumptions do not hold.
+This algorithm is the only SMC smoother proposed in the literature with  theoretical guarantees when no closed-form expressions of  the  transition  densities and the conditional likelihood of the observations are available,  assuming that the user  can only evaluate  approximations of these densities. 
+This pseudo-marginal particle smoothing algorithm  requires that the backward sampling step  generates samples exactly according to $\overline \upsilon_k^i$.  
+However, it relies on the key assumption \eqref{eq:AR:bound} which is rather restrictive, and would not be satisfied in practice for a lot of problems (as we will see in section \ref{sec:simu:LV}).
+ In the next section, we propose an alternative to this step to obtain a computationally efficient pseudo-marginal smoother in a much wider range of applications in which such assumptions do not hold.
 
 
 \section{Pseudo-marginal backward importance sampling}
