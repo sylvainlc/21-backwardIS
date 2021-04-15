@@ -292,17 +292,31 @@ Formally, let $(X_k)_{k\geqslant 0}$ be a Markov chain on $\rset^d$ such that th
 It is assumed that this state  is partially observed  through an observation process $(Y_k)_{0\leqslant k \leqslant n}$ taking values in $\rset^m$. 
 For all $0\leqslant k \leqslant n$, the distribution of $Y_k$ given $X_{0:n}$ depends on $X_k$ only and has density $\md{k;\parvec}(X_k,\cdot)$ with respect to the Lebesgue measure. 
 In this context, for any pair of indexes $0\leqslant\leqslant k_1 \leqslant k_2 \leqslant n$, we define the \textit{joint smoothing distribution} as the law of $X_{k_1:k_2}\vert Y_{0:n}$. 
+In this framework, the likelihood of the observations $\llh{n,\parvec}(Y_{0:n})$ , whose expression is, in general, intractable, is given by:
+$$
+\llh{n,\parvec}(Y_{0:n})  = \int \chi(x_0)\md{0;\parvec}(x_{0},Y_{0})\prod_{k=0}^{n-1}\qg{k;\parvec}(x_{k},x_{k+1})\rmd x_{0:n},
+$$
+ where, for all $0\leqslant k \leqslant n$ and all $\parvec\in\parspace$,
+\begin{equation}
+\label{eq:def:elln}
+\qg{k;\parvec}(x_{k},x_{k+1}) = \hd{k+1;\parvec}(x_{k}, x_{k+1}, Y_{k + 1})\md{k+1;\parvec}(x_{k+1},Y_{k+1})\eqsp.
+\end{equation}
+In some models, this quantity might be unknown (see models of sections \ref{sec:simu:SINE} and \ref{sec:simu:LV}), and we will only suppose that we have an estimate of this quantity (see assumption \textbf{H\ref{assum:unbiased}} in section \ref{sec:method}).
+Note that to avoid future cumbersome expressions,the dependance of the key quantity $\qg{k;\parvec}(\cdot)$ on the observations is implicit (as we will always work conditionnaly to the observations).
 
 
 In this paper, we extend and intensively explore a generic and efficient algorithm to compute \textit{expectations of smoothing additive functionals}. 
 Namely, we aim at computing: 
 $$\pE \left[\af{0:n}(X_{0:n})\middle | Y_{0:n}\right],$$
 where $\af{0:n}$ is an \textit{additive functional}, \textit{i.e.} a function from $\rset^{d \times (n + 1)}$ to $\rset^{d'}$ satisfying:
-$$\af{0:n}: x_{0:n} \mapsto \sum_{k=0}^{n-1}\addf{k}(x_{k},x_{k+1}),$$
-where $\addf{k}$ is a functional from $\rset^{d \times 2}$ $\rset^{d'}$.
+\begin{equation}
+\label{eq:additive:functional}
+\af{0:n}: x_{0:n} \mapsto \sum_{k=0}^{n-1}\addf{k}(x_{k},x_{k+1}),
+\end{equation}
+where $\addf{k}$ is a functional from $\rset^{d \times 2}$ to $\rset^{d'}$.
 If this problem can seem rather abstract at first, it is actually the keystone for many common inference problem in state space models.
 
-\begin{example}[state tracking]
+\begin{example}[State tracking]
 \label{ex:state:tracking}
 Suppose that the model parameter $\theta$ is known, a common objective aims at recovering the underlying signal $X_{k^*}$ for some index $0\leqslant k^* \leqslant n$ given the observations $Y_{0:n}$. The natural Bayesian estimator is given by:
 $$\pE\left[X_{k^*}\vert Y_{0:n}\right],$$
@@ -313,81 +327,67 @@ which is a particular instance of our problem with $\addf{k}(x_k, x_{k+1}) = x_k
 \label{ex:em:algorithm}
 In the usual case when $\theta$ is unknown, a classical estimator is given by:
 $$
-\widehat \parvec = \mathrm{argmax}_{\parvec\in\parspace}\eqsp\llh{n}(\parvec)\eqsp,
+\widehat \parvec = \mathrm{argmax}_{\parvec\in\parspace}\eqsp\llh{n,\parvec}(Y_{0:n})\eqsp,
 $$
-where $\llh{n}(\parvec)$ is the likelihood of the observations, whose expression is, in general, intractable. Indeed, the likelihood is given by:
-$$
-\llh{n}(\parvec)  = \int \chi(x_0)\md{0;\parvec}(x_{0},Y_{0})\prod_{k=0}^{n-1}\qg{k;\parvec}(x_{k},x_{k+1}, Y_{k+1})\rmd x_{0:n},
-$$
- where, for all $0\leqslant k \leqslant n$ and all $\parvec\in\parspace$,
-\begin{equation*}
-%\label{eq:def:elln}
-\qg{k;\parvec}(x_{k},x_{k+1}) = \hd{k+1;\parvec}(x_{k}, x_{k+1}, Y_{k + 1})\md{k+1;\parvec}(x_{k+1},Y_{k+1})\eqsp.
-\end{equation*}
+where 
+
 Expectation Maximization based algorithms \cite{dempster1977maximum}  are appealing solutions to obtain an estimator of $\hat \parvec$.
 The pivotal concept of the EM algorithm is that the intermediate quantity defined by
-\begin{equation}
-\parvec\mapsto Q(\parvec,\parvec') = \pE_{\parvec'}\left[\sum_{k=0}^{n-1} \log \qg{k;\parvec}(X_{k},X_{k+1}, Y_{k + 1})\middle | Y_{0:n}\right] \label{eq:EM:E:step}
-\end{equation}
+\begin{equation*}
+\parvec\mapsto Q(\parvec,\parvec') = \pE_{\parvec'}\left[\sum_{k=0}^{n-1} \log \qg{k;\parvec}(X_{k}, X_{k+1})\middle | Y_{0:n}\right] 
+%\label{eq:EM:E:step}
+\end{equation*}
 may be used as a surrogate for $\llh{n}(\parvec)$ in the maximization procedure,  where $\pE_{\parvec'}$ is the expectation under the joint distribution of the latent states and the observations when the model is parameterized by $\parvec'$. 
-Again, this inference setting is a special case of our framework where $\addf{k}(x_k, x_{k+1}) = \log \qg{k;\parvec}(X_{k},X_{k+1})$ (the dependance in $Y_{k +1}$ is omitted as the expectation is computed conditionnally to the observations).
+Again, this inference setting is a special case of our framework where $\addf{k}(x_k, x_{k+1}) = \log \qg{k;\parvec}(x_{k}, x_{k+1})$ .
 
-Therefore, the EM algorithm iteratively builds a sequence $(\parvec_{p})_{p\geqslant 0}$ of parameter estimates following the two steps: (i) compute $\parvec\mapsto Q(\parvec,\parvec_{p})$ and (ii) choose $\parvec_{p+1}$ as a maximizer of $\parvec \mapsto Q(\parvec,\parvec_{p})$. Gradient ascent algorithms are compelling alternatives to the EM algorithm.
+%Therefore, the EM algorithm iteratively builds a sequence $(\parvec_{p})_{p\geqslant 0}$ of parameter estimates following the two steps: (i) compute $\parvec\mapsto Q(\parvec,\parvec_{p})$ and (ii) choose $\parvec_{p+1}$ as a maximizer of $\parvec \mapsto Q(\parvec,\parvec_{p})$. Gradient ascent algorithms are compelling alternatives to the EM algorithm.
 \end{example}
 
-
- 
-In the context of HMMs, the gradient of the log-likelihood can also be expressed  as an expectation of an additive functional of the hidden states given $Y_{0:n}$ (\cite{cappe2005inference}, Chapter~10, or \cite{gloaguen2018online} in the context of SDEs). A key feature here is that all the relevant estimators rely on computing, for some parameters $\parvec$ and $\parvec'$:
-$$\pE_{\parvec'}\left[\af{0:n,\parvec}(X_{0:n})\middle | Y_{0:n}\right],$$
-where $\af{0:n,\parvec}$ is an \textit{additive functional}, \textit{i.e.} satisfying:
-$$\af{0:n,\parvec}: x_{0:n} \mapsto \sum_{k=0}^{n-1}\addf{k;\parvec}(x_{k},x_{k+1}),$$
-where $\addf{k;\parvec}$ is a functional depending on the estimator.
-%For all $p\geqslant 0$, the intermediate quantity is a conditional expectation of an additive functional and writes
-%\[
-%Q(\parvec,\parvec_{p}) = \post{0:n \mid n;\parvec_p}[\af{0:n;\parvec}] \eqsp,%= \mathbb{E}_{\parvec_p}\left[\sum_{k=0}^{n-1} \log \qg{k;\parvec}(X_{k},X_{k+1})\middle | Y_{0:n}\right] 
-%\]
-%where 
-%$$
-%\af{0:n,\parvec}: x_{0:n} \mapsto \sum_{k=0}^{n-1}\addf{k;\parvec}(x_{k},x_{k+1})
-%$$ 
-%and 
-%$$
-%\addf{k;\parvec}: (x_{k:k+1}) \mapsto \log \qg{k;\parvec}(x_{k},x_{k+1})
-%$$
-For any $\parvec\in\parspace$, $0 \leqslant k_1 \leqslant k_2 \leqslant n$ and any bounded and measurable function $h$ on $(\mathbb{R}^d)^{k_2 - k_1 +1}$,  define the \textit{joint smoothing distributions} as:
-\begin{equation}
-\label{eq:smooth}
-\post{k_1:k_2 \mid n;\parvec}[h] \eqdef  \pE_{\parvec}\left[h(X_{k_1:k_2})\middle | Y_{0:n}\right]\eqsp.
-\end{equation}
-For all $0\leqslant k\leqslant n$, $\post{k;\parvec}=\post{k:k\mid k;\parvec}$ are the \textit{filtering distributions}.
-%This expression of the EM intermediate quantity supports the keen interest for efficient algorithms to estimate conditional expectation of additive functionals  of the latent states given the observations. 
-
-%In the following, $\parvec$ is dropped from the notations for better clarity when there is no possible confusion. As noted for instance in \cite{cappe2005inference}, although the objective is to  obtain approximation of smoothing distributions, the filtering distribution is crucial as, for additive functionals,
-%\begin{align}
-%\post{0:n \mid n}[\af{0:n}] &= \post{n}\left[\tstat{n}[\af{0:n}]\right] \nonumber,
-%\intertext{where}
-%\tstat{n}[\af{0:n}](X_n) &= \pE_{}\left[\af{n}(X_{0:n})\middle | X_n, Y_{0:n}\right]. \label{eq:T:stat}
-%\end{align}
-%As a key consequence of the additive property, for all $1\leqslant k\leqslant n$
-%\begin{equation}
-%\tstat{k}[\af{0:k}](X_k) = \pE_{}\left[\tstat{k - 1}[\af{0:(k - 1)}](X_{k - 1}) + \addf{k-1}(X_{k-1}, X_k)\middle | X_k, Y_{0:{k - 1}}\right]. \label{eq:T:add:recursion}
-%\end{equation}
-%However, the exact computation of all these key expectations is not possible in general state spaces. 
-%
-%The next section describes a Sequential Monte Carlo algorithm \cite{doucet2013sequential} to approximate $\post{n}$ by weighted samples $\{(\ewght{n}{\ell},\epart{n}{\ell})\}_{\ell=1}^{\N}$ and the algorithm of \cite{gloaguen2018online} to compute recursively, for each $1\leqslant \ell \leqslant N$ an approximation $\tstat[\ell]{n}$ of $\tstat{n}[\af{0:n}](\epart{n}{\ell})$ so that the estimator of $\post{0:n \mid n}[\af{0:n}]$ is defined as
-%\begin{align}
-%\label{eq:paris:estimator}
-%\post{0:n \mid n}^N[\af{0:n}]&\eqdef \sum_{\ell=1}^N \frac{\ewght{n}{\ell}}{\sum_{j=1}^N \ewght{n}{j}}\tstat[\ell]{n}\eqsp.
-%\end{align}
-
-
-
-
-
+\begin{example}[Fisher's identity and online gradient ascent]
+An alternative to the EM algorithm is to maximize the log likelihood through gradient based methods.
+Indeed, in state space models, under some regularity conditions (see \cite{cappe2005inference}, Chapter~10), the gradient of the log likelihood can be obtained thanks to the Fisher's identity:
+$$\deriv \log \llh{n}(\parvec) = \pE_\theta\left[\sum_{k=0}^{n-1} \deriv \log \qg{k;\parvec}(X_{k},X_{k+1})\middle | Y_{0:n}\right],$$
+which relies on the expectation of a smoothing additive functional.
+It has been noted (see \cite{cappe2005inference}, chapter 10, or \cite{olsson2020particle} how this identity, coupled with the smoothing recursions of section \ref{sec:smoothing}, can lead to an online gradient ascent, that provides an online estimate of the MLE.
+An extension of this method will be illustrated on section \ref{sec:tangent:filter} on an original example where the transition density cannot be evaluated.
+\end{example}
 
 \section{Online sequential Monte Carlo smoothing}
-\label{sec:bayesian:smoothing}
-In the following, $\parvec$ may be  dropped from the notations for better clarity when there is no possible confusion. In many situations, SMC methods cannot be used straightforwardly as the transition densities $\hd{k}$, $0\leqslant k \leqslant n-1$ and the marginal likelihood of the observations $\md{k}$, $0\leqslant k \leqslant n-1$, are unknown. Pseudo-marginalisation was originally proposed in \cite{beaumont:2003} in the framework of MCMC methods, and further analyzed in \cite{andrieu:robert:2009}.  Following \cite{fearnhead2008particle, olsson2011particle, gloaguen2018online}, while the target density is intractable we assume that there exists some additional state space$(\marginalset,\mathcal{B}(\marginalset))$ such that the following assumption holds.
+\label{sec:method}
+
+\subsection{Backward statistic for online algorithm}
+
+For all pair of integers $0\leq k \leq k' \leq n$, and all measurable function $h$ on $\rset^{d \times (k' - k + 1)}$, the expectation with respect to the joint smoothing distribution is denoted by:
+
+$$\post{k:k' \mid n} \left[ h \right] := \pE\left[ h(X_{k:k'}) \middle | Y_{0:n} \right]\eqsp .$$
+
+The special case where $k = k' = n$ refers to \textit{filtering distribution} and will be denoted $\post{k}$.
+As said in previous section, we are focused on the estimation of $\post{0:n \mid n}[\af{0:n}]$ when $\af{0:n}$ satisfies \eqref{eq:additive:functional}.
+For $0\leqslant k\leqslant n$, let $\af{0:k}$ be the restriction of $\af{0:n}$ to $X_{0:k}$ (by truncating the sum in \eqref{eq:additive:functional}).
+A pivotal quantity to fullfill this goal is the \textit{backward statistic}:
+\begin{equation}
+\label{eq:T:stat}
+\tstat{k}[\af{0:k}](X_k) = \pE \left[\af{0:k}(X_{0:k        }) \middle | X_k, Y_{0:k}\right],~1\leqslant k \leqslant n,~\tstat{0} = 0\eqsp.
+\end{equation}
+Note that for each $k$ this statisic is a function of $X_k$, and is defined relatively to the functional of interest $\af{0:n}$.
+For additive functionals, this statistic satisfies the two following features:
+\begin{align}
+\post{0:n \mid n}[\af{0:n}] &= \post{n}\left[\tstat{n}[\af{0:n}] \right], \label{eq:property:filt:smooth}\\
+\tstat{k}\left[\af{0:k}\right](X_{k}) &= \pE\left[\left.\tstat{k-1}\left[\af{0:(k-1)}\right]\left(X_{k-1}\right) + \addf{k-1}\left(X_{k-1},X_{k}\right)\right|X_{k},Y_{0:k-1} \right],~1\leqslant k \leqslant n,\eqsp, \label{eq:property:backward}
+\end{align} 
+where $\addf{k-1}$ is the function defined in \eqref{eq:additive:functional}.
+Property \eqref{eq:property:filt:smooth} essentialy tells us that the target smoothing distribution is the filtering distribution of a well chosen statistic, while property \eqref{eq:property:filt:smooth} gives a recursion to compute this statistics. 
+To sum up, these two properties suggest an \textit{online} procedure to achieve the smoothing objective. Starting from 0, at each step $k$, this procedure would:
+\begin{itemize}
+\item Compute the filtering distribution;
+\item Compute the backward statistic.
+\end{itemize}
+In general, these computations cannot be performed, as they involve intractable integrals. 
+An approximation procedure will be designed through Sequential Monte Carlo methods.
+
+%In the following, $\parvec$ may be  dropped from the notations for better clarity when there is no possible confusion. In many situations, SMC methods cannot be used straightforwardly as the transition densities $\hd{k}$, $0\leqslant k \leqslant n-1$ and the marginal likelihood of the observations $\md{k}$, $0\leqslant k \leqslant n-1$, are unknown. Pseudo-marginalisation was originally proposed in \cite{beaumont:2003} in the framework of MCMC methods, and further analyzed in \cite{andrieu:robert:2009}.  
+Following \cite{fearnhead2008particle, olsson2011particle, gloaguen2018online, gloaguen2019pseudo}, we do not assume that model's dynamics given by \eqref{eq:def:elln} can be computed.
+We assume that there exists an estimator, potentialy relying on some random variable on a general state space $(\marginalset,\mathcal{B}(\marginalset))$ such that the following assumption holds.
 \begin{hypH} 
 \label{assum:unbiased}
 For all $\parvec \in\parspace$ and $k\geqslant 0$, there exists a Markov kernel on $(\Xset\times\Xset,\mathcal{B}(\marginalset))$ with density $\kernelmarg_{k;\parvec}$ with respect to a reference measure $\mu$ on a general state space $(\marginalset,\mathcal{B}(\marginalset))$,  and a positive mapping $\hatqg{k;\parvec}$ on $\Xset\times\Xset\times\marginalset$ such that, for all $(x,x')\in\Xset \times \Xset$,
@@ -397,21 +397,21 @@ For all $\parvec \in\parspace$ and $k\geqslant 0$, there exists a Markov kernel 
 % It is assumed that $\kernelmarg_{k;\parvec}$ has a probability density with respect to a reference measure on $(\marginalset,\mathcal{B}(\marginalset))$ which is also written $\kernelmarg_{k;\parvec}$.
 %In other words, we assume that an unbiased estimator of $\qg{k;\parvec}(x,x')\eqsp$ is available.
 \end{hypH}
-Thus, a pointwise estimate of $\qg{k;\parvec}(x,x')$ can be obtained by generating $\zeta$ from $\kernelmarg_{k;\parvec}(x,x';\rmd z)$ and computing the statistic $\hatqg{k;\parvec}\langle \zeta\rangle(x,x')$. Interestingly, even though pseudo marginalisation is based on the plug-in principle, it preserves typically the consistency of an algorithm, see for instance in the case of pseudo-marginal SMC smoothers \cite{gloaguen2021pseudo}.
+This setup, known as \textit{pseudo marginalisation} is based on the plug-in principle, as a pointwise estimate of $\qg{k;\parvec}(x,x')$ can be obtained by generating $\zeta$ from $\kernelmarg_{k;\parvec}(x,x';\rmd z)$ and computing the statistic $\hatqg{k;\parvec}\langle \zeta\rangle(x,x')$. 
+Its use in Monte Carlo methods, and the related theoretical guarantees, have been studied in the context of MCMC \cite{andrieu2009pseudo}, and more recently, of SMC \cite{gloaguen2019pseudo}.
 
-%To overcome these issues,, consider the following assumption. 
-%Let $(\marginalset,\mathcal{B}(\marginalset))$ be a general state space.
+We will now describe, in this context, how to practically implement a generic an efficient SMC algorithm.
 
-
-
-\subsection{Filtering}
+\subsection{Approximation of the filtering distribution}
 \label{sec:filtering}
-Let $(\epart{0}{\ell})_{\ell = 1}^\N$ be independent and identically distributed according to an instrumental proposal density $\rho_0$ on $\mathbb{R}^d$ and define the importance weights $\ewght{0}{\ell} \eqdef \Xinit(\epart{0}{\ell})/\XinitIS{0}(\epart{0}{\ell})$, where $\chi$ is the density of the distribution of $X_0$, see Section~\ref{sec:model}. For any bounded and measurable function  $f$ defined on $\mathbb{R}^d$,
+Let $(\epart{0}{\ell})_{\ell = 1}^\N$ be independent and identically distributed according to an instrumental proposal density $\rho_0$ on $\mathbb{R}^d$ and define the importance weights $\ewght{0}{\ell} \eqdef \Xinit(\epart{0}{\ell})/\XinitIS{0}(\epart{0}{\ell})$, where $\chi$ is the density of the distribution of $X_0$ as defined in Section~\ref{sec:model}. 
+For any bounded and measurable function  $h$ defined on $\mathbb{R}^d$, the importance sampling estimator
 \begin{align*}
-\post{0}^\N[f]&\eqdef \sumwght{0}^{-1}\sum_{\ell=1}^\N \ewght{0}{\ell}f(\epart{0}{\ell})\eqsp,\quad\mbox{where}\quad\sumwght{0}\eqdef \sum_{\ell=1}^N \ewght{0}{\ell}\eqsp.
+\post{0}^\N[h]&\eqdef \sumwght{0}^{-1}\sum_{\ell=1}^\N \ewght{0}{\ell}h(\epart{0}{\ell})\eqsp,\quad\mbox{where}\quad\sumwght{0}\eqdef \sum_{\ell=1}^N \ewght{0}{\ell}\eqsp.
 \end{align*}
-is a consistent estimator of $\post{0}[f]$. Then, for all $k\geqslant 1$, once the observation $Y_k$ is available, the weighted particle sample $\{(\ewght{k-1}{\ell},\epart{k-1}{\ell})\}_{\ell=1}^{\N}$ is transformed into a new weighted particle sample approximating $\post{k}$.
- This update step is carried through in two steps, \emph{selection} and \emph{mutation},  using sequential importance sampling and resampling steps. % the auxiliary sampler introduced in \cite{pitt1999filtering}.  
+is a consistent estimator of $\post{0}[f]$. 
+Then, for all $k\geqslant 1$, once the observation $Y_k$ is available, \textit{particle filtering} transforms the weighted particle sample $\{(\ewght{k-1}{\ell},\epart{k-1}{\ell})\}_{\ell=1}^{\N}$ into a new weighted particle sample approximating $\post{k}$.
+ This update step is carried through in two steps, \emph{selection} and \emph{mutation},  using sequential importance sampling and resampling steps.   
  New indices and particles $\{ (I_k^{\ell}, \epart{k}{\ell},\zeta_k^{\ell}) \}_{\ell = 1}^\N$ are simulated independently from the instrumental distribution with density on $\{1, \dots, \N\} \times \mathbb{R}^d\times \marginalset$:
 $$
 %\label{eq:instrumental-distribution-filtering}
@@ -428,7 +428,7 @@ $\kissforward{k-1}{k-1}$ is a Markovian transition density.  In practice, this s
 \}_{1\leqslant j\leqslant \N}$.
 \item Sample $\epart{k}{\ell}$ with distribution $\kissforward{k-1}{k-1}(\epart{k-1}{I_k^{\ell}},\cdot)$ and sample $\zeta_k^{\ell}$ with distribution $\kernelmarg_{k}(\epart{k-1}{I_k^{\ell}},\epart{k}{\ell};\cdot)$.
 \end{enumerate}
-The choice of the proposal distribution $\kissforward{k-1}{k-1}$ is a pivotal tuning step to obtain efficient estimations of the filtering distributions. In the context of diffusion processes, a natural choice for $p_k$ could be to use an approximation of the bootstrap filter, i.e. an approximation of $q_{k-1}$ based for instance on a Euler discretization scheme. In the numerical section of this paper, we propose to use an approximation of the optimal filter which accounts for the newly obtained observation to propose new particles, see \eqref{eq:optimal:filter}. 
+%In the context of diffusion processes, a natural choice for $p_k$ could be to use an approximation of the bootstrap filter, i.e. an approximation of $q_{k-1}$ based for instance on a Euler discretization scheme. In the numerical section of this paper, we propose to use an approximation of the optimal filter which accounts for the newly obtained observation to propose new particles, see \eqref{eq:optimal:filter}. 
 For any  $\ell \in\{1, \dots, \N\}$, $\epart{k}{\ell}$ is associated with the  importance weight defined by:
 \begin{equation}
 \label{eq:weight-update-filtering}
@@ -439,15 +439,23 @@ to produce the following approximation of $\post{k}[f]$:
 \post{k}^\N[f]&\eqdef \sumwght{k}^{-1}\sum_{\ell=1}^N \ewght{k}{\ell}f(\epart{k}{\ell})\eqsp,\quad\mbox{where}\quad\sumwght{k}\eqdef \sum_{\ell=1}^\N \ewght{k}{\ell}\eqsp.
 \end{align*}
 
+The choice of the proposal distribution $\kissforward{k-1}{k-1}$ is a pivotal tuning step to obtain efficient estimations of the filtering distributions. 
+This point will be discussed in each example considered in section \ref{sec:application}.
 
+\subsection{Approximation of the backward statistic}
+\label{sec:smoothing}
 
-\subsection{Smoothing}
-\label{sec:AR}
-In the context of additive functionals, we aim at obtaining a Monte Carlo approximation of $\post{0:n \mid n}[\af{0:n}]$, where $\af{0:n}$ is of the form $\af{0:n}: x_{0:n} \mapsto \sum_{k=0}^{n-1}\addf{k}(x_{k},x_{k+1})$, where $\addf{k}$ is a functional depending on the estimator. The forward-only smoothing algorithm introduced in \cite{delmoral2010backward} proposes a particle approximation of  $\post{0:n \mid n}[\af{0:n}]$ that can be computed \textit{online}. 
-This algorithm has a computational complexity which  grows \emph{quadratically} with the number of particles $\N$. 
-This computational cost can be reduced when the transition density of the hidden states is upper bounded following \cite{olsson2017efficient}  by applying the rejection sampling approach proposed in~\cite{douc2011sequential} and illustrated in \cite{dubarry2011fast}. 
-Following \cite{gloaguen2019pseudo}, the backward statistics 
-$\tstat{k + 1}[\af{0:k+1}](\epart{k+1}{i})$, where $\tstat{k + 1}$ is defined in \eqref{eq:T:stat},  are estimated, for all $1\leqslant i\leqslant \N$, as follows,
+%In the context of additive functionals, we aim at obtaining a Monte Carlo approximation of $\post{0:n \mid n}[\af{0:n}]$, where $\af{0:n}$ is of the form $\af{0:n}: x_{0:n} \mapsto \sum_{k=0}^{n-1}\addf{k}(x_{k},x_{k+1})$, where $\addf{k}$ is a functional depending on the estimator. The forward-only smoothing algorithm introduced in \cite{delmoral2010backward} proposes a particle approximation of  $\post{0:n \mid n}[\af{0:n}]$ that can be computed \textit{online}. 
+%This algorithm has a computational complexity which  grows \emph{quadratically} with the number of particles $\N$. 
+%This computational cost can be reduced when the transition density of the hidden states is upper bounded following \cite{olsson2017efficient}  by applying the rejection sampling approach proposed in~\cite{douc2011sequential} and illustrated in \cite{dubarry2011fast}. 
+In \cite{gloaguen2018online} and \cite{gloaguen2019pseudo}, the authors assumes that for all  $0\leqslant k\leqslant n$ and $0\leqslant i\leqslant N$, there exists an upper bound $\hkup^i_k$  such that
+\begin{equation}
+\mathrm{sup}_{\ell,\zeta}\;\hatqg{k}\langle \zeta\rangle(\epart{k}{\ell},\epart{k+1}{i})\leqslant \hkup^i_k\eqsp. \label{eq:AR:bound}
+\end{equation}
+Approximation of the backward statistics (as defined in \eqref{eq:T:stat}) are compute recursively, for each simulated particles. 
+The computations starts with initializing a set $\tstat[1]{0} = 0,\dots \tstat[N]{0} = 0$, which consists in our approximation of $\tstat{0}(\epart{0}{1}), \dots, \tstat{0}(\epart{0}{N})$. \textbf{NOTE: JE PENSE QU'IL Y A UN SOUCI D'INDICE DANS LA DÉFINITION DE LA FONCTIONNELLE ADDITIVE. iL FAUDRAIT DECALER DE 1} 
+
+Then, for each $k\geqslant 0$, $1\leqslant i\leqslant \N$, the approximated statistics are updated with:
 \begin{equation*}
 %\label{eq:update:paris:marginal}
 \tstat[i]{k+1}  = \frac{1}{\K} \sum_{j=1}^{\K} \left( \tstat[\bi{k+1}{i}{j}]{k} + \addf{k}\left(\epart{k}{\bi{k+1}{i}{j}}, \epart{k+1}{i}\right)\right)\eqsp,
@@ -533,6 +541,7 @@ Then, the estimator of the conditional expectation of the additive functional is
 This estimator does not rely on an accept reject mechanism and is therefore less computationally intensive and can be used under reasonable assumptions for many SDEs. In addition, as shown in Section~\ref{sec:experiments}, this does not affect the statistical efficiency of the algorithm.
 
 \section{Application to smoothing expectations and score estimation}
+\label{sec:application}
 
 \subsection{Recurrent neural networks}
 \textcolor{red}{Ici on n'a pas besoin du Pseudo-marginal. On illustre que l'on fait mieux que le Poor man's pour pas plus cher.}
@@ -558,6 +567,7 @@ A simulation plan which could be nice and not too complex:
 If this works well, then we illustrate our claims and we can perform parameter estimation for the stochastic RNN using backward IS to illustrate score estimation. And we are good ?
 
 \subsection{Sine model}
+\label{sec:simu:SINE}
 This section investigates the performance of the proposed algorithm to compute  expectations under the smoothing distributions in a context where  alternatives are available for comparison. Consider the Sine model where $(X_t)_{t\geqslant 0}$ is assumed to be a weak solution to
 $$
 \rmd X_t = \sin(X_t-\theta)\rmd t + \rmd W_t\eqsp,\quad X_0 = x_0\eqsp.
@@ -610,6 +620,8 @@ It is worth noting that the variance of the computational time is greatly reduce
 \end{figure}
 
 \subsection{Stochastic Lotka-Volterra model}
+\label{sec:simu:LV}
+
 This section sets the focus on a stochastic model describing in continuous time the population dynamics in a predator-prey system, as fully discussed in \cite{hening2018persistence}. The bivariate process $(X_t)_{t\geqslant 0}$ of predators and preys abundances is assumed to follow the stochastic  Lotka-Volterra model:
 \begin{equation}
 \label{eq:LV:SDE}
