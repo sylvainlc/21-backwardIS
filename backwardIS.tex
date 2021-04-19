@@ -355,36 +355,30 @@ An extension of this method will be illustrated in Section~\ref{sec:tangent:filt
 
 \subsection{Backward statistic for online algorithm}
 
-For all pair of integers $0\leq k \leq k' \leq n$, and all measurable function $h$ on $\rset^{d \times (k' - k + 1)}$, the expectation with respect to the joint smoothing distribution is denoted by:
-
-$$\post{k:k' \mid n} \left[ h \right] := \pE\left[ h(X_{k:k'}) \middle | Y_{0:n} \right]\eqsp .$$
-
-The special case where $k = k' = n$ refers to \textit{filtering distribution} and will be denoted $\post{k}$.
-As said in previous section, we are focused on the estimation of $\post{0:n \mid n}[\af{0:n}]$ when $\af{0:n}$ satisfies \eqref{eq:additive:functional}.
-For $0\leqslant k\leqslant n$, let $\af{0:k}$ be the restriction of $\af{0:n}$ to $X_{0:k}$ (by truncating the sum in \eqref{eq:additive:functional}).
-A pivotal quantity to fullfill this goal is the \textit{backward statistic}:
+In this section, the parameter $\parvec$ is dropped from notation for a better clarity. For all pair of integers $0\leq k \leq k' \leq n$, and all measurable function $h$ on $\rset^{d \times (k' - k + 1)}$, the expectation with respect to the joint smoothing distribution is denoted by:
+$$
+\post{k:k' \mid n} \left[ h \right] := \pE\left[ h(X_{k:k'}) \middle | Y_{0:n} \right]\eqsp .
+$$
+The special case where $k = k' = n$ refers to \textit{filtering distribution} and we write $\post{k} = \post{k:k \mid k}$.
+%As said in previous section, we are focused on the estimation of $\post{0:n \mid n}[\af{0:n}]$ when $\af{0:n}$ satisfies \eqref{eq:additive:functional}.
+%For $0\leqslant k\leqslant n$, let $\af{0:k}$ be the restriction of $\af{0:n}$ to $X_{0:k}$ (by truncating the sum in \eqref{eq:additive:functional}).
+A pivotal quantity to estimate $\post{0:n \mid n}[\af{0:n}]$ is the \textit{backward statistic}:
 \begin{equation}
 \label{eq:T:stat}
 \tstat{k}[\af{0:k}](X_k) = \pE \left[\af{0:k}(X_{0:k        }) \middle | X_k, Y_{0:k}\right],~1\leqslant k \leqslant n,~\tstat{0} = 0\eqsp.
 \end{equation}
 Note that for each $k$ this statisic is a function of $X_k$, and is defined relatively to the functional of interest $\af{0:n}$.
-For additive functionals, this statistic satisfies the two following features:
+For additive functionals, this statistic satisfies the two following key identities, for all $1\leqslant k \leqslant n$:
 \begin{align}
 \post{0:n \mid n}[\af{0:n}] &= \post{n}\left[\tstat{n}[\af{0:n}] \right], \label{eq:property:filt:smooth}\\
-\tstat{k}\left[\af{0:k}\right](X_{k}) &= \pE\left[\left.\tstat{k-1}\left[\af{0:(k-1)}\right]\left(X_{k-1}\right) + \addf{k-1}\left(X_{k-1},X_{k}\right)\right|X_{k},Y_{0:k-1} \right],~1\leqslant k \leqslant n,\eqsp, \label{eq:property:backward}
+\tstat{k}\left[\af{0:k}\right](X_{k}) &= \pE\left[\left.\tstat{k-1}\left[\af{0:(k-1)}\right]\left(X_{k-1}\right) + \addf{k-1}\left(X_{k-1},X_{k}\right)\right|X_{k},Y_{0:k-1} \right]\eqsp, \label{eq:property:backward}
 \end{align} 
 where $\addf{k-1}$ is the function defined in \eqref{eq:additive:functional}.
-Property \eqref{eq:property:filt:smooth} essentialy tells us that the target smoothing distribution is the filtering distribution of a well chosen statistic, while property \eqref{eq:property:filt:smooth} gives a recursion to compute this statistics. 
-To sum up, these two properties suggest an \textit{online} procedure to achieve the smoothing objective. Starting from 0, at each step $k$, this procedure would:
-\begin{itemize}
-\item Compute the filtering distribution;
-\item Compute the backward statistic.
-\end{itemize}
-In general, these computations cannot be performed, as they involve intractable integrals. 
-An approximation procedure will be designed through Sequential Monte Carlo methods.
-
+Property \eqref{eq:property:filt:smooth} essentialy tells us that the target is the filtering expectation of a well chosen statistic, while property \eqref{eq:property:filt:smooth} provides  a recursion to compute this statistics. 
+These two properties suggest an \textit{online} procedure to solve the online smoothing problem. Starting at time 0, at each step $k$, this procedure aims at (i) computing the filtering distribution and (ii) computing the backward statistics. %In general, these computations cannot be performed, as they involve intractable integrals. 
+%An approximation procedure will be designed through Sequential Monte Carlo methods.
 %In the following, $\parvec$ may be  dropped from the notations for better clarity when there is no possible confusion. In many situations, SMC methods cannot be used straightforwardly as the transition densities $\hd{k}$, $0\leqslant k \leqslant n-1$ and the marginal likelihood of the observations $\md{k}$, $0\leqslant k \leqslant n-1$, are unknown. Pseudo-marginalisation was originally proposed in \cite{beaumont:2003} in the framework of MCMC methods, and further analyzed in \cite{andrieu:robert:2009}.  
-Following \cite{fearnhead2008particle, olsson2011particle, gloaguen2018online, gloaguen2019pseudo}, we do not assume that model's dynamics given by \eqref{eq:def:elln} can be computed.
+Following \cite{fearnhead2008particle, olsson2011particle, gloaguen2018online, gloaguen2021pseudo}, we do not assume that  \eqref{eq:def:elln} can be evaluated pointwise.
 We assume that there exists an estimator, potentialy relying on some random variable on a general state space $(\marginalset,\mathcal{B}(\marginalset))$ such that the following assumption holds.
 \begin{hypH} 
 \label{assum:unbiased}
@@ -396,9 +390,9 @@ For all $\parvec \in\parspace$ and $k\geqslant 0$, there exists a Markov kernel 
 %In other words, we assume that an unbiased estimator of $\qg{k;\parvec}(x,x')\eqsp$ is available.
 \end{hypH}
 This setup, known as \textit{pseudo marginalisation} is based on the plug-in principle, as a pointwise estimate of $\qg{k;\parvec}(x,x')$ can be obtained by generating $\zeta$ from $\kernelmarg_{k;\parvec}(x,x';\rmd z)$ and computing the statistic $\hatqg{k;\parvec}\langle \zeta\rangle(x,x')$. 
-Its use in Monte Carlo methods, and the related theoretical guarantees, have been studied in the context of MCMC \cite{andrieu2009pseudo}, and more recently, of SMC \cite{gloaguen2019pseudo}.
+Its use in Monte Carlo methods, and the related theoretical guarantees, have been studied in the context of MCMC \cite{andrieu2009pseudo}, and more recently, of SMC \cite{gloaguen2021pseudo}.
 
-We will now describe, in this context, how to practically implement a generic an efficient SMC algorithm.
+%We will now describe, in this context, how to practically implement a generic an efficient SMC algorithm.
 
 \subsection{Approximation of the filtering distribution}
 \label{sec:filtering}
@@ -446,7 +440,7 @@ This point will be discussed in each example considered in section \ref{sec:appl
 %In the context of additive functionals, we aim at obtaining a Monte Carlo approximation of $\post{0:n \mid n}[\af{0:n}]$, where $\af{0:n}$ is of the form $\af{0:n}: x_{0:n} \mapsto \sum_{k=0}^{n-1}\addf{k}(x_{k},x_{k+1})$, where $\addf{k}$ is a functional depending on the estimator. The forward-only smoothing algorithm introduced in \cite{delmoral2010backward} proposes a particle approximation of  $\post{0:n \mid n}[\af{0:n}]$ that can be computed \textit{online}. 
 %This algorithm has a computational complexity which  grows \emph{quadratically} with the number of particles $\N$. 
 %This computational cost can be reduced when the transition density of the hidden states is upper bounded following \cite{olsson2017efficient}  by applying the rejection sampling approach proposed in~\cite{douc2011sequential} and illustrated in \cite{dubarry2011fast}. 
-In \cite{gloaguen2018online} and \cite{gloaguen2019pseudo}, the authors assumes that
+In \cite{gloaguen2018online}, the authors assumes that
 \begin{equation}
 \forall(x, x'), ~\hatqg{k}\langle \zeta\rangle(x, x')\geqslant 0\eqsp \text{ almost surely}, \label{eq:positive:estimate}
 \end{equation}
