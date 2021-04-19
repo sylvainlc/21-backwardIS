@@ -288,12 +288,11 @@ The paper is organized as follows. Section~\ref{sec:model} displays the latent d
 %\end{equation}
 %where $\parvec\in\parspace$, $(W_t)_{t\geqslant 0}$ is a standard Brownian motion in $\mathbb{R}^{\sfd}$, $\alpha_{\parvec_*}: \mathbb{R}^d\to\mathbb{R}^d$ is the drift function and $\sigma_{\parvec_*}:\mathbb{R}^d\to\mathbb{R}^{d\times \sfd}$ is the diffusion. 
 
-We focus here in the context of \textit{state space models}. 
-Formally, let $(X_k)_{k\geqslant 0}$ be a Markov chain on $\rset^d$ such that the distribution of $X_0$ has density $\chi$ with respect to the Lebesgue measure and for all $0\leqslant k \leqslant n-1$, the conditional distribution of $X_{k+1} $ given $X_{0:k}$ has density $\hd{k+1;\parvec}(X_{k},\cdot)$ ($a_{u:v}$ is a short-hand notation for $(a_u,\ldots,a_v)$). 
+Let $\parvec$ be a parameter lying in a $\Theta\subset \rset^q$ and consider a  \textit{state space model} where the hidden Markov chain  in $\rset^d$ is denoted by $(X_k)_{k\geqslant 0}$. The distribution of $X_0$ has density $\chi$ with respect to the Lebesgue measure and for all $0\leqslant k \leqslant n-1$, the conditional distribution of $X_{k+1} $ given $X_{0:k}$ has density $\hd{k+1;\parvec}(X_{k},\cdot)$, where $a_{u:v}$ is a short-hand notation for $(a_u,\ldots,a_v)$. 
 It is assumed that this state  is partially observed  through an observation process $(Y_k)_{0\leqslant k \leqslant n}$ taking values in $\rset^m$. 
 For all $0\leqslant k \leqslant n$, the distribution of $Y_k$ given $X_{0:n}$ depends on $X_k$ only and has density $\md{k;\parvec}(X_k,\cdot)$ with respect to the Lebesgue measure. 
-In this context, for any pair of indexes $0\leqslant\leqslant k_1 \leqslant k_2 \leqslant n$, we define the \textit{joint smoothing distribution} as the law of $X_{k_1:k_2}\vert Y_{0:n}$. 
-In this framework, the likelihood of the observations $\llh{n,\parvec}(Y_{0:n})$ , whose expression is, in general, intractable, is given by:
+In this context, for any pair of indexes $0\leqslant\leqslant k_1 \leqslant k_2 \leqslant n$, we define the \textit{joint smoothing distribution} as the conditional law of $X_{k_1:k_2}$ given $Y_{0:n}$. 
+In this framework, the likelihood of the observations $\llh{n,\parvec}(Y_{0:n})$ , which is  in general intractable, is
 $$
 \llh{n,\parvec}(Y_{0:n})  = \int \chi(x_0)\md{0;\parvec}(x_{0},Y_{0})\prod_{k=0}^{n-1}\qg{k;\parvec}(x_{k},x_{k+1})\rmd x_{0:n},
 $$
@@ -302,11 +301,11 @@ $$
 \label{eq:def:elln}
 \qg{k;\parvec}(x_{k},x_{k+1}) = \hd{k+1;\parvec}(x_{k}, x_{k+1}, Y_{k + 1})\md{k+1;\parvec}(x_{k+1},Y_{k+1})\eqsp.
 \end{equation}
-In some models, this quantity might be unknown (see models of sections \ref{sec:simu:SINE} and \ref{sec:simu:LV}), and we will only suppose that we have an estimate of this quantity (see assumption \textbf{H\ref{assum:unbiased}} in section \ref{sec:method}).
-Note that to avoid future cumbersome expressions,the dependance of the key quantity $\qg{k;\parvec}(\cdot)$ on the observations is implicit (as we will always work conditionnaly to the observations).
+In a large variety of situations, \eqref{eq:def:elln} cannot be evaluated pointwise  (see models of sections \ref{sec:simu:SINE} and \ref{sec:simu:LV}), and we will only suppose that we have an estimate of this quantity (see assumption \textbf{H\ref{assum:unbiased}} in Section~\ref{sec:method}).
+Note that to avoid future cumbersome expressions, the dependency of the key quantity $\qg{k;\parvec}(\cdot)$ on the observations is implicit, as we will always work conditionnaly to the observations.
 
 
-In this paper, we extend and intensively explore a generic and efficient algorithm to compute \textit{expectations of smoothing additive functionals}. 
+In this paper, we propose efficient algorithm to compute \textit{expectations of smoothing additive functionals}. 
 Namely, we aim at computing: 
 $$\pE \left[\af{0:n}(X_{0:n})\middle | Y_{0:n}\right],$$
 where $\af{0:n}$ is an \textit{additive functional}, \textit{i.e.} a function from $\rset^{d \times (n + 1)}$ to $\rset^{d'}$ satisfying:
@@ -314,32 +313,30 @@ where $\af{0:n}$ is an \textit{additive functional}, \textit{i.e.} a function fr
 \label{eq:additive:functional}
 \af{0:n}: x_{0:n} \mapsto \sum_{k=0}^{n-1}\addf{k}(x_{k},x_{k+1}),
 \end{equation}
-where $\addf{k}$ is a functional from $\rset^{d \times 2}$ to $\rset^{d'}$.
-If this problem can seem rather abstract at first, it is actually the keystone for many common inference problem in state space models.
+where $\addf{k}$ is a functional from $\rset^{d} \times \rset^{d}$ to $\rset^{d'}$.
+Such expectations are the keystones for many common inference problem in state space models.
 
-\begin{example}[State tracking]
+\begin{example}[State estimation]
 \label{ex:state:tracking}
-Suppose that the model parameter $\theta$ is known, a common objective aims at recovering the underlying signal $X_{k^*}$ for some index $0\leqslant k^* \leqslant n$ given the observations $Y_{0:n}$. The natural Bayesian estimator is given by:
+Suppose that the model parameter $\theta$ is known, a common objective is to recover the underlying signal $X_{k^*}$ for some index $0\leqslant k^* \leqslant n$ given the observations $Y_{0:n}$. A standard estimator is
 $$\pE\left[X_{k^*}\vert Y_{0:n}\right],$$
 which is a particular instance of our problem with $\addf{k}(x_k, x_{k+1}) = x_k$ if $k = k^*$ and 0 otherwise. 
 \end{example}
 
 \begin{example}[EM algorithm]
 \label{ex:em:algorithm}
-In the usual case when $\theta$ is unknown, a classical estimator is given by:
+In the usual case when $\theta$ is unknown, the maximum likelihood estimator is
 $$
 \widehat \parvec = \mathrm{argmax}_{\parvec\in\parspace}\eqsp\llh{n,\parvec}(Y_{0:n})\eqsp,
 $$
-where 
-
-Expectation Maximization based algorithms \cite{dempster1977maximum}  are appealing solutions to obtain an estimator of $\hat \parvec$.
+where  Expectation Maximization based algorithms \cite{dempster1977maximum}  are appealing solutions to obtain an estimator of $\hat \parvec$.
 The pivotal concept of the EM algorithm is that the intermediate quantity defined by
 \begin{equation*}
 \parvec\mapsto Q(\parvec,\parvec') = \pE_{\parvec'}\left[\sum_{k=0}^{n-1} \log \qg{k;\parvec}(X_{k}, X_{k+1})\middle | Y_{0:n}\right] 
 %\label{eq:EM:E:step}
 \end{equation*}
 may be used as a surrogate for $\llh{n}(\parvec)$ in the maximization procedure,  where $\pE_{\parvec'}$ is the expectation under the joint distribution of the latent states and the observations when the model is parameterized by $\parvec'$. 
-Again, this inference setting is a special case of our framework where $\addf{k}(x_k, x_{k+1}) = \log \qg{k;\parvec}(x_{k}, x_{k+1})$ .
+Again, this inference setting is a special case of our framework where $\addf{k}(x_k, x_{k+1}) = \log \qg{k;\parvec}(x_{k}, x_{k+1})$.
 
 %Therefore, the EM algorithm iteratively builds a sequence $(\parvec_{p})_{p\geqslant 0}$ of parameter estimates following the two steps: (i) compute $\parvec\mapsto Q(\parvec,\parvec_{p})$ and (ii) choose $\parvec_{p+1}$ as a maximizer of $\parvec \mapsto Q(\parvec,\parvec_{p})$. Gradient ascent algorithms are compelling alternatives to the EM algorithm.
 \end{example}
@@ -350,7 +347,7 @@ Indeed, in state space models, under some regularity conditions (see \cite{cappe
 $$\deriv \log \llh{n}(\parvec) = \pE_\theta\left[\sum_{k=0}^{n-1} \deriv \log \qg{k;\parvec}(X_{k},X_{k+1})\middle | Y_{0:n}\right],$$
 which relies on the expectation of a smoothing additive functional.
 It has been noted (see \cite{cappe2005inference}, chapter 10, or \cite{olsson2020particle} how this identity, coupled with the smoothing recursions of section \ref{sec:smoothing}, can lead to an online gradient ascent, that provides an online estimate of the MLE.
-An extension of this method will be illustrated on section \ref{sec:tangent:filter} on an original example where the transition density cannot be evaluated.
+An extension of this method will be illustrated in Section~\ref{sec:tangent:filter} in a challenging setting where the transition density cannot be evaluated.
 \end{example}
 
 \section{Online sequential Monte Carlo smoothing}
