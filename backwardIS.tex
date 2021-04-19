@@ -541,7 +541,7 @@ In addition, as shown in Section~\ref{sec:simu:RNN} and \ref{sec:simu:SINE}, thi
 \label{sec:simu:RNN}
 
 \textcolor{red}{Ici on n'a pas besoin du Pseudo-marginal. On illustre que l'on fait mieux que le Poor man's pour pas plus cher.}
-Recurrent Neural Network (RNN) were first introduced in \cite{Mozer1989AFB} to model time series using a hidden context state  which is appealing to describe short time dependencies. Although they are lackluster in problems requiring long term memory due to vanishing and exploding gradient \cite{Bengio1994LearningLD} and they have been extended by Long Short Term Memory  \cite{Hochreiter1997LongSM} and Gated Recurrent Unit (GRU) \cite{Cho2014LearningPR}, they define robust many to many backbone architectures which are widely used in practice \cite{}.
+Recurrent Neural Networks (RNN) were first introduced in \cite{Mozer1989AFB} to model time series using a hidden context state  which is appealing to describe short time dependencies. Although they are lackluster in problems requiring long term memory due to vanishing and exploding gradients \cite{Bengio1994LearningLD} and they have been extended by Long Short Term Memory  \cite{Hochreiter1997LongSM} and Gated Recurrent Unit (GRU) \cite{Cho2014LearningPR}, they define robust many to many backbone architectures which are widely used in practice \cite{}.
 
 
 In this section, we propose a general state space model based on a RNN architecture, as follows.  The hidden state is initialized as $X_0 \sim \mathcal{N}(0,\Sigma)$ and for all $k\geqslant 1$,
@@ -561,6 +561,28 @@ A simulation plan which could be nice and not too complex:
 \end{enumerate}
 
 If this works well, then we illustrate our claims and we can perform parameter estimation for the stochastic RNN using backward IS to illustrate score estimation. And we are good ?
+
+\begin{table}
+\caption{Mean squared error $\|X_0 - \mathbb{E}[X_0|Y_{1:n}]\|^2$ for the Poorman smoother (PMS) and the Backward IS smoother, for states $\{X_k\}_{k=0}^n$ and observations $\{X_k\}_{k=0}^n$ generated with stochastic RNNs of dimension 32 and 64, for various number $J$ of backward samples. We consider sequences of observations with $n=24$ and $n=100$.}
+\label{table:RNN_exp}
+\centering 
+\begin{adjustbox}{\textwidth}
+\scriptstyle
+\begin{tabular}{cc|cc|cc}
+RNN dim & backward samples & 24 obs - PMS & 24 obs - backward IS & 100 obs - PMS & 100 obs - backward IS  \\\toprule
+\hline
+d = 32 & J = 2 & 0.2601 & 0.2434 & 0.2196 & ? 
+d = 32 & J = 4 & X & 0.2494 & X & 0.1877
+d = 32 & J = 8 & X & 0.2541 & X & ? 
+\hline
+d = 64 & J = 2 & 0.1498 & 0.1473 & & 
+d = 64 & J = 4 & X & & &
+d = 64 & J = 8 & X & & &
+\hline
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
 
 \subsection{One dimensional diffusion processes: the Sine model}
 \label{sec:simu:SINE}
