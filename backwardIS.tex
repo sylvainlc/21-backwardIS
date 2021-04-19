@@ -662,18 +662,38 @@ The replicates show that the variance of our estimator (for a given set of obser
 
 
 
-\section{Tangent filters and online recursive maximum likelihood}
+\section{Online recursive maximum likelihood}
 \label{sec:tangent:filter}
-%Let $\parspace$ be a parameter space. 
-%This section considers a family of transition kernels $(\hk_{k;\parvec})_{\parvec\in\parspace; 0\leqslant k \leqslant n-1}$ on $\Xset\times \mathcal{B}(\Xset)$ and $(\mk_{k;\parvec})_{\parvec\in\parspace;1\leqslant k \leqslant n}$ on $\Xset\times \mathcal{B}(\Yset)$ associated with densities $\hd{k;\parvec}$ and $\md{k;\parvec}$ with respect to $\mu$ and  $\nu$. 
-%The joint smoothing distributions are then defined, for any $\parvec\in\parspace$, $0 \leqslant k_1 \leqslant k_2 \leqslant n$ and any function $h\in \bmf{(\Xset)^{k_2 - k_1 +1}}$,  by:
-%\[
-%\post{k_1:k_2;\parvec \mid n}[h] \eqdef \llh{n;\parvec}^{-1}(Y_{1:n})\int \chi(\rmd x_0)\prod_{k=0}^{n-1}\hk_{k;\parvec}(x_{k},\rmd x_{k+1})\md{k+1;\parvec}(x_{k+1},Y_{k+1})h(x_{k_1:k_2})\eqsp,
-%\]
-%where
-%\[
-%\llh{n;\parvec}(Y_{1:n})  = \int \chi(\rmd x_0)\prod_{k=0}^{n-1}\hk_{k;\parvec}(x_{k},\rmd x_{k+1})\md{k+1;\parvec}(x_{k+1},Y_{k+1})
-%\]
+
+In this section, we focus in the context of online recursive maximum likelihood, i.e., where new observations are used only once to update our estimator of the unknown $\parvec$.
+
+Following \cite{legland1997recursive}, the idea is the build a sequence $\left\lbrace\parvec_k\right\rbrace_{k\geq 0}$ as follows.
+
+\begin{itemize}
+\item Using the first observation $Y_0$, initialize $\parvec_0$;
+\item For a new observation $Y_{k},~k\geqslant 1$, set:
+$$\theta_{k} = \theta_{k-1} + \gamma_k \deriv \logllh{\parvec}(Y_k \mid Y_{1:k - 1}) ,$$
+where $\deriv \logllh{\parvec}(Y_k \mid Y_{1:k - 1})$ is the log likelihood for the new observation given all the past, and $\gamma_k$ is step size controlling the magnitude of the gradient ascent. 
+\end{itemize}
+
+One can verify that, in the context of our model, we have: 
+\begin{equation}
+\deriv \logllh{\parvec}(Y_k \mid Y_{1:k - 1})  
+=  \frac{\pred{k;\parvec}[\deriv \md{k;\parvec}] + \filtderiv{k;\parvec}[\md{k;\parvec}]}{\pred{k;\parvec}[\md{k;\parvec}]}\eqsp,
+\label{eq:online:gradient}
+\end{equation}
+
+where $\pred{k;\parvec} = \phi_{k \mid k - 1}$ is the predictive distribution, i.e. the law of $X_k\vert Y_{0:{k-1}}$, and 
+$$\filtderiv{k;\parvec}[\md{k;\parvec}] = \int \md{k;\parvec}(x_k) \deriv \pred{k;\parvec}(x_k) \rmd x_k,$$
+is known as the \textit{tangent filter} (in this case, for the functional $\md{k,\parvec}$, see \cite{cappe2005inference}, Chapter 10, \cite{delmoral2015uniform} or \cite{olsson2020particle} for a more generic definition).
+
+In order to build a particle-based approximation of $\eqref{eq:online:gradient}$, we can remark that
+$$\filtderiv{k;\parvec}[\md{k;\parvec}] \post{0:k;\parvec \mid k - 1} [\af{0:k;\parvec} \md{k;\parvec}] - \pred{k;\parvec}[\md{k;\parvec}] \times \post{0:k;\parvec \mid k - 1 }[\af{0:k}]\eqsp,$$
+where 
+$$\af{0:k}(x_0:k} =  \sum_{j = 0}^{k - 1} \deriv\log \md{j+1;\parvec}(x_{j+1},Y_{j+1}) + \deriv \log \hd{j;\parvec}(x_j,x_{j+1})\eqsp.$$
+
+
+
 As noted for instance in \cite[Section~2]{delmoral2015uniform} and \cite{olsson2017efficient}, for all $\parvec\in\parspace$ and all bounded and measurable function $f_{0:n}$ on $(\Xset)^{n+1}$,
 \[
 \deriv \post{0:n;\parvec \mid n - 1}[f_{0:n}]  = \post{0:n;\parvec \mid n - 1} [\af{n} f_{0:n}] - \post{0:n;\parvec \mid n - 1} [f_{0:n}] \times \post{0:n;\parvec \mid n - 1 }[\af{n}]\eqsp,
