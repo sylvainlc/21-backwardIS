@@ -228,7 +228,7 @@
 \maketitle
 
 \begin{abstract}
-This paper proposes a new Sequential Monte Carlo algorithm to perform maximum likelihood estimation in partially observed dynamical systems whose dynamics is unknown. Training such generative models and obtaining low variance estimators of the posterior distributions of the unobserved states given the observations is challenging as the transition densities of the states  cannot be evaluated pointwise. In this paper, a backward importance sampling step is introduced to estimate such posterior distributions instead of the acceptance-rejection procedure used in the usual approach. Te proposed algorithm reduces very significantly the computational time for similar performance. In the context of multivariate stochastic differential equations, the proposed algorithm makes  use of unbiased estimates of the unknown transition densities  under much weaker assumptions than standard alternatives. The performance of this estimator is assessed in particular in the case of a partially observed stochastic Lotka-Volterra model. The algorithm is also evaluated in the case of high-dimensional discrete-time latent data models and for recursive maximum likelihood estimation.
+This paper proposes a new Sequential Monte Carlo algorithm to perform maximum likelihood estimation in partially observed dynamical systems whose dynamics is unknown. Training such generative models and obtaining low variance estimators of the posterior distributions of the unobserved states given the observations is challenging as the transition densities of the states  cannot be evaluated pointwise. In this paper, a backward importance sampling step is introduced to estimate such posterior distributions instead of the acceptance-rejection procedure used in usual approaches. This new step allows to reduce very significantly the computational time for similar performance. In the context of multivariate stochastic differential equations, the proposed algorithm makes  use of unbiased estimates of the unknown transition densities  under much weaker assumptions than standard alternatives. The performance of this estimator is assessed in particular in the case of a partially observed stochastic Lotka-Volterra model. The algorithm is also evaluated in the case of high-dimensional discrete-time latent data models and for recursive maximum likelihood estimation.
 \end{abstract}
 
 
@@ -272,6 +272,7 @@ The proposed method is furnished with extensive numerical experiments to illustr
 \item When considering the pseudo-marginal approach, we extend the use of Wald's trick to the backward kernel to use importance sampling in cases where the estimators of the unknown densities  are not positive by construction.
 \item The proposed method does not rely on any acceptance rejection procedure which reduces very significantly the computational time. 
 \end{itemize}
+The paper is organized as follows. Section~\ref{sec:model} displays the latent data models and the main objectives considered in this paper. Then, Section~\ref{sec:method} details online pseudo marginal sequential Monte Carlo algorithms and Section~\ref{sec:backwardis} our proposed algorithm. Section~\ref{sec:application}  provides numerical experiments in  partially observed diffusion  models and in the case of high-dimensional discrete-time latent data models and Section~\ref{sec:tangent:filter} an application to recursive maximum likelihood estimation
 
 \section{Model and objectives}
 \label{sec:model}
@@ -490,7 +491,7 @@ However, it relies on the key assumptions \eqref{eq:positive:estimate} and \eqre
 
 
 \section{Pseudo-marginal backward importance sampling}
-
+\label{sec:backwardis}
 
 
 \subsection{Positive transition densities estimates}
