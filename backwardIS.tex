@@ -430,28 +430,16 @@ to produce the following approximation of $\post{k}[f]$:
 \begin{align*}
 \post{k}^\N[f]&\eqdef \sumwght{k}^{-1}\sum_{\ell=1}^N \ewght{k}{\ell}f(\epart{k}{\ell})\eqsp,\quad\mbox{where}\quad\sumwght{k}\eqdef \sum_{\ell=1}^\N \ewght{k}{\ell}\eqsp.
 \end{align*}
+The choice of the proposal distribution $\kissforward{k-1}{k-1}$ is a pivotal tuning step to obtain efficient estimations of the filtering distributions.  This point will be discussed in each example considered in Section~\ref{sec:application}.
 
-The choice of the proposal distribution $\kissforward{k-1}{k-1}$ is a pivotal tuning step to obtain efficient estimations of the filtering distributions. 
-This point will be discussed in each example considered in section \ref{sec:application}.
-
-\subsection{Approximation of the backward statistic}
+\subsection{Approximation of the backward statistics}
 \label{sec:smoothing}
 
 %In the context of additive functionals, we aim at obtaining a Monte Carlo approximation of $\post{0:n \mid n}[\af{0:n}]$, where $\af{0:n}$ is of the form $\af{0:n}: x_{0:n} \mapsto \sum_{k=0}^{n-1}\addf{k}(x_{k},x_{k+1})$, where $\addf{k}$ is a functional depending on the estimator. The forward-only smoothing algorithm introduced in \cite{delmoral2010backward} proposes a particle approximation of  $\post{0:n \mid n}[\af{0:n}]$ that can be computed \textit{online}. 
 %This algorithm has a computational complexity which  grows \emph{quadratically} with the number of particles $\N$. 
 %This computational cost can be reduced when the transition density of the hidden states is upper bounded following \cite{olsson2017efficient}  by applying the rejection sampling approach proposed in~\cite{douc2011sequential} and illustrated in \cite{dubarry2011fast}. 
-In \cite{gloaguen2018online}, the authors assumes that
-\begin{equation}
-\forall(x, x'), ~\hatqg{k}\langle \zeta\rangle(x, x')\geqslant 0\eqsp \text{ almost surely}, \label{eq:positive:estimate}
-\end{equation}
-and that, for all  $0\leqslant k\leqslant n$ and $0\leqslant i\leqslant N$, there exists an upper bound $\hkup^i_k$  such that
-\begin{equation}
-\mathrm{sup}_{\ell,\zeta}\;\hatqg{k}\langle \zeta\rangle(\epart{k}{\ell},\epart{k+1}{i})\leqslant \hkup^i_k\eqsp. \label{eq:AR:bound}
-\end{equation}
-Approximation of the backward statistics (as defined in \eqref{eq:T:stat}) are then computed recursively, for each simulated particles. 
-The computations starts with initializing a set $\tstat[1][\af{0}]{0} = 0,\dots \tstat[N][\af{0}]{0} = 0$, which consists in our approximation of $\tstat{0}(\epart{0}{1}), \dots, \tstat{0}(\epart{0}{N})$. \textbf{NOTE: JE PENSE QU'IL Y A UN SOUCI D'INDICE DANS LA DÉFINITION DE LA FONCTIONNELLE ADDITIVE. iL FAUDRAIT DECALER DE 1} 
-
-Then, for each $k\geqslant 0$, $1\leqslant i\leqslant \N$, the approximated statistics are updated with:
+Approximation of the backward statistics (as defined in \eqref{eq:T:stat}) are computed recursively, for each simulated particles. 
+The computations starts with initializing a set $\tstat[1]{0} = 0,\dots \tstat[N]{0} = 0$, which consists in our approximation of $\tstat{0}(\epart{0}{1}), \dots, \tstat{0}(\epart{0}{N})$.  Then, using \eqref{eq:property:backward}, for each $k\geqslant 0$, $1\leqslant i\leqslant \N$, the approximated statistics are updated with:
 \begin{equation*}
 %\label{eq:update:paris:marginal}
 \tstat[i]{k+1}  = \frac{1}{\K} \sum_{j=1}^{\K} \left( \tstat[\bi{k+1}{i}{j}]{k} + \addf{k}\left(\epart{k}{\bi{k+1}{i}{j}}, \epart{k+1}{i}\right)\right)\eqsp,
@@ -460,8 +448,13 @@ where $\K\geqslant 1$ is a sample size which  is typically small compared to $\N
 $$
 \overline \upsilon_k^i(\ell,z)\propto\ewght{k}{\ell}\hatqg{k}\langle z\rangle(\epart{k}{\ell},\epart{k+1}{i})\kernelmarg_{k}(\epart{k}{\ell},\epart{k+1}{i};z)\eqsp.
 $$
-One can therefore understand the necessity of condition \eqref{eq:positive:estimate} as negative estimation of $\qg{k}$ would not lead to a probability distribution over particles.
-Still, if \eqref{eq:positive:estimate} is satistified, the sampling from the distribution $\overline\upsilon_k$ is possible thanks to condition \eqref{eq:AR:bound}, as, for all $(i, z) \in \lbrace 1,\dots,N\rbrace\times\marginalset$, it results in
+As explained in \cite{gloaguen2021pseudo}, this recursive update requires to produce samples $\bi{k+1}{i}{j}$ distributed according to the marginal  distribution of $\overline \upsilon_k^i$, referred to as the backward kernel. In practice, this requires computationally intensive sampling procedures and the only proposed practical solution can be used in very restrictive situations.  
+In \cite{gloaguen2018online}, the authors assumed that  almost surely, for all $x,x'$, $\hatqg{k}\langle \zeta\rangle(x, x')\geqslant 0$, and that, for all  $0\leqslant k\leqslant n$ and $0\leqslant i\leqslant N$, there exists an upper bound $\hkup^i_k$  such that
+\begin{equation}
+\mathrm{sup}_{\ell,\zeta}\;\hatqg{k}\langle \zeta\rangle(\epart{k}{\ell},\epart{k+1}{i})\leqslant \hkup^i_k\eqsp. \label{eq:AR:bound}
+\end{equation}
+%One can therefore understand the necessity of condition \eqref{eq:positive:estimate} as negative estimation of $\qg{k}$ would not lead to a probability distribution over particles.
+Then,  if the positiveness assumption of  $\hatqg{k}\langle \zeta\rangle(x, x')$ is satistified, the sampling from the distribution $\overline\upsilon_k$ is possible thanks to condition \eqref{eq:AR:bound}, as, for all $(i, z) \in \lbrace 1,\dots,N\rbrace\times\marginalset$, 
 $$
 \ewght{k}{\ell}\hatqg{k}\langle z \rangle(\epart{k}{\ell},\epart{k+1}{i})\kernelmarg_{k}(\epart{k}{\ell},\epart{k+1}{i};z) \leqslant \hkup_k \ewght
 {k}{\ell} \kernelmarg_{k}(\epart{k}{\ell},\epart{k+1}{i};z)\eqsp. 
@@ -477,7 +470,7 @@ Therefore, the following  accept-reject mechanism algorithm may be used to sampl
 \end{enumerate}
 This algorithm is the only SMC smoother proposed in the literature with  theoretical guarantees when no closed-form expressions of  the  transition  densities and the conditional likelihood of the observations are available,  assuming that the user  can only evaluate  approximations of these densities. 
 This pseudo-marginal particle smoothing algorithm  requires that the backward sampling step  generates samples exactly according to $\overline \upsilon_k^i$.  
-However, it relies on the key assumptions \eqref{eq:positive:estimate} and \eqref{eq:AR:bound} which are rather restrictive (especially the second one), and would not be satisfied in practice for a lot of problems (as we will see in section \ref{sec:simu:LV}).
+However, it relies on the key assumptions of the positiveness of $\hatqg{k}\langle \zeta\rangle(x, x')$ and \eqref{eq:AR:bound} which are rather restrictive (especially the second one), and would not be satisfied in practice for a lot of problems (see for instance in Section~\ref{sec:simu:LV}).
  In the next section, we propose an alternative to this step to obtain a computationally efficient pseudo-marginal smoother in a much wider range of applications in which such assumptions do not hold.
 
 
