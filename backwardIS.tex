@@ -845,7 +845,15 @@ However, the empirical study illustrates that $\K$ may be chosen to increase wit
 
 \section{Application to partially observed SDE}
 \label{sec:filter:SDE}
-
+Let $(X_t)_{t\ge 0}$ be defined as a weak solution to the following Stochastic Differential Equation (SDE) in $\mathbb{R}^d$:
+\begin{equation}
+\label{eq:sde}
+X_0 = x_0 \quad\mbox{and}\quad \rmd X_t = \alpha_{\parvec}(X_t)\rmd t + \rmd W_t\eqsp,
+\end{equation}
+where $(W_t)_{t\geqslant 0}$ is a standard Brownian motion, $\alpha_{\parvec}: \Xset\to\Xset$ is the drift function
+% and $\Sigma_{\parvec}:\Xset\to\mathbb{R}^{2\dimX}$ is the diffusion
+. The inference procedure presented in this paper is applied in the case where the solution to \eqref{eq:sde} is supposed to be partially observed at times $t_0 = 0,\ldots,t_n$, for a given $n\geqslant 1$, through an observation process $(Y_k)_{0\leqslant k \leqslant n}$ taking values in $\mathbb{R}^m$. For all $0\leqslant k \leqslant n$, the distribution of $Y_k$ given $(X_t)_{t\geqslant 0}$ depends on $X_k = X_{t_k}$ only and has density $\md{k;\parvec}$ with respect to $\nu$. The distribution of $X_0$ has density $\chi$ with respect to $\mu$ and for all $0\leqslant k \leqslant n-1$, the conditional distribution of $X_{k+1} $ given $(X_{t})_{0\leqslant t\leqslant k}$ has density $\hd{k+1;\parvec}(X_{k},\cdot)$ with respect to $\mu$. 
+%This unknown density can be expressed as an expectation of a Brownian Bridge functional \cite{dacunha1986estimation}.
 \subsection{Unbiased estimators of the transition densities}
 
 The algorithm described above strongly relies on assumption H\ref{assum:unbiased}. 
@@ -890,6 +898,46 @@ Assumption (2)
 %\[
 %\hatqg{k;\parvec}(x,y;\zeta) = \hdhat{k+1;\parvec}(x,y;\zeta)\md{k+1;\parvec}(x_{k+1},Y_{k+1})\eqsp.
 %\]
+Let $\omega = (\omega_s)_{0 \leq s \leq t}$ be the realization of a Brownian Bridge starting at $x$ at time 0 and ending in $y$ at time $\Delta$. The distribution of $\omega$ is denoted by  $\mathbb{W}_x^{\Delta,y}$. 
+Moreover, suppose that for all $\parvec\in\parspace$, $\alpha_{\parvec}$ is of a gradient form $\alpha_{\parvec} = \nabla_x A_{\parvec}$ where $A_{\parvec}:\Xset \to \rset$ is a twice continuously differentiable function. Denoting, $ \psi_\theta:~~x \mapsto  \psi_\theta(x) = (\|\alpha_{\parvec}(x)\|^2 + \Delta A_{\parvec}(x))/2$, by Girsanov theorem, for all $x, y \in \mathbb{R}^d \times \mathbb{R}^d$
+\begin{equation}
+\label{eq:q:girsanov}
+\hd{k+1;\parvec}(x,y) = \phi_{\Delta_k}(x-y)\mathrm{exp}\left(A_{\parvec}(y) - A_{\parvec}(x)\right)\mathbb{E}_{\mathbb{W}_x^{\Delta_k,y}}\left[\mathrm{exp}\left(-\int_0^{\Delta_k} \psi_{\parvec}(\omega_s)\rmd s\right)\right]\eqsp,
+\end{equation}
+where $\Delta_k = t_{k+1}-t_k$, for all $a>0$, $\phi_a$ is the probability density function of a centered Gaussian random variable with variance $a$. The transition density then cannot be computed as it involves an integration over the whole path between $x$ and $y$. 
+To perform the algorithm proposed in this paper, we therefore have to design a positive an unbiased estimator of $\hd{k+1;\parvec}(x,y)$. 
+
+\paragraph{Unbiased GPE estimator for $\hd{k+1;\parvec}(x,y;\zeta)$.}
+
+Assume that there exist random variables $\gpeLB$ and $\gpeUB$ such that for all $0\leqslant s \leqslant \Delta_k$, $\gpeLB \leqslant \psi_{\parvec}(\omega_s) \leqslant \gpeUB$. Let $\kappa$ be a random variable taking values in $\mathbb{N}$ with distribution $\mu$, $\omega = (\omega_s)_{0 \leq s \leq \Delta_k}$ be the realization of a Brownian Bridge, and $(U_j)_{1\leqslant j \leqslant \kappa}$ be independent uniform random
+variables on $(0,\Delta_k)$ and $\zeta = (\kappa,\omega, U_1, \ldots , U_{\kappa})$. As
+shown in \cite{fearnhead:papaspiliopoulos:roberts:2008}, equation \eqref{eq:q:girsanov} leads to a positive unbiased estimator given by
+\[
+\hdhat{k+1;\parvec}(x,y;\zeta) = \phi_{\Delta_k}(x-y)\mathrm{exp}\left(A_{\parvec}(y) - A_{\parvec}(x) - \gpeLB\Delta_k\right)\prod_{j=1}^{\kappa}\frac{\gpeUB-\psi_{\parvec}(\omega_{{U_j}})}{\gpeUB-\gpeLB}\eqsp.
+\]
+
+\paragraph{Unbiased GPE estimator of $\nabla_{\parvec}\log\hd{k+1;\parvec}(x,y)$.}
+Let's denote $\varphi_{\parvec}:~x \mapsto \psi_{\parvec}(x) - \gpeLB$. 
+By \eqref{eq:q:girsanov},
+\begin{multline*}
+\nabla_{\parvec}\log\hd{k+1;\parvec}(x,y) = \nabla_{\parvec}A_{\parvec}(y) - \nabla_{\parvec}A_{\parvec}(x) - \nabla_{\parvec}\gpeLB \Delta_k\\
+-\frac{\mathbb{E}_{\mathbb{W}_x^{\Delta_k,y}}\left[\left(\int_0^{\Delta_k} \nabla_{\parvec}\varphi_{\parvec}(\omega_s)\rmd s\right)\mathrm{exp}\left(-\int_0^{\Delta_k} \varphi_{\parvec}(\omega_s)\rmd s\right)\right]}{\mathbb{E}_{\mathbb{W}_x^{\Delta_k,y}}\left[\mathrm{exp}\left(-\int_0^{\Delta_k} \varphi_{\parvec}(\omega_s)\rmd s\right)\right]}\eqsp.
+\end{multline*}
+ On the other hand, the diffusion bridge $\mathbb{S}^{\Delta_k,y}_{\parvec,x}$ associated with the SDE \eqref{eq:sde} is absolutely continuous with respect to $\mathbb{W}_x^{\Delta_k,y}$ with Radon-Nikodym derivative given by
+\begin{align*}
+\frac{\rmd \mathbb{S}^{\Delta_k,y}_{\parvec,x}}{\rmd \mathbb{W}_x^{\Delta_k,y}}(\omega) &= \left[\hd{k+1;\parvec}(x,y)\right]^{-1}\phi_{\Delta_k}(x-y)\mathrm{exp}\left(A_{\parvec}(y) - A_{\parvec}(x) - \gpeLB\Delta_k-\int_0^{\Delta_k} \varphi_{\parvec}(\omega_s)\rmd s\right)\eqsp,\\
+&=\mathbb{E}_{\mathbb{W}_x^{\Delta_k,y}}\left[\mathrm{exp}\left(-\int_0^{\Delta_k} \varphi_{\parvec}(\omega_s)\rmd s\right)\right]^{-1}\mathrm{exp}\left(-\int_0^{\Delta_k} \varphi_{\parvec}(\omega_s)\rmd s\right)\eqsp.
+\end{align*}
+This yields
+\[
+\nabla_{\parvec}\log\hd{k+1;\parvec}(x,y) = \left(\nabla_{\parvec}A_{\parvec}(y) - \nabla_{\parvec}A_{\parvec}(x) - \nabla_{\parvec}\gpeLB\Delta_k\right) - \mathbb{E}_{\mathbb{S}_{\parvec,x}^{\Delta_k,y}} \left[\int_0^{\Delta_k} \nabla_{\parvec}\varphi_{\parvec}(\omega_s)\rmd s\right]
+\]
+and an unbiased estimator of $\nabla_{\parvec}\log\hd{k+1;\parvec}(x,y)$ is given by
+\[
+\mathsf{l}_{k+1;\parvec}(x,y,\mathsf{s}^{\parvec,x,y,\Delta_k}_U) = \left(\nabla_{\parvec}A_{\parvec}(y) - \nabla_{\parvec}A_{\parvec}(x) - \nabla_{\parvec}\gpeLB\Delta_k\right) - \Delta_k\nabla_{\parvec}\varphi_{\parvec}(\mathsf{s}^{\parvec,x,y,\Delta_k}_U)\eqsp,
+\]
+where $U$ is uniform on $(0,1)$ and independent of $\mathsf{s}^{\parvec,x,y,\Delta_k}\sim \mathbb{S}_{\parvec,x}^{\Delta_k,y}$. In the context of GPE, $\mathsf{s}^{\parvec,x,y,\Delta_k}$ can be simulated exactly using exact algorithms for diffusion processes proposed in \cite{beskos2006retrospective}.
+
 
 \subsection{Parametrix estimators}
 
@@ -930,59 +978,12 @@ The stability of this estimator is studied in \cite{fearnhead2017continuous} whi
 The parametrix algorithm mentioned above is a highly flexible procedure to obtain such an unbiased estimate for a much broader class of diffusions than Poisson based estimations which require strong assumptions. 
 However, as the update \eqref{CIS:eq:rho} involves the difference of two Kolmogorov operators, the parametrix estimator of the transition density may be negative, and has no reason to satisfy \eqref{eq:AR:bound}.
 Thus, the SMC algorithms described above cannot be implemented.
-Let $(X_t)_{t\ge 0}$ be defined as a weak solution to the following Stochastic Differential Equation (SDE) in $\mathbb{R}^d$:
-\begin{equation}
-\label{eq:sde}
-X_0 = x_0 \quad\mbox{and}\quad \rmd X_t = \alpha_{\parvec}(X_t)\rmd t + \rmd W_t\eqsp,
-\end{equation}
-where $(W_t)_{t\geqslant 0}$ is a standard Brownian motion, $\alpha_{\parvec}: \Xset\to\Xset$ is the drift function
-% and $\Sigma_{\parvec}:\Xset\to\mathbb{R}^{2\dimX}$ is the diffusion
-. The inference procedure presented in this paper is applied in the case where the solution to \eqref{eq:sde} is supposed to be partially observed at times $t_0 = 0,\ldots,t_n$, for a given $n\geqslant 1$, through an observation process $(Y_k)_{0\leqslant k \leqslant n}$ taking values in $\mathbb{R}^m$. For all $0\leqslant k \leqslant n$, the distribution of $Y_k$ given $(X_t)_{t\geqslant 0}$ depends on $X_k = X_{t_k}$ only and has density $\md{k;\parvec}$ with respect to $\nu$. The distribution of $X_0$ has density $\chi$ with respect to $\mu$ and for all $0\leqslant k \leqslant n-1$, the conditional distribution of $X_{k+1} $ given $(X_{t})_{0\leqslant t\leqslant k}$ has density $\hd{k+1;\parvec}(X_{k},\cdot)$ with respect to $\mu$. 
-This unknown density can be expressed as an expectation of a Brownian Bridge functional \cite{dacunha1986estimation}.
 
-Let $\omega = (\omega_s)_{0 \leq s \leq t}$ be the realization of a Brownian Bridge starting at $x$ at time 0 and ending in $y$ at time $\Delta$. The distribution of $\omega$ is denoted by  $\mathbb{W}_x^{\Delta,y}$. 
-Moreover, suppose that for all $\parvec\in\parspace$, $\alpha_{\parvec}$ is of a gradient form $\alpha_{\parvec} = \nabla_x A_{\parvec}$ where $A_{\parvec}:\Xset \to \rset$ is a twice continuously differentiable function. Denoting, $ \psi_\theta:~~x \mapsto  \psi_\theta(x) = (\|\alpha_{\parvec}(x)\|^2 + \Delta A_{\parvec}(x))/2$, by Girsanov theorem, for all $x, y \in \mathbb{R}^d \times \mathbb{R}^d$
-\begin{equation}
-\label{eq:q:girsanov}
-\hd{k+1;\parvec}(x,y) = \phi_{\Delta_k}(x-y)\mathrm{exp}\left(A_{\parvec}(y) - A_{\parvec}(x)\right)\mathbb{E}_{\mathbb{W}_x^{\Delta_k,y}}\left[\mathrm{exp}\left(-\int_0^{\Delta_k} \psi_{\parvec}(\omega_s)\rmd s\right)\right]\eqsp,
-\end{equation}
-where $\Delta_k = t_{k+1}-t_k$, for all $a>0$, $\phi_a$ is the probability density function of a centered Gaussian random variable with variance $a$.
 
-The transition density then cannot be computed as it involves an integration over the whole path between $x$ and $y$. 
-To perform the algorithm proposed in this paper, we therefore have to design a positive an unbiased estimator of $\hd{k+1;\parvec}(x,y)$. 
-Moreover, maximum likelihood estimation of $\theta$ requires an unbiased estimator of $\nabla_{\parvec}\log\hd{k+1;\parvec}(x,y)$. 
-Such two estimators can be obtained using the General Poisson Estimator (GPE, \cite{fearnhead:papaspiliopoulos:roberts:2008}).
 
-\paragraph{Unbiased GPE estimator for $\hd{k+1;\parvec}(x,y;\zeta)$.}
+%Moreover, maximum likelihood estimation of $\theta$ requires an unbiased estimator of $\nabla_{\parvec}\log\hd{k+1;\parvec}(x,y)$. 
+%Such two estimators can be obtained using the General Poisson Estimator (GPE, \cite{fearnhead:papaspiliopoulos:roberts:2008}).
 
-Assume that there exist random variables $\gpeLB$ and $\gpeUB$ such that for all $0\leqslant s \leqslant \Delta_k$, $\gpeLB \leqslant \psi_{\parvec}(\omega_s) \leqslant \gpeUB$. Let $\kappa$ be a random variable taking values in $\mathbb{N}$ with distribution $\mu$, $\omega = (\omega_s)_{0 \leq s \leq \Delta_k}$ be the realization of a Brownian Bridge, and $(U_j)_{1\leqslant j \leqslant \kappa}$ be independent uniform random
-variables on $(0,\Delta_k)$ and $\zeta = (\kappa,\omega, U_1, \ldots , U_{\kappa})$. As
-shown in \cite{fearnhead:papaspiliopoulos:roberts:2008}, equation \eqref{eq:q:girsanov} leads to a positive unbiased estimator given by
-\[
-\hdhat{k+1;\parvec}(x,y;\zeta) = \phi_{\Delta_k}(x-y)\mathrm{exp}\left(A_{\parvec}(y) - A_{\parvec}(x) - \gpeLB\Delta_k\right)\prod_{j=1}^{\kappa}\frac{\gpeUB-\psi_{\parvec}(\omega_{{U_j}})}{\gpeUB-\gpeLB}\eqsp.
-\]
-
-\paragraph{Unbiased GPE estimator of $\nabla_{\parvec}\log\hd{k+1;\parvec}(x,y)$.}
-Let's denote $\varphi_{\parvec}:~x \mapsto \psi_{\parvec}(x) - \gpeLB$. 
-By \eqref{eq:q:girsanov},
-\begin{multline*}
-\nabla_{\parvec}\log\hd{k+1;\parvec}(x,y) = \nabla_{\parvec}A_{\parvec}(y) - \nabla_{\parvec}A_{\parvec}(x) - \nabla_{\parvec}\gpeLB \Delta_k\\
--\frac{\mathbb{E}_{\mathbb{W}_x^{\Delta_k,y}}\left[\left(\int_0^{\Delta_k} \nabla_{\parvec}\varphi_{\parvec}(\omega_s)\rmd s\right)\mathrm{exp}\left(-\int_0^{\Delta_k} \varphi_{\parvec}(\omega_s)\rmd s\right)\right]}{\mathbb{E}_{\mathbb{W}_x^{\Delta_k,y}}\left[\mathrm{exp}\left(-\int_0^{\Delta_k} \varphi_{\parvec}(\omega_s)\rmd s\right)\right]}\eqsp.
-\end{multline*}
- On the other hand, the diffusion bridge $\mathbb{S}^{\Delta_k,y}_{\parvec,x}$ associated with the SDE \eqref{eq:sde} is absolutely continuous with respect to $\mathbb{W}_x^{\Delta_k,y}$ with Radon-Nikodym derivative given by
-\begin{align*}
-\frac{\rmd \mathbb{S}^{\Delta_k,y}_{\parvec,x}}{\rmd \mathbb{W}_x^{\Delta_k,y}}(\omega) &= \left[\hd{k+1;\parvec}(x,y)\right]^{-1}\phi_{\Delta_k}(x-y)\mathrm{exp}\left(A_{\parvec}(y) - A_{\parvec}(x) - \gpeLB\Delta_k-\int_0^{\Delta_k} \varphi_{\parvec}(\omega_s)\rmd s\right)\eqsp,\\
-&=\mathbb{E}_{\mathbb{W}_x^{\Delta_k,y}}\left[\mathrm{exp}\left(-\int_0^{\Delta_k} \varphi_{\parvec}(\omega_s)\rmd s\right)\right]^{-1}\mathrm{exp}\left(-\int_0^{\Delta_k} \varphi_{\parvec}(\omega_s)\rmd s\right)\eqsp.
-\end{align*}
-This yields
-\[
-\nabla_{\parvec}\log\hd{k+1;\parvec}(x,y) = \left(\nabla_{\parvec}A_{\parvec}(y) - \nabla_{\parvec}A_{\parvec}(x) - \nabla_{\parvec}\gpeLB\Delta_k\right) - \mathbb{E}_{\mathbb{S}_{\parvec,x}^{\Delta_k,y}} \left[\int_0^{\Delta_k} \nabla_{\parvec}\varphi_{\parvec}(\omega_s)\rmd s\right]
-\]
-and an unbiased estimator of $\nabla_{\parvec}\log\hd{k+1;\parvec}(x,y)$ is given by
-\[
-\mathsf{l}_{k+1;\parvec}(x,y,\mathsf{s}^{\parvec,x,y,\Delta_k}_U) = \left(\nabla_{\parvec}A_{\parvec}(y) - \nabla_{\parvec}A_{\parvec}(x) - \nabla_{\parvec}\gpeLB\Delta_k\right) - \Delta_k\nabla_{\parvec}\varphi_{\parvec}(\mathsf{s}^{\parvec,x,y,\Delta_k}_U)\eqsp,
-\]
-where $U$ is uniform on $(0,1)$ and independent of $\mathsf{s}^{\parvec,x,y,\Delta_k}\sim \mathbb{S}_{\parvec,x}^{\Delta_k,y}$. In the context of GPE, $\mathsf{s}^{\parvec,x,y,\Delta_k}$ can be simulated exactly using exact algorithms for diffusion processes proposed in \cite{beskos2006retrospective}.
 
 
 \end{document}
