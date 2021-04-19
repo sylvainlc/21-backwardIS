@@ -374,7 +374,7 @@ For additive functionals, this statistic satisfies the two following key identit
 \tstat{k}\left[\af{0:k}\right](X_{k}) &= \pE\left[\left.\tstat{k-1}\left[\af{0:(k-1)}\right]\left(X_{k-1}\right) + \addf{k-1}\left(X_{k-1},X_{k}\right)\right|X_{k},Y_{0:k-1} \right]\eqsp, \label{eq:property:backward}
 \end{align} 
 where $\addf{k-1}$ is the function defined in \eqref{eq:additive:functional}.
-Property \eqref{eq:property:filt:smooth} essentialy tells us that the target is the filtering expectation of a well chosen statistic, while property \eqref{eq:property:filt:smooth} provides  a recursion to compute this statistics. 
+Property \eqref{eq:property:filt:smooth} essentialy tells us that the targetted smoothing expectation is the filtering expectation of a well chosen statistic, while property \eqref{eq:property:backward} provides  a recursion to compute this statistic. 
 These two properties suggest an \textit{online} procedure to solve the online smoothing problem. Starting at time 0, at each step $k$, this procedure aims at (i) computing the filtering distribution and (ii) computing the backward statistics. %In general, these computations cannot be performed, as they involve intractable integrals. 
 %An approximation procedure will be designed through Sequential Monte Carlo methods.
 %In the following, $\parvec$ may be  dropped from the notations for better clarity when there is no possible confusion. In many situations, SMC methods cannot be used straightforwardly as the transition densities $\hd{k}$, $0\leqslant k \leqslant n-1$ and the marginal likelihood of the observations $\md{k}$, $0\leqslant k \leqslant n-1$, are unknown. Pseudo-marginalisation was originally proposed in \cite{beaumont:2003} in the framework of MCMC methods, and further analyzed in \cite{andrieu:robert:2009}.  
@@ -663,9 +663,12 @@ The replicates show that the variance of our estimator (for a given set of obser
 
 
 \section{Online recursive maximum likelihood}
+
+\subsection{Particle based online estimation}
 \label{sec:tangent:filter}
 
 In this section, we focus in the context of online recursive maximum likelihood, i.e., where new observations are used only once to update our estimator of the unknown $\parvec$.
+We first fully describe the algorithm and its particle based implementation. At the end of the section, we give the main arguments behind the method.
 
 Following \cite{legland1997recursive}, the idea is the build a sequence $\left\lbrace\parvec_k\right\rbrace_{k\geq 0}$ as follows.
 
@@ -673,7 +676,7 @@ Following \cite{legland1997recursive}, the idea is the build a sequence $\left\l
 \item Using the first observation $Y_0$, initialize $\parvec_0$;
 \item For a new observation $Y_{k},~k\geqslant 1$, set:
 $$\theta_{k} = \theta_{k-1} + \gamma_k \deriv \logllh{\parvec}(Y_k \mid Y_{1:k - 1}) ,$$
-where $\deriv \logllh{\parvec}(Y_k \mid Y_{1:k - 1})$ is the log likelihood for the new observation given all the past, and $\gamma_k$ is step size controlling the magnitude of the gradient ascent. 
+where $\deriv \logllh{\parvec}(Y_k \mid Y_{1:k - 1})$ is the log likelihood for the new observation given all the past, and $\left\lbrace\gamma_k\right\rbrace_{k\geqslant}$ is positive step size such that $\sum_{k \geqslant 1}\gamma_k = \infty$ and $\sum_{k \geqslant 1}\gamma_k^2 < \infty$. 
 \end{itemize}
 
 One can verify that, in the context of our model, we have: 
@@ -688,96 +691,116 @@ $$\filtderiv{k;\parvec}[\md{k;\parvec}] = \int \md{k;\parvec}(x_k) \deriv \pred{
 is known as the \textit{tangent filter} (in this case, for the functional $\md{k,\parvec}$, see \cite{cappe2005inference}, Chapter 10, \cite{delmoral2015uniform} or \cite{olsson2020particle} for a more generic definition).
 
 In order to build a particle-based approximation of $\eqref{eq:online:gradient}$, we can remark that
-$$\filtderiv{k;\parvec}[\md{k;\parvec}] \post{0:k;\parvec \mid k - 1} [\af{0:k;\parvec} \md{k;\parvec}] - \pred{k;\parvec}[\md{k;\parvec}] \times \post{0:k;\parvec \mid k - 1 }[\af{0:k}]\eqsp,$$
+$$\filtderiv{k;\parvec}[\md{k;\parvec}] = \post{0:k;\parvec \mid k - 1} [\af{0:k;\parvec} \md{k;\parvec}] - \pred{k;\parvec}[\md{k;\parvec}] \times \post{0:k;\parvec \mid k - 1 }[\af{0:k}]\eqsp,$$
 where 
-$$\af{0:k}(x_0:k} =  \sum_{j = 0}^{k - 1} \deriv\log \md{j+1;\parvec}(x_{j+1},Y_{j+1}) + \deriv \log \hd{j;\parvec}(x_j,x_{j+1})\eqsp.$$
+\begin{equation}
+\label{eq:complete:gradient:log}
+\af{0:k}(x_{0:k}) =  \sum_{j = 0}^{k - 1} \deriv\log \qg{j, \parvec}(x_j,x_{j+1})\eqsp.
+\end{equation}
 
-
-
-As noted for instance in \cite[Section~2]{delmoral2015uniform} and \cite{olsson2017efficient}, for all $\parvec\in\parspace$ and all bounded and measurable function $f_{0:n}$ on $(\Xset)^{n+1}$,
-\[
-\deriv \post{0:n;\parvec \mid n - 1}[f_{0:n}]  = \post{0:n;\parvec \mid n - 1} [\af{n} f_{0:n}] - \post{0:n;\parvec \mid n - 1} [f_{0:n}] \times \post{0:n;\parvec \mid n - 1 }[\af{n}]\eqsp,
-\]
-where
-\begin{equation*}
-\af{n}(x_{0:n}) = \sum_{k=0}^{n-1}\addf{k;\parvec}(x_{k},x_{k+1})\eqsp,
-\end{equation*}
-with, for all $0\leqslant k \leqslant n-1$,
-\[
-\addf{k;\parvec}(x_{k},x_{k+1}) = \nabla_{\parvec}\log \md{k+1;\parvec}(x_{k+1},Y_{k+1}) + \nabla_{\parvec}\log \hd{k;\parvec}(x_k,x_{k+1})\eqsp.
-\]
-Considering an objective function $f_{n}$ defined on $\Xset$ which depends on the last state $x_n$ only, the tangent filter $\filtderiv{n}$ is defined as the following signed measure: 
-$$
-\filtderiv{n;\parvec}[f_n] \eqdef \deriv \pred{n;\parvec}[f_n] = \post{0:n;\parvec \mid n - 1} [\af{n;\parvec} f_{n}] - \pred{n;\parvec}[f_{n}] \times \post{0:n;\parvec \mid n - 1 }[\af{n}]\eqsp, 
-$$
-where $\pred{n}=\post{n:n\mid n - 1}$ is the predictive measure. 
-The particle based estimator of $\pred{n}[f]$ is given by:
-$$\pred{n}^N[f] = \frac{1}{N}\sum_{\ell = 1}^N f(\epart{n}{\ell})\eqsp.$$
 Using the tower property  and the backward decomposition \eqref{eq:property:backward}:
 \begin{equation} 
 \label{eq:tangent:identity}
-\filtderiv{n;\parvec}[f_n] = \pred{n;\parvec}[(\tstat{n} [\af{n}] - \pred{n;\parvec}[\tstat{n}[\af{n}]]) f_n]\eqsp.
+\filtderiv{k;\parvec}[\md{k;\parvec}] = \pred{k;\parvec}\left[\left(\tstat{k} [\af{0:k}] - \pred{k;\parvec}[\tstat{k}[\af{0:k}]]\right) \md{k;\parvec}\right]\eqsp.
 \end{equation}
-Therefore, the tangent filter \eqref{eq:tangent:identity} can be approximated on-the-fly using the statistics $(\tau_i^n)_{i=1}^{\N}$ and the weighted particles $\{(\epart{n}{i}, \ewght{n}{i})\}_{i=1}^{\N}$:
-%\begin{equation} 
-%\label{eq:tangent:identity:part}
-%\filtderiv{n;\parvec}^{N,\textrm{FFBS}}[f_n] = \frac{1}{\N}\sum_{i=1}^\N\tstattil{i}{n}f_n(\epart{i}{n}) - \left(\frac{1}{\N}\sum_{i=1}^\N\tstattil{i}{n}\right)\left(\frac{1}{\N}\sum_{i=1}^\N f_n(\epart{i}{n})\right)\eqsp.
-%\end{equation}
-%In cases where $\qg{k}$, $0\leqslant k \leqslant n-1$, is unknown and replaced by an unbiased estimate, the associated pseudo marginal particle-based approximation of the tangent filter is given by:
+Therefore, a particle filter, can be used to compute 
+$$\pred{k}^N[\md{k;\parvec}] = \frac{1}{N}\sum_{\ell = 1}^N \md{k;\parvec}(\epart{n}{\ell})\eqsp,\eqsp \pred{k}^N[\deriv \md{k;\parvec}] = \frac{1}{N}\sum_{\ell = 1}^N \deriv \md{k;\parvec}(\epart{k}{\ell}),$$
+together with a backward sampling procedure, approximating the backward statistic related to the functional \eqref{eq:complete:gradient:log}, resulting in the approximation
 \begin{equation} 
 \label{eq:tangent:identity:part:linear}
-\eta_{n;\parvec}^{N}[f_n] = \frac{1}{\N}\sum_{i=1}^\N\tau_i^n f_n(\epart{i}{n}) - \left(\frac{1}{\N}\sum_{i=1}^\N\tau_i^n\right)\left(\frac{1}{\N}\sum_{i=1}^\N f_n(\epart{i}{n})\right)\eqsp.
+\eta_{k;\parvec}^{N}[\md{k;\parvec}] = \frac{1}{\N}\sum_{\ell=1}^\N\tau_\ell^k \md{k;\parvec}
+(\epart{\ell}{k}) - \left(\frac{1}{\N}\sum_{\ell=1}^\N\tau_\ell^n\right)\left(\frac{1}{\N}\sum_{\ell=1}^\N \md{k;\parvec}(\epart{\ell}{k})\right)\eqsp.
 \end{equation}
-%\textcolor{red}{To be adapted if $g_{k}$ depends on both $x_k$ and $x_{k+1}$. As it is more an application of the results displayed in the previous section, I do think that this should be written as it is, with $g_{k}$ depending only on $x_k$. This is the version used in the experiments and this is the one given in the paper with Westerborn...}.
-Given a set of observations $Y_{1:n}$, maximum likelihood estimation amounts at obtaining a parameter $\hat\parvec_{n} \in \parspace$ such that $\hat\parvec_{n} = \arg\max_{\parvec \in \parspace} \logllh{\parvec;n}(Y_{1:n})$, where $\logllh{\parvec;n}(Y_{1:n}) = \log \llh{\parvec;n}(Y_{1:n})$ is the logarithm of the likelihood. There are many different approaches to compute an estimator of $\hat\parvec_{n}$, see for instance~\cite[Chapter 10]{cappe2005inference}. Following \cite{douc2001asymptotics}, under strong mixing assumptions, for all  $\parvec \in \parvec$, the extended process $\{ (X_n, Y_n, \pred{n}, \filtderiv{n}) \}_{n \geqslant 0}$ is an ergodic Markov chain and for all $\parvec \in \parvec$, the normalized score $\deriv \logllh{\parvec}(Y_{1:n})/n$ of the observations may be shown to converge where:
-\[
-\frac{1}{n} \deriv \logllh{\parvec}(Y_{1:n}) = \frac{1}{n} \sum_{k = 1}^n \deriv \logllh{\parvec}(Y_k \mid Y_{1:k - 1})  
-=  \frac{1}{n} \sum_{k = 0}^n \frac{\pred{k;\parvec}[\deriv \md{k;\parvec}] + \filtderiv{k;\parvec}[\md{k;\parvec}]}{\pred{k;\parvec}[\md{k;\parvec}]}\eqsp.
-\]
-Assuming that the observations $Y_{1:n}$ are generated by a model driven by a true parameter $\parvec_{\star}$ for all $\parvec\in\parvec$ this normalized score converges almost surely to a limiting quantity $\lambda(\parvec, \parvec_{\star})$ such that, under identifiability constraints, $\lambda(\parvec_{\star}, \parvec_{\star}) = 0$. A gradient ascent algorithm cannot be designed as the limiting function $\parvec \mapsto \lambda(\parvec, \parvec_{\star})$ is not available explicitly. Solving the equation $\lambda(\parvec_{\star}, \parvec_{\star}) = 0$ may be cast into the framework of \emph{stochastic approximation} to produce parameter estimates using the \emph{Robbins-Monro algorithm}
+Plugging these estimates in equation \eqref{eq:online:gradient} allows to perform the online recursive algorithm.
+
+It is worth noting that, in the context of this paper where $\qg{k}$ cannot be evaluated pointwise, one cannot expect to know the functional \eqref{eq:complete:gradient:log}, which involves the gradient of this quantity. 
+In section \ref{sec:xp:tangent:filter}, we illustrate that we can plug-in an estimate of this functionnal instead.
+
+For the interested reader, it might be worth noting the idea behind this online algorithm. 
+First, note that 
+$$
+\frac{1}{n} \deriv \logllh{\parvec}(Y_{1:n}) = \frac{1}{n} \sum_{k = 1}^n \deriv \logllh{\parvec}\left(Y_k \mid Y_{1:k - 1}\right)\eqsp.$$
+Moreover, under strong mixing assumptions, for all  $\parvec \in \parvec$, the extended process $\{ (X_n, Y_n, \pred{n}, \filtderiv{n}) \}_{n \geqslant 0}$ is an ergodic Markov chain and for all $\parvec \in \parvec$, the normalized score $\deriv \logllh{\parvec}(Y_{1:n})/n$  converges almost surely to a limiting quantity $\lambda(\parvec, \parvec_{\star})$ such that, under identifiability constraints, $\lambda(\parvec_{\star}, \parvec_{\star}) = 0$. 
+A gradient ascent algorithm cannot be designed as the limiting function $\parvec \mapsto \lambda(\parvec, \parvec_{\star})$ is not available explicitly. 
+However, solving the equation $\lambda(\parvec_{\star}, \parvec_{\star}) = 0$ may be cast into the framework of \emph{stochastic approximation} to produce parameter estimates using the \emph{Robbins-Monro algorithm}
 \begin{equation}
 \label{eq:par:update}
-\parvec_{n+1} = \parvec_n + \gamma_{n+1} \zeta_{n+1}\eqsp, \quad n\geqslant 0\eqsp, 
+\parvec_{k} = \parvec_{k - 1} + \gamma_{k} \zeta_{k}\eqsp, \quad n\geqslant 0\eqsp, 
 \end{equation}
-where $\zeta_{n+1}$ is a noisy observation of $\lambda(\parvec_n, \parvec_{\star})$. Obtaining such an observation is not possible in practice and following \cite{olsson2017efficient} this noisy observation is approximated by 
-\begin{equation} 
-\label{eq:def:zeta}
-\zeta_{n + 1} \eqdef \frac{\zeta^{1}_{n+1} + \zeta^{2}_{n+1}}{\zeta^{3}_{n+1}}\eqsp,
-\end{equation}
-where
-\begin{equation} 
-\label{eq:zeta:terms}
-\zeta^{1}_{n+1} \eqdef \pred{n+1;\parvec_n} \left[ (\deriv \md{n+1;\parvec})_{|{\parvec = \parvec_n}} \right]\eqsp,  \quad \zeta^{2}_{n+1} \eqdef \filtderiv{n+1;\parvec_n}[\md{n + 1;\parvec_n}]\quad \mbox{and} \quad\zeta^{3}_{n+1} \eqdef \pred{n+1;\parvec_n}[\md{n + 1;\parvec_n}]\eqsp.
-\end{equation}
-In \eqref{eq:zeta:terms}, the measures $\pred{n+1;\parvec_n}$ and $\filtderiv{n+1;\parvec_n}$ depend on \emph{all} the past parameter values. In the case of a finite state space $\set{X}$ the algorithm was studied in~\cite{legland1997recursive}, which also provides assumptions under which the sequence $\{\parvec_{n}\}_{n\geqslant 0}$ converges towards the parameter $\parvec_{\star}$ (see also \cite{tadic2010analyticity} for refinements). In more general cases, these measures may be estimated online using the pseudo marginal smoother presented in this paper.
-%The PaRIS based approximations of the tangent filter and the recursive maximum likelihood estimator are given in Appendix~\ref{sec:alg}.
+where $\zeta_{k}$ is a noisy observation of $\lambda(\parvec_{k - 1}, \parvec_{\star})$, equal to \eqref{eq:online:gradient}.  
+In the case of a finite state space $\set{X}$ the algorithm was studied in~\cite{legland1997recursive}, which also provides assumptions under which the sequence $\{\parvec_{n}\}_{n\geqslant 0}$ converges towards the parameter $\parvec_{\star}$ (see also \cite{tadic2010analyticity} for refinements). 
+%
+%
+%As noted for instance in \cite[Section~2]{delmoral2015uniform} and \cite{olsson2017efficient}, for all $\parvec\in\parspace$ and all bounded and measurable function $f_{0:n}$ on $(\Xset)^{n+1}$,
+%\[
+%\deriv \post{0:n;\parvec \mid n - 1}[f_{0:n}]  = \post{0:n;\parvec \mid n - 1} [\af{n} f_{0:n}] - \post{0:n;\parvec \mid n - 1} [f_{0:n}] \times \post{0:n;\parvec \mid n - 1 }[\af{n}]\eqsp,
+%\]
+%where
+%\begin{equation*}
+%\af{n}(x_{0:n}) = \sum_{k=0}^{n-1}\addf{k;\parvec}(x_{k},x_{k+1})\eqsp,
+%\end{equation*}
+%with, for all $0\leqslant k \leqslant n-1$,
+%\[
+%\addf{k;\parvec}(x_{k},x_{k+1}) = \nabla_{\parvec}\log \md{k+1;\parvec}(x_{k+1},Y_{k+1}) + \nabla_{\parvec}\log \hd{k;\parvec}(x_k,x_{k+1})\eqsp.
+%\]
+%Considering an objective function $f_{n}$ defined on $\Xset$ which depends on the last state $x_n$ only, the tangent filter $\filtderiv{n}$ is defined as the following signed measure: 
+%$$
+%\filtderiv{n;\parvec}[f_n] \eqdef \deriv \pred{n;\parvec}[f_n] = \post{0:n;\parvec \mid n - 1} [\af{n;\parvec} f_{n}] - \pred{n;\parvec}[f_{n}] \times \post{0:n;\parvec \mid n - 1 }[\af{n}]\eqsp, 
+%$$
+%where $\pred{n}=\post{n:n\mid n - 1}$ is the predictive measure. 
+%The particle based estimator of $\pred{n}[f]$ is given by:
+%$$\pred{n}^N[f] = \frac{1}{N}\sum_{\ell = 1}^N f(\epart{n}{\ell})\eqsp.$$
+%Using the tower property  and the backward decomposition \eqref{eq:property:backward}:
+%\begin{equation} 
+%\label{eq:tangent:identity}
+%\filtderiv{n;\parvec}[f_n] = \pred{n;\parvec}[(\tstat{n} [\af{n}] - \pred{n;\parvec}[\tstat{n}[\af{n}]]) f_n]\eqsp.
+%\end{equation}
+%Therefore, the tangent filter \eqref{eq:tangent:identity} can be approximated on-the-fly using the statistics $(\tau_i^n)_{i=1}^{\N}$ and the weighted particles $\{(\epart{n}{i}, \ewght{n}{i})\}_{i=1}^{\N}$:
+%%\begin{equation} 
+%%\label{eq:tangent:identity:part}
+%%\filtderiv{n;\parvec}^{N,\textrm{FFBS}}[f_n] = \frac{1}{\N}\sum_{i=1}^\N\tstattil{i}{n}f_n(\epart{i}{n}) - \left(\frac{1}{\N}\sum_{i=1}^\N\tstattil{i}{n}\right)\left(\frac{1}{\N}\sum_{i=1}^\N f_n(\epart{i}{n})\right)\eqsp.
+%%\end{equation}
+%%In cases where $\qg{k}$, $0\leqslant k \leqslant n-1$, is unknown and replaced by an unbiased estimate, the associated pseudo marginal particle-based approximation of the tangent filter is given by:
+%\begin{equation} 
+%\label{eq:tangent:identity:part:linear}
+%\eta_{n;\parvec}^{N}[f_n] = \frac{1}{\N}\sum_{i=1}^\N\tau_i^n f_n(\epart{i}{n}) - \left(\frac{1}{\N}\sum_{i=1}^\N\tau_i^n\right)\left(\frac{1}{\N}\sum_{i=1}^\N f_n(\epart{i}{n})\right)\eqsp.
+%\end{equation}
+%%\textcolor{red}{To be adapted if $g_{k}$ depends on both $x_k$ and $x_{k+1}$. As it is more an application of the results displayed in the previous section, I do think that this should be written as it is, with $g_{k}$ depending only on $x_k$. This is the version used in the experiments and this is the one given in the paper with Westerborn...}.
+%Given a set of observations $Y_{1:n}$, maximum likelihood estimation amounts at obtaining a parameter $\hat\parvec_{n} \in \parspace$ such that $\hat\parvec_{n} = \arg\max_{\parvec \in \parspace} \logllh{\parvec;n}(Y_{1:n})$, where $\logllh{\parvec;n}(Y_{1:n}) = \log \llh{\parvec;n}(Y_{1:n})$ is the logarithm of the likelihood. There are many different approaches to compute an estimator of $\hat\parvec_{n}$, see for instance~\cite[Chapter 10]{cappe2005inference}. Following \cite{douc2001asymptotics}, under strong mixing assumptions, for all  $\parvec \in \parvec$, the extended process $\{ (X_n, Y_n, \pred{n}, \filtderiv{n}) \}_{n \geqslant 0}$ is an ergodic Markov chain and for all $\parvec \in \parvec$, the normalized score $\deriv \logllh{\parvec}(Y_{1:n})/n$ of the observations may be shown to converge where:
+%\[
+%\frac{1}{n} \deriv \logllh{\parvec}(Y_{1:n}) = \frac{1}{n} \sum_{k = 1}^n \deriv \logllh{\parvec}(Y_k \mid Y_{1:k - 1})  
+%=  \frac{1}{n} \sum_{k = 0}^n \frac{\pred{k;\parvec}[\deriv \md{k;\parvec}] + \filtderiv{k;\parvec}[\md{k;\parvec}]}{\pred{k;\parvec}[\md{k;\parvec}]}\eqsp.
+%\]
+%Assuming that the observations $Y_{1:n}$ are generated by a model driven by a true parameter $\parvec_{\star}$ for all $\parvec\in\parvec$ this normalized score converges almost surely to a limiting quantity $\lambda(\parvec, \parvec_{\star})$ such that, under identifiability constraints, $\lambda(\parvec_{\star}, \parvec_{\star}) = 0$. A gradient ascent algorithm cannot be designed as the limiting function $\parvec \mapsto \lambda(\parvec, \parvec_{\star})$ is not available explicitly. Solving the equation $\lambda(\parvec_{\star}, \parvec_{\star}) = 0$ may be cast into the framework of \emph{stochastic approximation} to produce parameter estimates using the \emph{Robbins-Monro algorithm}
+%\begin{equation}
+%\label{eq:par:update}
+%\parvec_{n+1} = \parvec_n + \gamma_{n+1} \zeta_{n+1}\eqsp, \quad n\geqslant 0\eqsp, 
+%\end{equation}
+%where $\zeta_{n+1}$ is a noisy observation of $\lambda(\parvec_n, \parvec_{\star})$. Obtaining such an observation is not possible in practice and following \cite{olsson2017efficient} this noisy observation is approximated by 
+%\begin{equation} 
+%\label{eq:def:zeta}
+%\zeta_{n + 1} \eqdef \frac{\zeta^{1}_{n+1} + \zeta^{2}_{n+1}}{\zeta^{3}_{n+1}}\eqsp,
+%\end{equation}
+%where
+%\begin{equation} 
+%\label{eq:zeta:terms}
+%\zeta^{1}_{n+1} \eqdef \pred{n+1;\parvec_n} \left[ (\deriv \md{n+1;\parvec})_{|{\parvec = \parvec_n}} \right]\eqsp,  \quad \zeta^{2}_{n+1} \eqdef \filtderiv{n+1;\parvec_n}[\md{n + 1;\parvec_n}]\quad \mbox{and} \quad\zeta^{3}_{n+1} \eqdef \pred{n+1;\parvec_n}[\md{n + 1;\parvec_n}]\eqsp.
+%\end{equation}
+%In \eqref{eq:zeta:terms}, the measures $\pred{n+1;\parvec_n}$ and $\filtderiv{n+1;\parvec_n}$ depend on \emph{all} the past parameter values. In the case of a finite state space $\set{X}$ the algorithm was studied in~\cite{legland1997recursive}, which also provides assumptions under which the sequence $\{\parvec_{n}\}_{n\geqslant 0}$ converges towards the parameter $\parvec_{\star}$ (see also \cite{tadic2010analyticity} for refinements). In more general cases, these measures may be estimated online using the pseudo marginal smoother presented in this paper.
+%%The PaRIS based approximations of the tangent filter and the recursive maximum likelihood estimator are given in Appendix~\ref{sec:alg}.
+%
+%
+%
 
 
+\subsection{Experiments: online estimation in the SINE model}
+\label{sec:xp:tangent:filter}
+Online recursive maximum likelihood using pseudo marginal SMC is illustrated for the SINE model of section \ref{sec:simu:SINE}. 
+As mentionned, a GPE estimator of the transition density can be computed. 
+Following the idea of this computation, one can actually obtain an unbiased estimated of the gradient of the log-transition density, and thus compute and unbiased estimate of the key quantity given in \eqref{eq:complete:gradient:log}. 
+To the best of our knowledge, this estimator is new, and given in appendix \ref{sec:filter:SDE}.
 
-
-
-
-\paragraph{Experiments.}
-Online recursive maximum likelihood using pseudo marginal SMC is illustrated when \eqref{eq:sde} has the specific form:
-\begin{equation}
-\label{eq:SINE}
-X_0 = x_0 \quad\mbox{and}\quad \rmd X_t = \sin(X_t - \parvec)\rmd t + \rmd W_t\eqsp,
-\end{equation}
-where $\parvec$ is an unknown parameter ranging between 0 and $2\pi$. For this numerical experiments, we suppose that a realization of \eqref{eq:SINE} is only observed at times $t_k = k$ for $0\leqslant k\leqslant n$ with $n=5000$ through a noisy observation process $(Y_k)_{0\leqslant k\leqslant n}$ such for all $0\leqslant k\leqslant n$,
-\begin{align*}
-Y_k = X_{t_k} + \varepsilon_k\eqsp,
-\end{align*}
-where $(\varepsilon_k)_{0\leqslant k \leqslant n}$ are i.i.d. standard Gaussian random variables, independent of $(W_t)_{t\geqslant 0}$. In this case $\alpha_{\theta}: x\mapsto \sin(x-\parvec)$ and 
-\[
-\mathrm{inf}_{x\in \rset}\; (\alpha^2_{\parvec}(x) + \Delta A_{\parvec}(x))/2 \geqslant  -1/2
-\]
-and for all $x\in\rset$,
-\[
-0\leqslant \varphi_{\parvec}(x) =  (\alpha^2_{\parvec}(x) + \Delta A_{\parvec}(x))/2 + 1/2 \leqslant 9/8
-\]
-and a GPE estimator of both the transition density and the gradient of its logarithm associated with the SINE model is straightforward to compute. 
-
-A simulated data set is displayed in Figure~\ref{fig:data}, where $\parvec_* = \pi/4$. The solution to \eqref{eq:SINE} is sampled at times $(t_k)_{0\leqslant k\leqslant n}$  using the Exact algorithm of \cite{beskos2006retrospective}. 
+A simulated data set is displayed in Figure~\ref{fig:data}, where $\parvec_* = \pi/4$. The solution to the SINE SDE is sampled at times $(t_k)_{0\leqslant k\leqslant n}$  using the Exact algorithm of \cite{beskos2006retrospective}. 
 For all  $0\leqslant k \leqslant n-1$,  $\widehat{q}_{k,\parvec}$ and the GPE unbiased estimator of $\nabla_{\parvec}q_{k,\parvec}(x,y)$ are estimated using $M = 30$ independent Monte Carlo replications of the general Poisson estimator. 
 The estimations of $\parvec_*$ are given for $50$ independent runs started at random locations $\theta_0$ with $\N = 100$ particles and $\K = 2$ backward samples. Following \cite{gloaguen2018online}, the proposal distribution of the particle filter is obtained using an approximation of the fully adapted particle filter where $\hd{k,\parvec}$ is replaced by the its Euler scheme approximation.
 
