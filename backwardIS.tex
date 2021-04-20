@@ -292,7 +292,7 @@ Let $\parvec$ be a parameter lying in a $\Theta\subset \rset^q$ and consider a  
 It is assumed that this state  is partially observed  through an observation process $(Y_k)_{0\leqslant k \leqslant n}$ taking values in $\rset^m$. 
 For all $0\leqslant k \leqslant n$, the distribution of $Y_k$ given $X_{0:n}$ depends on $X_k$ only and has density $\md{k;\parvec}(X_k,\cdot)$ with respect to the Lebesgue measure. 
 In this context, for any pair of indexes $0\leqslant\leqslant k_1 \leqslant k_2 \leqslant n$, we define the \textit{joint smoothing distribution} as the conditional law of $X_{k_1:k_2}$ given $Y_{0:n}$. 
-In this framework, the likelihood of the observations $\llh{n,\parvec}(Y_{0:n})$ , which is  in general intractable, is
+In this framework, the likelihood of the observations $\llh{n,\parvec}(Y_{0:n})$, which is  in general intractable, is
 $$
 \llh{n,\parvec}(Y_{0:n})  = \int \chi(x_0)\md{0;\parvec}(x_{0},Y_{0})\prod_{k=0}^{n-1}\qg{k;\parvec}(x_{k},x_{k+1})\rmd x_{0:n},
 $$
@@ -448,8 +448,12 @@ where $\K\geqslant 1$ is a sample size which  is typically small compared to $\N
 $$
 \overline \upsilon_k^i(\ell,z)\propto\ewght{k}{\ell}\hatqg{k}\langle z\rangle(\epart{k}{\ell},\epart{k+1}{i})\kernelmarg_{k}(\epart{k}{\ell},\epart{k+1}{i};z)\eqsp.
 $$
-As explained in \cite{gloaguen2021pseudo}, this recursive update requires to produce samples $\bi{k+1}{i}{j}$ distributed according to the marginal  distribution of $\overline \upsilon_k^i$, referred to as the backward kernel. In practice, this requires computationally intensive sampling procedures and the only proposed practical solution can be used in very restrictive situations.  
-In \cite{gloaguen2018online}, the authors assumed that  almost surely, for all $x,x'$, $\hatqg{k}\langle \zeta\rangle(x, x')\geqslant 0$, and that, for all  $0\leqslant k\leqslant n$ and $0\leqslant i\leqslant N$, there exists an upper bound $\hkup^i_k$  such that
+Then, using \eqref{eq:property:filt:smooth}, $\post{0:n \mid n}[\af{0:n}]$ is estimated by  
+\[
+\post{0:n\mid n}^{\N} [\af{0:n}] \eqdef \sum_{i=1}^{\N}\frac{\ewght{n}{i}}{\sumwght{n}}\tstat[i]{n}\eqsp.
+\]
+As explained in \cite{gloaguen2021pseudo}, this recursive update requires to produce samples $\bi{k+1}{i}{j}$ distributed according to the marginal  distribution of $\overline \upsilon_k^i$, referred to as the backward kernel.  The theoretical guarantees established in \cite{gloaguen2021pseudo}, i.e. exponential concentration and asymptotic normality of $\post{0:n\mid n}^{\N} [\af{0:n}]$, assume that sampling from $\overline \upsilon_k^i$ is possible. In practice, this requires computationally intensive sampling procedures and the only proposed practical solution can be used in very restrictive situations.  
+This solution was proposed in \cite{gloaguen2018online}, where the authors assumed that  almost surely, for all $x,x'$, $\hatqg{k}\langle \zeta\rangle(x, x')\geqslant 0$, and that, for all  $0\leqslant k\leqslant n$ and $0\leqslant i\leqslant N$, there exists an upper bound $\hkup^i_k$  such that
 \begin{equation}
 \mathrm{sup}_{\ell,\zeta}\;\hatqg{k}\langle \zeta\rangle(\epart{k}{\ell},\epart{k+1}{i})\leqslant \hkup^i_k\eqsp. \label{eq:AR:bound}
 \end{equation}
