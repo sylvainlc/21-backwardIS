@@ -668,60 +668,54 @@ The replicates show that the variance of our estimator (for a given set of obser
 
 \section{Online recursive maximum likelihood}
 
-\subsection{Particle based online estimation}
-\label{sec:tangent:filter}
+%\subsection{Particle based online estimation}
+%\label{sec:tangent:filter}
 
-In this section, we focus in the context of online recursive maximum likelihood, i.e., where new observations are used only once to update our estimator of the unknown $\parvec$.
-We first fully describe the algorithm and its particle based implementation. At the end of the section, we give the main arguments behind the method.
-
-Following \cite{legland1997recursive}, the idea is the build a sequence $\left\lbrace\parvec_k\right\rbrace_{k\geq 0}$ as follows.
-
-\begin{itemize}
-\item Using the first observation $Y_0$, initialize $\parvec_0$;
-\item For a new observation $Y_{k},~k\geqslant 1$, set:
-$$\theta_{k} = \theta_{k-1} + \gamma_k \deriv \logllh{\parvec}(Y_k \mid Y_{1:k - 1}) ,$$
-where $\deriv \logllh{\parvec}(Y_k \mid Y_{1:k - 1})$ is the log likelihood for the new observation given all the past, and $\left\lbrace\gamma_k\right\rbrace_{k\geqslant}$ is positive step size such that $\sum_{k \geqslant 1}\gamma_k = \infty$ and $\sum_{k \geqslant 1}\gamma_k^2 < \infty$. 
-\end{itemize}
-
-One can verify that, in the context of our model, we have: 
+This section focuses on the context of online recursive maximum likelihood, i.e., where new observations are used only once to update the estimator of the unknown parameter $\parvec$.
+%We first fully describe the algorithm and its particle based implementation. At the end of the section, we give the main arguments behind the method.
+Following \cite{legland1997recursive}, the idea is the build a sequence $\left\lbrace\parvec_k\right\rbrace_{k\geq 0}$ as follows. First, set the initial value of the parameter estimate: $\parvec_0$. The, for each new observation $Y_{k},~k\geqslant 1$, define
+$$
+\theta_{k} = \theta_{k-1} + \gamma_k \deriv \logllh{\parvec}(Y_k \mid Y_{1:k - 1}) \eqsp,
+$$
+where $\logllh{\parvec}(Y_k \mid Y_{1:k - 1})$ is the log likelihood for the new observation given all the past, and $\left\lbrace\gamma_k\right\rbrace_{k\geqslant}$ are positive step sizes such that $\sum_{k \geqslant 1}\gamma_k = \infty$ and $\sum_{k \geqslant 1}\gamma_k^2 < \infty$. The practicalt implementation of such an update relies on the following identity:
 \begin{equation}
 \deriv \logllh{\parvec}(Y_k \mid Y_{1:k - 1})  
 =  \frac{\pred{k;\parvec}[\deriv \md{k;\parvec}] + \filtderiv{k;\parvec}[\md{k;\parvec}]}{\pred{k;\parvec}[\md{k;\parvec}]}\eqsp,
 \label{eq:online:gradient}
 \end{equation}
-
-where $\pred{k;\parvec} = \phi_{k \mid k - 1}$ is the predictive distribution, i.e. the law of $X_k\vert Y_{0:{k-1}}$, and 
-$$\filtderiv{k;\parvec}[\md{k;\parvec}] = \int \md{k;\parvec}(x_k) \deriv \pred{k;\parvec}(x_k) \rmd x_k,$$
-is known as the \textit{tangent filter} (in this case, for the functional $\md{k,\parvec}$, see \cite{cappe2005inference}, Chapter 10, \cite{delmoral2015uniform} or \cite{olsson2020particle} for a more generic definition).
-
-In order to build a particle-based approximation of $\eqref{eq:online:gradient}$, we can remark that
+where $\pred{k;\parvec} = \phi_{k;\parvec \mid k - 1}$ is the predictive distribution  and 
 $$\filtderiv{k;\parvec}[\md{k;\parvec}] = \post{0:k;\parvec \mid k - 1} [\af{0:k;\parvec} \md{k;\parvec}] - \pred{k;\parvec}[\md{k;\parvec}] \times \post{0:k;\parvec \mid k - 1 }[\af{0:k}]\eqsp,$$
-where 
+with
 \begin{equation}
 \label{eq:complete:gradient:log}
 \af{0:k}(x_{0:k}) =  \sum_{j = 0}^{k - 1} \deriv\log \qg{j, \parvec}(x_j,x_{j+1})\eqsp.
 \end{equation}
-
-Using the tower property  and the backward decomposition \eqref{eq:property:backward}:
+%$$\filtderiv{k;\parvec}[\md{k;\parvec}] = \int \md{k;\parvec}(x_k) \deriv \pred{k;\parvec}(x_k) \rmd x_k,$$
+The signed measure $\filtderiv{k;\parvec}$ is known as the \textit{tangent filter}, see \cite[Chapter~10]{cappe2005inference}, \cite{delmoral2015uniform} or \cite{olsson2020particle}. 
+%In order to build a particle-based approximation of $\eqref{eq:online:gradient}$, we can remark that
+%$$\filtderiv{k;\parvec}[\md{k;\parvec}] = \post{0:k;\parvec \mid k - 1} [\af{0:k;\parvec} \md{k;\parvec}] - \pred{k;\parvec}[\md{k;\parvec}] \times \post{0:k;\parvec \mid k - 1 }[\af{0:k}]\eqsp,$$
+%where 
+%\begin{equation}
+%\label{eq:complete:gradient:log}
+%\af{0:k}(x_{0:k}) =  \sum_{j = 0}^{k - 1} \deriv\log \qg{j, \parvec}(x_j,x_{j+1})\eqsp.
+%\end{equation}
+Using the tower property  and the backward decomposition \eqref{eq:property:backward} yields
 \begin{equation} 
 \label{eq:tangent:identity}
 \filtderiv{k;\parvec}[\md{k;\parvec}] = \pred{k;\parvec}\left[\left(\tstat{k} [\af{0:k}] - \pred{k;\parvec}[\tstat{k}[\af{0:k}]]\right) \md{k;\parvec}\right]\eqsp.
 \end{equation}
-Therefore, a particle filter, can be used to compute 
-$$\pred{k}^N[\md{k;\parvec}] = \frac{1}{N}\sum_{\ell = 1}^N \md{k;\parvec}(\epart{n}{\ell})\eqsp,\eqsp \pred{k}^N[\deriv \md{k;\parvec}] = \frac{1}{N}\sum_{\ell = 1}^N \deriv \md{k;\parvec}(\epart{k}{\ell}),$$
-together with a backward sampling procedure, approximating the backward statistic related to the functional \eqref{eq:complete:gradient:log}, resulting in the approximation
+Therefore, a particle filter, can be used to compute the following seuqential Monte Carlo approximation:
+$$
+\pred{k}^N[\md{k;\parvec}] = \frac{1}{N}\sum_{\ell = 1}^N \md{k;\parvec}(\epart{n}{\ell})\eqsp,\eqsp \pred{k}^N[\deriv \md{k;\parvec}] = \frac{1}{N}\sum_{\ell = 1}^N \deriv \md{k;\parvec}(\epart{k}{\ell})\eqsp.
+$$
+In addition, the thangent filter can be approximated using a backward sampling procedure, based on the backward statistic associated with  the functional \eqref{eq:complete:gradient:log}:
 \begin{equation} 
 \label{eq:tangent:identity:part:linear}
 \eta_{k;\parvec}^{N}[\md{k;\parvec}] = \frac{1}{\N}\sum_{\ell=1}^\N\tau_\ell^k \md{k;\parvec}
 (\epart{\ell}{k}) - \left(\frac{1}{\N}\sum_{\ell=1}^\N\tau_\ell^n\right)\left(\frac{1}{\N}\sum_{\ell=1}^\N \md{k;\parvec}(\epart{\ell}{k})\right)\eqsp.
 \end{equation}
-Plugging these estimates in equation \eqref{eq:online:gradient} allows to perform the online recursive algorithm.
-
-It is worth noting that, in the context of this paper where $\qg{k}$ cannot be evaluated pointwise, one cannot expect to know the functional \eqref{eq:complete:gradient:log}, which involves the gradient of this quantity. 
-In section \ref{sec:xp:tangent:filter}, we illustrate that we can plug-in an estimate of this functionnal instead.
-
-For the interested reader, it might be worth noting the idea behind this online algorithm. 
-First, note that 
+Plugging these estimates in equation \eqref{eq:online:gradient} allows to perform the online recursive algorithm. It is worth noting that, in the context of this paper where $\qg{k}$ cannot be evaluated pointwise, one cannot expect to know the functional \eqref{eq:complete:gradient:log}, which involves the gradient of this quantity. 
+In section \ref{sec:xp:tangent:filter}, we illustrate that we can plug-in an estimate of this functionnal instead. The rationale motivating this algorithm relies on the following expression of the normalized loglikelihood:
 $$
 \frac{1}{n} \deriv \logllh{\parvec}(Y_{1:n}) = \frac{1}{n} \sum_{k = 1}^n \deriv \logllh{\parvec}\left(Y_k \mid Y_{1:k - 1}\right)\eqsp.$$
 Moreover, under strong mixing assumptions, for all  $\parvec \in \parvec$, the extended process $\{ (X_n, Y_n, \pred{n}, \filtderiv{n}) \}_{n \geqslant 0}$ is an ergodic Markov chain and for all $\parvec \in \parvec$, the normalized score $\deriv \logllh{\parvec}(Y_{1:n})/n$  converges almost surely to a limiting quantity $\lambda(\parvec, \parvec_{\star})$ such that, under identifiability constraints, $\lambda(\parvec_{\star}, \parvec_{\star}) = 0$. 
