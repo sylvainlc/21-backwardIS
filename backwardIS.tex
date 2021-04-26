@@ -544,27 +544,73 @@ In addition, as shown in Section~\ref{sec:simu:RNN} and \ref{sec:simu:SINE}, thi
 \subsection{Recurrent neural networks}
 \label{sec:simu:RNN}
 
-\textcolor{red}{Ici on n'a pas besoin du Pseudo-marginal. On illustre que l'on fait mieux que le Poor man's pour pas plus cher.}
-Recurrent Neural Network (RNN) were first introduced in \cite{Mozer1989AFB} to model time series using a hidden context state  which is appealing to describe short time dependencies. Although they are lackluster in problems requiring long term memory due to vanishing and exploding gradient \cite{Bengio1994LearningLD} and they have been extended by Long Short Term Memory  \cite{Hochreiter1997LongSM} and Gated Recurrent Unit (GRU) \cite{Cho2014LearningPR}, they define robust many to many backbone architectures which are widely used in practice \cite{}.
-
+Recurrent Neural Networks (RNN) were first introduced in \cite{Mozer1989AFB} to model time series using a hidden context state  which is appealing to describe short time dependencies. Although they are lackluster in problems requiring long term memory due to vanishing and exploding gradients \cite{Bengio1994LearningLD} and they have been extended by Long Short Term Memory  \cite{Hochreiter1997LongSM} and Gated Recurrent Unit (GRU) \cite{Cho2014LearningPR}, they define robust many to many backbone architectures which are widely used in practice \cite{mikolov2010recurrent, sutskever2011generating, sutskever2014sequence}.
 
 In this section, we propose a general state space model based on a RNN architecture, as follows.  The hidden state is initialized as $X_0 \sim \mathcal{N}(0,\Sigma)$ and for all $k\geqslant 1$,
 $$
 X_k = \tanh(W_{1} Y_{k-1} + W_{2} X_{k-1} + b + \eta_k)\quad\mathrm{and} \quad Y_k = W_{3} X_{k}  + c + \varepsilon_k\eqsp,
 $$
-where where $W_{1}$, $W_{2}$, $W_3$ and $b$ and $c$ are the weight matrices and bias,  $\Sigma$ is an unknown covariance matrix and $(\eta_k)_{k\geqslant 1}$ and $(\varepsilon_k)_{k\geqslant 1}$ are independen Gaussian random variables with covaraince matrices $Q$ and $R$.
+where $W_{1}$, $W_{2}$, $W_3$ and $b$ and $c$ are the weight matrices and bias,  $\Sigma$ is an unknown covariance matrix and $(\eta_k)_{k\geqslant 1}$ and $(\varepsilon_k)_{k\geqslant 1}$ are independent Gaussian random variables with covariance matrices $Q$ and $R$.
 
-\textcolor{red}{Expain that (i) multi-layer models  are easy extensions, (ii) even the bootstrap is hard since we can sample from the prior but we cannot evaluate it so we need Pseudo-Marginal and/or backward importance.}
+Such general state space model can be extended straightforwardly to multi-layer RNN architectures by injecting noise on each hidden layer, and to RNN variants such as LSTM and GRU. 
 
-A simulation plan which could be nice and not too complex:
-\begin{enumerate}
-\item Learn a RNN without noise on a nice dataset (weather data ?).
-\item Then sample a sequence $(\{X_k,Y_k\})_{1\leqslant k\leqslant n}$, with $n=100$ or $n=1000$ and choosing $Q,R,\Sigma$ as diagonal matrices. (Check that the choice leads to realistic observations).
-\item Run the backward IS and the Poorman smoother to estimate a conditional expectation $\mathbb{E}[X_0|Y_{1:n}]$ if we do similarly as in the other cases.
-\item Display for both algorithms $\|X_0 - \mathbb{E}[X_0|Y_{1:n}]\|^2$.
-\end{enumerate}
+From this general state space model based on a stochastic RNN, in the context of the \textit{state estimation} problem, we can use particle smoothing algorithms to estimate the smoothing expectation $\mathbb{E}[X_k|Y_{0:n}]$, for $k \in \{0,...,n\}$. We will call $\mathbb{\widehat{E}}[X_k|Y_{0:n}]$ such estimation. 
 
-If this works well, then we illustrate our claims and we can perform parameter estimation for the stochastic RNN using backward IS to illustrate score estimation. And we are good ?
+
+Table~\ref{table:RNN_exp} presents the results for a backward IS smoother versus a Poor Man's smoother when estimating $\mathbb{E}[X_k|Y_{0:n}]$.
+To generate a sequence of states and observations $(X_{0:n},Y_{0:n})$ from the stochastic RNN, we first trained a deterministic one-layer RNN on 20,000 samples of the weather dataset\footnote{https://www.bgc-jena.mpg.de/wetter/}, and inject noise post-training on the trained RNN.  We consider diagonal covariance matrices $\Sigma$, $Q$ and $R$, with the same variance along all dimensions equal to 0.1. 
+
+The table displays two quantities, when performing 100 runs for each smoothing algorithm: (i) the Mean Squared error $\mathbb{E}[\|X_0 - \mathbb{\widehat{E}}[X_0|Y_{0:n}]\|^2]$ for the conditional expectation of $X_0$ and (ii) the average Mean Squared Error $\mathbb{E}[\frac{1}{n+1} \sum_{k=0}^{n}\|X_k - \mathbb{\widehat{E}}[X_k|Y_{0:n}]\|^2]$ for all conditional expectations of $X_k$, $k \in \{0,..,n\}$.
+The experiments were done for RNNs of hidden dimension 32 and 64, and for a sequence of observations with a total length of 200 time steps: the table then presents the evaluation of the above quantities when doing online estimation for such sequence, for $n=49$ (sequence truncated at 50 observations), $n=99$ (sequence truncated at 100 observations, and $n=199$ (full sequence). 
+For the backward IS smoother, we use $N=1000$ particles for the bootstrap filter and $\K=32$ backward samples (see figure~\ref{fig:sine:timeandbias:N:vary} for the choice of $\K$ from the number of particles $N$). We use for the Poor Man's smoother a number of particles $N=3,000$, giving a similar computational cost than the backward IS smoother. One interesting aspect of applying the backward IS smoother (BIS) on neural network architectures is the parallelization abilities of such algorithm: when sampling from neural network's observation models, the loop over the backward samples in the backward step of the BIS is easily parallelizable, while the Poor Man's smoother requires to keep at time step the full past trajectories of the particles. 
+
+\begin{table}
+\caption{$\mathbb{E}[\|X_0 - \mathbb{\widehat{E}}[X_0|Y_{0:n}]\|^2]$ and $\mathbb{E}[\frac{1}{n+1} \sum_{k=0}^{n}\|X_k - \mathbb{\widehat{E}}[X_k|Y_{0:n}]\|^2]$ for the Poor man's smoother (PMS) and the Backward IS smoother, for states $\{X_k\}_{k=0}^n$ and observations $\{X_k\}_{k=0}^n$ generated with stochastic RNNs of dimension 32 and 64. We consider an online estimation of a sequence of 200 observations, truncated at timestep $n=49$ (50 timesteps), $n=99$ (100 timesteps) and the full sequence ($n=199$).}
+\label{table:RNN_exp}
+\centering 
+\begin{tabular}{c|cc}
+quantity & PMS & Backward IS \\\toprule
+\hline
+RNN dim = 32 & & \\
+\hline
+$\|X_0 - \mathbb{\widehat{E}}[X_0|Y_{0:199}]\|^2$ & 0.2147 & 0.1997 \\
+$\frac{1}{200} \sum_{k=0}^{199} \|X_k - \mathbb{\widehat{E}}[X_k|Y_{0:199}]\|^2$ & 0.2551 & 0.2056 \\
+\hline
+$\|X_0 - \mathbb{\widehat{E}}[X_0|Y_{0:99}]\|^2$ & 0.2135 & 0.1997 \\
+$\frac{1}{100} \sum_{k=0}^{99} \|X_k - \mathbb{\widehat{E}}[X_k|Y_{0:99}]\|^2$ & 0.2531 & 0.2189 \\
+\hline
+$\|X_0 - \mathbb{\widehat{E}}[X_0|Y_{0:49}]\|^2$ & 0.2018 & 0.1997 \\
+$\frac{1}{50} \sum_{k=0}^{49} \|X_k - \mathbb{\widehat{E}}[X_k|Y_{0:49}]\|^2$ & 0.2307 & 0.2147 \\
+\hline
+\midrule
+RNN dim = 64 & & \\
+\hline
+$\|X_0 - \mathbb{\widehat{E}}[X_0|Y_{0:199}]\|^2$ & 0.1969 & 0.1649 \\
+$\frac{1}{200} \sum_{k=0}^{199} \|X_k - \mathbb{\widehat{E}}[X_k|Y_{0:199}]\|^2$ & 0.1822 & 0.1427 \\
+\hline
+$\|X_0 - \mathbb{\widehat{E}}[X_0|Y_{0:99}]\|^2$ & 0.1914 & 0.1649 \\
+$\frac{1}{100} \sum_{k=0}^{99} \|X_k - \mathbb{\widehat{E}}[X_k|Y_{0:99}]\|^2$ & 0.1775 & 0.1519 \\
+\hline
+$\|X_0 - \mathbb{\widehat{E}}[X_0|Y_{0:49}]\|^2$ & 0.1707 & 0.1650 \\
+$\frac{1}{50} \sum_{k=0}^{49} \|X_k - \mathbb{\widehat{E}}[X_k|Y_{0:49}]\|^2$ & 0.1633 & 0.1589 \\
+\hline
+\bottomrule
+\end{tabular}
+\end{table}
+
+The results show that the backward IS smoother outperform the Poor Man's, both when estimating 
+%the conditional expectation of $X_0$ 
+$\mathbb{E}[X_0|Y_{0:n}]$, and the average over all time steps $k$ of $\mathbb{E}[X_k|Y_{0:n}]$. This is also illustrated in the figure~\ref{fig:RNN:mseperXk}, displaying for the stochastic RNN of dimension $64$ the Mean Square Error (MSE) over 100 runs $\mathbb{E}[\|X_k - \mathbb{\widehat{E}}[X_k|Y_{0:199}]\|^2]$, for $k \in \{0,...,199\}$: the backward IS smoother has a smaller MSE than the Poor Man's smoother, as soon as $k \leq 150$.  
+Moreover, the table also shows that while the backward IS's estimation $\mathbb{\widehat{E}}[X_0|Y_{0:n}]$ tends to stay stable for all given $n$ (49,99, and 199), the Poor Man's estimation is less accurate for a longer sequence of observations, with a MSE $\mathbb{E}[\|X_0 - \mathbb{\widehat{E}}[X_0|Y_{0:n}]\|^2]$ increasing as $n$ increases.
+
+\begin{figure}[h]
+\begin{center}
+    %\includegraphics[scale = .3]{RNN_dim64_mse_all_Xk.pdf}
+    \includegraphics[width=\textwidth, trim = 1cm 2cm 1cm 2cm, clip]{RNN_dim64_mse_all_Xk.pdf}
+\end{center}
+    \caption{Plot of $\mathbb{E}[\|X_k - \mathbb{\widehat{E}}[X_k|Y_{0:199}]\|^2]$ for $k \in \{0,...,199\}$ for 100 runs of the Backward IS and Poor Man smoothers.}
+    \label{fig:RNN:mseperXk}
+\end{figure}
 
 \subsection{One dimensional diffusion processes: the Sine model}
 \label{sec:simu:SINE}
