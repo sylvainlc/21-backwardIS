@@ -280,10 +280,10 @@ It leads to a smoothing algorithm that only requires an almost surely positive e
 The proposed method is furnished with extensive numerical experiments to illustrate its performance. The empirical results can be summarised as follows.
 \begin{itemize}
 \item The proposed approach can be used for any latent data models such as hidden Markov models, or recurrent neural networks with unobserved latent states. Even when the transition densities are available, we show empirically that our backward importance sampling is a computationally efficient solution to solve the online smoothing problem, in cases where rejection sampling is traditionally used in the PaRIS algorithm of \cite{olsson2017efficient}.
-\item When considering the pseudo-marginal approach, we extend the use of Wald's trick to the backward kernel. With such extension, importance sampling can be used in cases where the estimators of the unknown densities  are not positive by construction. This allows to perform sequential Monte Carlo smoothing for many models for which no solutions were proposed in the literature to the best of our knowledge. 
+\item When considering the pseudo-marginal approach, we extend the use of Wald's trick to the backward kernel. Importance sampling can therefore  be used in cases where the estimators of the unknown densities  are not positive by construction. This allows to perform sequential Monte Carlo smoothing in models for which no solutions were proposed in the literature to the best of our knowledge. 
 \item The proposed method does not rely on any acceptance rejection procedure which reduces very significantly the computational time. 
 \end{itemize}
-The paper is organized as follows. Section~\ref{sec:model} displays the latent data models and the main objectives considered in this paper. Then, Section~\ref{sec:method} details online pseudo marginal sequential Monte Carlo algorithms and Section~\ref{sec:backwardis} our proposed algorithm. Section~\ref{sec:application}  provides numerical experiments in  partially observed diffusion  models and in the case of high-dimensional discrete-time latent data models and Section~\ref{sec:tangent:filter} an application to recursive maximum likelihood estimation. 
+The paper is organized as follows. Section~\ref{sec:model} displays the latent data models and the main objectives considered in this paper. Then, Section~\ref{sec:method} details online pseudo marginal sequential Monte Carlo algorithms and Section~\ref{sec:backwardis} our proposed algorithm. Section~\ref{sec:application}  provides numerical experiments in  partially observed diffusion  models and in the case of high-dimensional discrete-time latent data models and Section~\ref{sec:xp:tangent:filter} an application to recursive maximum likelihood estimation. 
 % why do we need discrete-time ? 
 
 \section{Model and objectives}
@@ -313,11 +313,11 @@ $$
 \label{eq:def:elln}
 \qg{k;\parvec}(x_{k},x_{k+1}) = \hd{k+1;\parvec}(x_{k}, x_{k+1}, Y_{k + 1})\md{k+1;\parvec}(x_{k+1},Y_{k+1})\eqsp.
 \end{equation}
-In a large variety of situations, \eqref{eq:def:elln} cannot be evaluated pointwise  (see models of sections \ref{sec:simu:SINE} and \ref{sec:simu:LV}), and we will only suppose that we have an estimate of this quantity (see assumption \textbf{H\ref{assum:unbiased}} in Section~\ref{sec:method}).
+In a large variety of situations, \eqref{eq:def:elln} cannot be evaluated pointwise  (see models of sections \ref{sec:simu:SINE} and \ref{sec:simu:LV}), and we assume in this paper that we have an estimate of this quantity (see assumption \textbf{H\ref{assum:unbiased}} in Section~\ref{sec:method}).
 Note that to avoid future cumbersome expressions, the dependency of the key quantity $\qg{k;\parvec}(\cdot)$ on the observations is implicit, as we will always work conditionnaly to the observations.
 
 
-In this paper, we propose efficient algorithm to compute \textit{expectations of smoothing additive functionals}. 
+In this paper, we propose an algorithm to compute \textit{ smoothing expectations of additive functionals}. 
 Namely, we aim at computing: 
 $$\pE \left[\af{0:n}(X_{0:n})\middle | Y_{0:n}\right],$$
 where $\af{0:n}$ is an \textit{additive functional}, \textit{i.e.} a function from $\rset^{d \times (n + 1)}$ to $\rset^{d'}$ satisfying:
@@ -325,23 +325,17 @@ where $\af{0:n}$ is an \textit{additive functional}, \textit{i.e.} a function fr
 \label{eq:additive:functional}
 \af{0:n}: x_{0:n} \mapsto \sum_{k=0}^{n-1}\addf{k}(x_{k},x_{k+1}),
 \end{equation}
-where $\addf{k}$ is a functional from $\rset^{d} \times \rset^{d}$ to $\rset^{d'}$.
-Such expectations are the keystones for many common inference problem in state space models.
+where $\addf{k}:\rset^{d} \times \rset^{d}\to\rset^{d'}$.
+Such expectations are the keystones of many common inference problems in state space models.
 
-\begin{example}[State estimation]
+\begin{example}[State estimation.]
 \label{ex:state:tracking}
-Suppose that the model parameter $\theta$ is known, a common objective is to recover the underlying signal $X_{k^*}$ for some index $0\leqslant k^* \leqslant n$ given the observations $Y_{0:n}$. A standard estimator is
-$$\pE\left[X_{k^*}\vert Y_{0:n}\right],$$
-which is a particular instance of our problem with $\addf{k}(x_k, x_{k+1}) = x_k$ if $k = k^*$ and 0 otherwise. 
+Suppose that the model parameter $\theta$ is known, a common objective is to recover the underlying signal $X_{k^*}$ for some index $0\leqslant k^* \leqslant n$ given the observations $Y_{0:n}$. A standard estimator is $\pE[X_{k^*}\vert Y_{0:n}]$, which is a particular instance of our problem with $\addf{k}(x_k, x_{k+1}) = x_k$ if $k = k^*$ and 0 otherwise. 
 \end{example}
 
-\begin{example}[EM algorithm]
+\begin{example}[EM algorithm.]
 \label{ex:em:algorithm}
-In the usual case when $\theta$ is unknown, the maximum likelihood estimator is
-$$
-\widehat \parvec = \mathrm{argmax}_{\parvec\in\parspace}\eqsp\llh{n,\parvec}(Y_{0:n})\eqsp,
-$$
-where  Expectation Maximization based algorithms \cite{dempster1977maximum}  are appealing solutions to obtain an estimator of $\hat \parvec$.
+In the usual case when $\theta$ is unknown, the maximum likelihood estimator is $\widehat \parvec = \mathrm{argmax}_{\parvec\in\parspace}\eqsp\llh{n,\parvec}(Y_{0:n})$. Expectation Maximization based algorithms \cite{dempster1977maximum}  are appealing solutions to obtain an estimator of $\hat \parvec$.
 The pivotal concept of the EM algorithm is that the intermediate quantity defined by
 \begin{equation*}
 \parvec\mapsto Q(\parvec,\parvec') = \pE_{\parvec'}\left[\sum_{k=0}^{n-1} \log \qg{k;\parvec}(X_{k}, X_{k+1})\middle | Y_{0:n}\right] 
@@ -353,13 +347,13 @@ Again, this inference setting is a special case of our framework where $\addf{k}
 %Therefore, the EM algorithm iteratively builds a sequence $(\parvec_{p})_{p\geqslant 0}$ of parameter estimates following the two steps: (i) compute $\parvec\mapsto Q(\parvec,\parvec_{p})$ and (ii) choose $\parvec_{p+1}$ as a maximizer of $\parvec \mapsto Q(\parvec,\parvec_{p})$. Gradient ascent algorithms are compelling alternatives to the EM algorithm.
 \end{example}
 
-\begin{example}[Fisher's identity and online gradient ascent]
-An alternative to the EM algorithm is to maximize the log likelihood through gradient based methods.
+\begin{example}[Fisher's identity and online gradient ascent.]
+An alternative to the EM algorithm is to maximize the loglikelihood through gradient based methods.
 Indeed, in state space models, under some regularity conditions (see \cite{cappe2005inference}, Chapter~10), the gradient of the log likelihood can be obtained thanks to the Fisher's identity:
 $$\deriv \log \llh{n}(\parvec) = \pE_\theta\left[\sum_{k=0}^{n-1} \deriv \log \qg{k;\parvec}(X_{k},X_{k+1})\middle | Y_{0:n}\right],$$
 which relies on the expectation of a smoothing additive functional.
-It has been noted (see \cite{cappe2005inference}, chapter 10, or \cite{olsson2020particle} how this identity, coupled with the smoothing recursions of section \ref{sec:smoothing}, can lead to an online gradient ascent, that provides an online estimate of the MLE.
-An extension of this method will be illustrated in Section~\ref{sec:tangent:filter} in a challenging setting where the transition density cannot be evaluated.
+It has been noted (see \cite{cappe2005inference}, chapter 10, or \cite{olsson2020particle} how this identity, coupled with the smoothing recursions of Section \ref{sec:smoothing}, can lead to an online gradient ascent, that provides an online estimate of the MLE.
+An extension of this method will be illustrated in Section~\ref{sec:xp:tangent:filter} in a challenging setting where the transition density cannot be evaluated.
 \end{example}
 
 \section{Online sequential Monte Carlo smoothing}
