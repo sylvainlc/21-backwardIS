@@ -245,61 +245,44 @@ and engineering domains such as movement ecology \cite{michelot2016movehmm}, ene
 %\textcolor{red}{Ne pas orienter vers les EDS uniquement. Mettre en avant les modeles complexes et l'impossibilite de faire de l'acceptation rejet, et mettre en avant la possibilite d'avoir un biais dans les poids. Les EDS seront une application parmi d'autres. Mettre en avant les differents points : utilisation d'estimateur des poids, importance sampling au lieu de l'AR pour un enorme gain numerique, application au gradient pour l'estimation en ligne.}
 
 
-Markov chain Monte Carlo (MCMC) and sequential Monte Carlo (SMC) methods (also known as particle filters or smoothers) are widespread solutions to propose consistent estimators of such distributions. A pivotal step of SMC approaches is the evaluation of the transition density of the hidden signal and of the density of the conditional distribution of an observation given the corresponding latent state (the marginal conditional likelihood). However, in many practical settings, no closed-form expressions of these distributions are available: for instance, in the case of partially observed diffusions \cite{andersson2017unbiased,fearnhead2017continuous} or in the context of  approximate Bayesian computation smoothing \cite{martin:jasra:singh:whiteley:delmoral:maccoy:2014}. A first step to bypass this shortcoming was proposed in  \cite{fearnhead2010random}. %where 
-The authors proposed an important contribution by showing that it is possible to implement importance sampling and filtering recursions, when the unavailable importance weights are replaced by random estimators. %Je couperai cette phrase en deux. 
+Markov chain Monte Carlo (MCMC) and sequential Monte Carlo (SMC) methods (also known as particle filters or smoothers) are widespread solutions to propose consistent estimators of such distributions. 
+Among SMC methods, novel algorithms has been designed in the last decades to solve the smoothing problem, such as the Forward Filtering Backward Simulation algorithm \cite{douc2011sequential}  or two-filter based approaches \cite{briers2010smoothing, fearnhead2010sequential, nguyen2017two}. %but 
+These approaches, that comes with strong theoretical guarantees (\cite{delmoral2010backward, douc2011sequential, dubarry2013nonasymptotic, gerber2017convergence}), require the time horizon and all observations to be available  to initialize a backward information filter, and, thus, perform the smoothing.
+The particle-based rapid incremental smoother \cite{olsson2017efficient} is an online version of \cite{douc2011sequential}, specifically designed to approximate conditional expectations of additive functionals. 
+This algorithm relies on a backward sampling procedure performed on the fly thanks to the well known acceptance rejection sampling. 
+This online smoother was proven to be strongly consisteny, asymptoticaly normal, and with a control of the asymptotic variance, when it is performed together with the vanilla bootstrap filter \cite{gordon1993novel}. 
+In \cite{olsson2020particle}, the authors show how this algorithm can be used to performed recursive maximum likelihood in state space models.
+However, a major drawback of this approach is the necessity to upper bound the transition density of the hidden signal, as it is required to performed acceptance rejection sampling.
+
+Moreover, a pivotal step of all SMC approaches is the evaluation of this transition density and of the density of the conditional distribution of an observation given the corresponding latent state (the marginal conditional likelihood).
+In many practical settings, though, no closed-form expressions of these distributions are available: for instance, in the case of partially observed diffusions \cite{andersson2017unbiased,fearnhead2017continuous} or in the context of  approximate Bayesian computation smoothing \cite{martin:jasra:singh:whiteley:delmoral:maccoy:2014}.
+ A first step to bypass this shortcoming was proposed in  \cite{fearnhead2010random}. %where 
+The authors proposed an important contribution by showing that it is possible to implement importance sampling and filtering recursions, when the unavailable importance weights are replaced by random estimators.
 Standard data augmentation schemes were then used to extend this random-weight particle filter to provide new inference procedures for partially observed diffusion models \cite{yonekura:beskos:2020}. 
 
-%More recently, \cite{gloaguen2021pseudo} introduced a pseudo-marginal online smoother to approximate conditional expectations of additive functionals of the hidden states  in  a very general setting where the user can only evaluate (possibly biased) approximations of the transition density and of the marginal conditional likelihood. 
-More recently, \cite{gloaguen2021pseudo} introduced a pseudo-marginal online smoother to approximate conditional expectations of additive functionals of the hidden states in a very general setting: the user can only evaluate (possibly biased) approximations of the transition density and of the marginal conditional likelihood. 
-The online algorithm of \cite{gloaguen2021pseudo} may be used to approximate expectations of additive functionals under the smoothing distributions by processing the data stream online. This algorithm extends the particle-based rapid incremental smoother (PaRIS) of \cite{olsson2017efficient}. This approach is an online version of the Forward Filtering Backward Simulation algorithm \cite{douc2011sequential} specifically designed to approximate conditional expectations of additive functionals. Other smoothing algorithms such as two-filter based approaches \cite{briers2010smoothing, fearnhead2010sequential, nguyen2017two}  could be extended. %but 
-Yet, they are intrinsically not online procedures as they require the time horizon and all observations to be available  to initialize a backward information filter. In \cite{gloaguen2021pseudo}, the authors proposed several theoretical guarantees for this pseudo-marginal smoothing algorithm: strong consistency, asymptotic normality when the number of particles grows to infinity and control of the asymptotic variance. %This makes this pseudo marginal smoother the first algorithm to approximate such expectations in such a  general setting  with theoretical guarantees and an explicit expression of the asymptotic variance. 
-  This extended the result of \cite{olsson2017efficient}, written only in the case of the bootstrap filter \cite{gordon1993novel}, and the theoretical guarantees obtained for online sequential Monte Carlo smoothers given in \cite{delmoral2010backward, douc2011sequential, dubarry2013nonasymptotic, gerber2017convergence}.
+More recently, the online algorithm of \cite{olsson2017efficient} was extended to this case for partially observed diffusion processes by \cite{gloaguen2018online}. 
+This idea was extended in \cite{gloaguen2021pseudo}, who introduced a pseudo-marginal online smoother to approximate conditional expectations of additive functionals of the hidden states in a very general setting: the user can only evaluate (possibly biased) approximations of the transition density and of the marginal conditional likelihood. 
+The online algorithm of \cite{gloaguen2021pseudo} may be used to approximate expectations of additive functionals under the smoothing distributions by processing the data stream online.
 
-
-  %Except in very few SDE cases, this transition density has no analytical expression and the key conditonal expectations cannot be computed explicitly so that MLE cannot be achieved.
-  %The objective of this paper is to propose an efficient consistent and asymptotically Gaussian SMC algorithm which can be applied to general POD processes to approximate conditional expectations of functionals of the hidden states. The paper sets the focus on POD processes as this is a widespread complex setting for which no satisfactory solution was available to solve Bayesian smoothing problems but it is important to note that our algorithm may be used for general state space hidden Markov models as soon as unbiased estimators of the transition densities are available. 
-
-%Following \cite{fearnhead2008particle,gloaguen2018online, gloaguen2019pseudo}, this paper concentrates on  SMC methods to approximate smoothing distributions with a random set of states, the {\em particles}, associated with importance weights by combining importance sampling and resampling steps.  
-%This allows first to solve the filtering problem by combining an auxiliary particle filter with an unbiased estimate of the unknown densities.  
-%The online algorithm of \cite{gloaguen2018online} may be used to approximate expectations of additive functionals under the smoothing distributions by processing the data stream online. This algorithm extends the particle-based rapid incremental smoother (PaRIS) of \cite{olsson2017efficient} when the unknown transition densities are replaced by unbiased estimates. This approach is an online version of the Forward Filtering Backward Simulation algorithm \cite{douc2011sequential} specifically designed to approximate conditional expectations of additive functionals. 
-%The crucial feature which makes the PaRIS algorithm appealing is the acceptance-rejection step which benefits from the unbiased estimation. 
-%The extension of the  usual alternative, named the Forward Filtering Backward Smoothing algorithm \cite{doucet2000sequential}, is more sensitive as it involves ratios of these unknown quantities.
-   %In \cite{gloaguen2018online, gloaguen2019pseudo}, the consistency of this algorithm as long as a central limit theorem (CLT) are established.
-  
-
-
-%However, a requirement to use this pseudo-marginal algorithm, where transition densities are intractable and estimated by means of simulation, is that the associated pseudo-marginal backward kernel can be sampled from exactly. 
-However, when using this pseudo-marginal algorithm, where transition densities are intractable and estimated by means of simulation, the user needs to be able to sample exactly from the associated pseudo-marginal backward kernel. 
-Following  \cite{gloaguen2018online} rejection sampling can be proposed. %but 
-Yet, such a solution is based on the assumption that the estimate of the transition density and of the marginal conditional  likelihood  are almost surely positive and upper bounded.  These assumptions are very restrictive. %and 
+However, as fo the PaRIS algorihm,  when using this pseudo-marginal approach, where transition densities are intractable  the user needs to be able to sample exactly from the associated pseudo-marginal backward kernel. 
+This step is again done by rejection sampling, and therefore requires that the estimate of the transition density and of the marginal conditional  likelihood  are almost surely positive and upper bounded.  
+In practice, these assumptions are very restrictive. %and 
 For instance, in the context of diffusion processes, they narrow the possible models to the class of diffusions satisfying the Exact algorithm conditions of \cite{beskos2006retrospective}, for which  General Poisson Estimators (GPEs) \cite{fearnhead2008particle} already lead to eligible unbiased estimators.  
 
-In this paper, a new procedure is introduced to replace the backward acceptance-rejection step by an importance sampling estimate.  %which 
-It leads to a smoothing algorithm that only requires an almost surely positive estimator of the unknown transition density. 
-In the context of partially observed diffusion processes, it is shown that such an estimator can be obtained using Wald's trick for a wide range of models, using for instance the parametrix estimators of \cite{andersson2017unbiased} and \cite{fearnhead2017continuous}.  %We propose to use Wald's trick to obtain positive estimates of the transition densities as this is not guaranteed in the original parametrix estimators.
-%The overall method therefore provides a consistent estimator of expectations under the smoothing distributions in the context of generic POD, where the hidden diffusion process can belong to a wide range of multivariate models. 
-The proposed method is furnished with extensive numerical experiments to illustrate its performance. The empirical results can be summarised as follows.
+In this paper, a new procedure is introduced to replace the backward acceptance-rejection step of the PaRIS and the pseudo marginal PaRIIS by a backward importance sampling estimate.  %which 
+It leads to a smoothing algorithm that only requires an almost surely positive estimator of the unknown transition density, and therefore extends widely the class of models for which these online smoothers can be designed. 
+In the context of partially observed diffusion processes, for instance,  we show that an almost surely positive estimator can be obtained using Wald's trick combined with the highly generic parametrix estimators of \cite{andersson2017unbiased} and \cite{fearnhead2017continuous}.
+
+The paper is organized as follows. Section~\ref{sec:model} displays the latent data models and the main objectives considered in this paper. Then, Section~\ref{sec:method} details online pseudo marginal sequential Monte Carlo algorithms and Section~\ref{sec:backwardis} our proposed algorithm. Section~\ref{sec:application}  provides  extensive numerical experiments to illustrate the performance of our approach. The empirical results of this section can be summarised as follows.
 \begin{itemize}
-\item The proposed approach can be used for any latent data models such as hidden Markov models, or recurrent neural networks with unobserved latent states. Even when the transition densities are available, we show empirically that our backward importance sampling is a computationally efficient solution to solve the online smoothing problem, in cases where rejection sampling is traditionally used in the PaRIS algorithm of \cite{olsson2017efficient}.
-\item When considering the pseudo-marginal approach, we extend the use of Wald's trick to the backward kernel. Importance sampling can therefore  be used in cases where the estimators of the unknown densities  are not positive by construction. This allows to perform sequential Monte Carlo smoothing in models for which no solutions were proposed in the literature to the best of our knowledge. 
-\item The proposed method does not rely on any acceptance rejection procedure which reduces very significantly the computational time. 
+\item The proposed approach can be used for any latent data models such as hidden Markov models, or recurrent neural networks with unobserved latent states. Even when the transition densities are available, we show empirically that our backward importance sampling is a computationally efficient solution to solve the online smoothing problem (section \ref{sec:simu:RNN}).
+\item When considering the pseudo-marginal approach, we extend the use of Wald's trick to the backward kernel, and therefore show that our approach can be used in cases where the estimators of the unknown densities  are not positive by construction. This allows to perform sequential Monte Carlo smoothing in models for which no solutions were proposed in the literature to the best of our knowledge, such as multivariate partially observed diffusion processes (section \ref{sec:simu:LV}).
+\item We show that the proposed approach outperforms the existing method in terms of computational efficiency and should be considered even when the acceptance rejection procedure can be performed (section \ref{sec:simu:SINE}). 
+\item We show how the proposed method allows for efficient online recursive maximum likelihood in the context of partially observed diffusion processes \ref{sec:simu:tangent:filter}. This experiment also allows to conjecture for the asymptotic normality of our estimator, which would be an extension of the results of \cite{gloaguen2021pseudo}.
 \end{itemize}
-The paper is organized as follows. Section~\ref{sec:model} displays the latent data models and the main objectives considered in this paper. Then, Section~\ref{sec:method} details online pseudo marginal sequential Monte Carlo algorithms and Section~\ref{sec:backwardis} our proposed algorithm. Section~\ref{sec:application}  provides numerical experiments in  partially observed diffusion  models and in the case of high-dimensional discrete-time latent data models and Section~\ref{sec:xp:tangent:filter} an application to recursive maximum likelihood estimation. 
-% why do we need discrete-time ? 
 
 \section{Model and objectives}
 \label{sec:model}
-
-
-
-% and $(X_t)_{t\geqslant 0}$ be defined as a weak solution to the following 
-%SDE in $\mathbb{R}^d$:
-%
-%\begin{equation}
-%\label{eq:sde}
-%\rmd X_t = \alpha_{\parvec}(X_t)\rmd t + \sigma_{\parvec}(X_t)\rmd W_t\eqsp,
-%\end{equation}
-%where $\parvec\in\parspace$, $(W_t)_{t\geqslant 0}$ is a standard Brownian motion in $\mathbb{R}^{\sfd}$, $\alpha_{\parvec_*}: \mathbb{R}^d\to\mathbb{R}^d$ is the drift function and $\sigma_{\parvec_*}:\mathbb{R}^d\to\mathbb{R}^{d\times \sfd}$ is the diffusion. 
 
 Let $\parvec$ be a parameter lying in a $\Theta\subset \rset^q$ and consider a  \textit{state space model} where the hidden Markov chain  in $\rset^d$ is denoted by $(X_k)_{k\geqslant 0}$. The distribution of $X_0$ has density $\chi$ with respect to the Lebesgue measure and for all $0\leqslant k \leqslant n-1$, the conditional distribution of $X_{k+1} $ given $X_{0:k}$ has density $\hd{k+1;\parvec}(X_{k},\cdot)$, where $a_{u:v}$ is a short-hand notation for $(a_u,\ldots,a_v)$. 
 It is assumed that this state  is partially observed  through an observation process $(Y_k)_{0\leqslant k \leqslant n}$ taking values in $\rset^m$. 
@@ -360,7 +343,7 @@ An extension of this method will be illustrated in Section~\ref{sec:xp:tangent:f
 \section{Online sequential Monte Carlo smoothing}
 \label{sec:method}
 
-\subsection{Backward statistic for online algorithm}
+\subsection{Backward statistic for online smoothing}
 
 In this section, the parameter $\parvec$ is dropped from notation for a better clarity. For all pair of integers $0\leq k \leq k' \leq n$, and all measurable function $h$ on $\rset^{d \times (k' - k + 1)}$, the expectation with respect to the joint smoothing distribution is denoted by:
 $$
@@ -399,7 +382,57 @@ For all $\parvec \in\parspace$ and $k\geqslant 0$, there exists a Markov kernel 
 This setup, known as \textit{pseudo marginalisation} is based on the plug-in principle, as a pointwise estimate of $\qg{k;\parvec}(x,x')$ can be obtained by generating $\zeta$ from $\kernelmarg_{k;\parvec}(x,x';\rmd z)$ and computing the statistic $\hatqg{k;\parvec}\langle \zeta\rangle(x,x')$. 
 Its use in Monte Carlo methods, and the related theoretical guarantees, have been studied in the context of MCMC \cite{andrieu2009pseudo}, and more recently, of SMC \cite{gloaguen2021pseudo}.
 
-%We will now describe, in this context, how to practically implement a generic an efficient SMC algorithm.
+\subsubsection*{Recursive maximum likelihood}
+
+An appealing application for online smoothing is the context of recursive maximum likelihood, i.e., where new observations are used only once to update the estimator of the unknown parameter $\parvec$.
+%We first fully describe the algorithm and its particle based implementation. At the end of the section, we give the main arguments behind the method.
+Following \cite{legland1997recursive}, the idea is the build a sequence $\left\lbrace\parvec_k\right\rbrace_{k\geq 0}$ as follows. First, set the initial value of the parameter estimate: $\parvec_0$. The, for each new observation $Y_{k},~k\geqslant 1$, define
+$$
+\theta_{k} = \theta_{k-1} + \gamma_k \deriv \logllh{\parvec}(Y_k \mid Y_{1:k - 1}) \eqsp,
+$$
+where $\logllh{\parvec}(Y_k \mid Y_{1:k - 1})$ is the log likelihood for the new observation given all the past, and $\left\lbrace\gamma_k\right\rbrace_{k\geqslant}$ are positive step sizes such that $\sum_{k \geqslant 1}\gamma_k = \infty$ and $\sum_{k \geqslant 1}\gamma_k^2 < \infty$. The practicalt implementation of such an update relies on the following identity:
+\begin{equation}
+\deriv \logllh{\parvec}(Y_k \mid Y_{1:k - 1})  
+=  \frac{\pred{k;\parvec}[\deriv \md{k;\parvec}] + \filtderiv{k;\parvec}[\md{k;\parvec}]}{\pred{k;\parvec}[\md{k;\parvec}]}\eqsp,
+\label{eq:online:gradient}
+\end{equation}
+where $\pred{k;\parvec} = \phi_{k;\parvec \mid k - 1}$ is the predictive distribution  and 
+$$\filtderiv{k;\parvec}[\md{k;\parvec}] = \post{0:k;\parvec \mid k - 1} [\af{0:k;\parvec} \md{k;\parvec}] - \pred{k;\parvec}[\md{k;\parvec}] \times \post{0:k;\parvec \mid k - 1 }[\af{0:k}]\eqsp,$$
+with
+\begin{equation}
+\label{eq:complete:gradient:log}
+\af{0:k}(x_{0:k}) =  \sum_{j = 0}^{k - 1} \deriv\log \qg{j, \parvec}(x_j,x_{j+1})\eqsp.
+\end{equation}
+%$$\filtderiv{k;\parvec}[\md{k;\parvec}] = \int \md{k;\parvec}(x_k) \deriv \pred{k;\parvec}(x_k) \rmd x_k,$$
+The signed measure $\filtderiv{k;\parvec}$ is known as the \textit{tangent filter}, see \cite[Chapter~10]{cappe2005inference}, \cite{delmoral2015uniform} or \cite{olsson2020particle}. 
+%In order to build a particle-based approximation of $\eqref{eq:online:gradient}$, we can remark that
+%$$\filtderiv{k;\parvec}[\md{k;\parvec}] = \post{0:k;\parvec \mid k - 1} [\af{0:k;\parvec} \md{k;\parvec}] - \pred{k;\parvec}[\md{k;\parvec}] \times \post{0:k;\parvec \mid k - 1 }[\af{0:k}]\eqsp,$$
+%where 
+%\begin{equation}
+%\label{eq:complete:gradient:log}
+%\af{0:k}(x_{0:k}) =  \sum_{j = 0}^{k - 1} \deriv\log \qg{j, \parvec}(x_j,x_{j+1})\eqsp.
+%\end{equation}
+Using the tower property  and the backward decomposition \eqref{eq:property:backward} yields
+\begin{equation} 
+\label{eq:tangent:identity}
+\filtderiv{k;\parvec}[\md{k;\parvec}] = \pred{k;\parvec}\left[\left(\tstat{k} [\af{0:k}] - \pred{k;\parvec}[\tstat{k}[\af{0:k}]]\right) \md{k;\parvec}\right]\eqsp.
+\end{equation}
+
+It is worth noting that, in the context of this paper where $\qg{k}$ cannot be evaluated pointwise, one cannot expect to know the functional \eqref{eq:complete:gradient:log}, which involves the gradient of this quantity. 
+In section \ref{sec:xp:tangent:filter}, we illustrate that we can plug-in an estimate of this functionnal instead. 
+
+The rationale motivating this algorithm relies on the following expression of the normalized loglikelihood:
+$$
+\frac{1}{n} \deriv \logllh{\parvec}(Y_{1:n}) = \frac{1}{n} \sum_{k = 1}^n \deriv \logllh{\parvec}\left(Y_k \mid Y_{1:k - 1}\right)\eqsp.$$
+Moreover, under strong mixing assumptions, for all  $\parvec \in \parvec$, the extended process $\{ (X_n, Y_n, \pred{n}, \filtderiv{n}) \}_{n \geqslant 0}$ is an ergodic Markov chain and for all $\parvec \in \parvec$, the normalized score $\deriv \logllh{\parvec}(Y_{1:n})/n$  converges almost surely to a limiting quantity $\lambda(\parvec, \parvec_{\star})$ such that, under identifiability constraints, $\lambda(\parvec_{\star}, \parvec_{\star}) = 0$. 
+A gradient ascent algorithm cannot be designed as the limiting function $\parvec \mapsto \lambda(\parvec, \parvec_{\star})$ is not available explicitly. 
+However, solving the equation $\lambda(\parvec_{\star}, \parvec_{\star}) = 0$ may be cast into the framework of \emph{stochastic approximation} to produce parameter estimates using the \emph{Robbins-Monro algorithm}
+\begin{equation}
+\label{eq:par:update}
+\parvec_{k} = \parvec_{k - 1} + \gamma_{k} \zeta_{k}\eqsp, \quad n\geqslant 0\eqsp, 
+\end{equation}
+where $\zeta_{k}$ is a noisy observation of $\lambda(\parvec_{k - 1}, \parvec_{\star})$, equal to \eqref{eq:online:gradient}.  
+In the case of a finite state space $\set{X}$ the algorithm was studied in~\cite{legland1997recursive}, which also provides assumptions under which the sequence $\{\parvec_{n}\}_{n\geqslant 0}$ converges towards the parameter $\parvec_{\star}$ (see also \cite{tadic2010analyticity} for refinements). 
 
 \subsection{Approximation of the filtering distribution}
 \label{sec:filtering}
@@ -438,6 +471,8 @@ to produce the following approximation of $\post{k}[f]$:
 \post{k}^\N[f]&\eqdef \sumwght{k}^{-1}\sum_{\ell=1}^N \ewght{k}{\ell}f(\epart{k}{\ell})\eqsp,\quad\mbox{where}\quad\sumwght{k}\eqdef \sum_{\ell=1}^\N \ewght{k}{\ell}\eqsp.
 \end{align*}
 The choice of the proposal distribution $\kissforward{k-1}{k-1}$ is a pivotal tuning step to obtain efficient estimations of the filtering distributions.  This point will be discussed in each example considered in Section~\ref{sec:application}.
+
+
 
 \subsection{Approximation of the backward statistics}
 \label{sec:smoothing}
@@ -478,7 +513,22 @@ Therefore, the following  accept-reject mechanism algorithm may be used to sampl
 This algorithm is the only SMC smoother proposed in the literature with  theoretical guarantees when no closed-form expressions of  the  transition  densities and the conditional likelihood of the observations are available,  assuming that the user  can only evaluate  approximations of these densities. 
 This pseudo-marginal particle smoothing algorithm  requires that the backward sampling step  generates samples exactly according to $\overline \upsilon_k^i$.  
 However, it relies on the key assumptions of the positiveness of $\hatqg{k}\langle \zeta\rangle(x, x')$ and \eqref{eq:AR:bound} which are rather restrictive (especially the second one), and would not be satisfied in practice for a lot of problems (see for instance in Section~\ref{sec:simu:LV}).
- In the next section, we propose an alternative to this step to obtain a computationally efficient pseudo-marginal smoother in a much wider range of applications for which such assumptions do not hold.
+ In section \ref{sec:backwardis}, we propose an alternative to this step to obtain a computationally efficient pseudo-marginal smoother in a much wider range of applications for which such assumptions do not hold.
+ 
+\subsubsection*{Approximations for recursive MLE}
+
+In the case of recursive MLE, one needs to approximate the key quantity \eqref{eq:online:gradient}.
+A particle filter, can be used to compute the following sequential Monte Carlo approximation:
+$$
+\pred{k}^N[\md{k;\parvec}] = \frac{1}{N}\sum_{\ell = 1}^N \md{k;\parvec}(\epart{n}{\ell})\eqsp,\eqsp \pred{k}^N[\deriv \md{k;\parvec}] = \frac{1}{N}\sum_{\ell = 1}^N \deriv \md{k;\parvec}(\epart{k}{\ell})\eqsp.
+$$
+In addition, the tangent filter can be approximated using a backward sampling procedure, based on the backward statistic associated with  the functional \eqref{eq:complete:gradient:log}:
+\begin{equation} 
+\label{eq:tangent:identity:part:linear}
+\eta_{k;\parvec}^{N}[\md{k;\parvec}] = \frac{1}{\N}\sum_{\ell=1}^\N\tau_\ell^k \md{k;\parvec}
+(\epart{\ell}{k}) - \left(\frac{1}{\N}\sum_{\ell=1}^\N\tau_\ell^n\right)\left(\frac{1}{\N}\sum_{\ell=1}^\N \md{k;\parvec}(\epart{\ell}{k})\right)\eqsp.
+\end{equation}
+Plugging these estimates in equation \eqref{eq:online:gradient} allows to perform the online recursive algorithm. 
 
 
 \section{Pseudo-marginal backward importance sampling}
@@ -612,7 +662,7 @@ Moreover, the table also shows that while the backward IS's estimation $\mathbb{
     \label{fig:RNN:mseperXk}
 \end{figure}
 
-\subsection{One dimensional diffusion processes: the Sine model}
+\subsection{One dimensional diffusion processe: the Sine model}
 \label{sec:simu:SINE}
 This section investigates the performance of the proposed algorithm to compute  expectations under the smoothing distributions in a context where  alternatives are available for comparison. Consider the Sine model where $(X_t)_{t\geqslant 0}$ is assumed to be a weak solution to
 $$
@@ -665,6 +715,85 @@ It is worth noting that the variance of the computational time is greatly reduce
 \label{fig:sine:timeandbias:N:vary}
 \end{figure}
 
+
+\subsection{Recursive maximum likelihood estimation in the  Sine model}
+\label{sec:simu:tangent:filter}
+Online recursive maximum likelihood using pseudo marginal SMC is illustrated for the same Sine model.
+As mentionned, a GPE estimator of the transition density can be computed. 
+Following the idea of this computation, one can actually obtain an unbiased estimated of the gradient of the log-transition density and thus compute and unbiased estimate of the key quantity given in \eqref{eq:complete:gradient:log}. 
+To the best of our knowledge, this estimator is new, and given in appendix \ref{sec:filter:SDE}.
+Using the Exact algorithm of \cite{beskos2006retrospective} a data set of 5000 points (displayed in Figure~\ref{fig:data}), was simulated whith the true parameter $\parvec_* = \pi/4$. 
+As in the previous section, particle smoothing was performed, using  the same particle filter, with $\N = 100$ particles and $\K = 10$ backward samples in our backward importance sampling procedure. 
+In this setup, we explore three key features of our estimator.
+
+{\em Sensitivity to the starting point $\hat{\parvec}_0$.}
+The inference procedure was performed on the same data set from 50 different starting points uniformly chosen in $(0,2\pi)$. 
+The gradient step size $\gamma_k$ of equation \eqref{eq:par:update} was chosen constant (and equal to 0.5) for the first 300 time steps, and then decreasing with a rate proportional to $k^{-0.6}$. 
+Results are given Figure~\ref{fig:1obs:50start}. There is no sensitivity to the starting point of the algorithm, and after a couple of hundred observations, the estimates all concentrate around the true value. 
+As the gradient step size decreases, the estimates stay around the true value following autocorrelated patterns that are common to all trajectories.
+
+{\em Asymptotic normality.}
+The inference procedure was performed on 50 different data sets simulated with the same $\theta_*$. 
+The 50 estimates were obtained starting from the same starting point (fixed to $\theta_*$, as Figure \ref{fig:1obs:50start} shows no sensitivity to the starting point). Figure \ref{fig:50obs:1start} shows the results for the raw and the averaged estimates. 
+ The averaged estimates $(\widetilde \parvec_k)_{k\geqslant 0}$ consist in averaging the values produced by the estimation procedure after a burning phase of $n_0$ time steps (here $n_0 =300$ time steps). 
+ This procedure allows to obtain an estimator whose convergence rate does not depend on the step sizes chosen by the user, see \cite{polyak1992acceleration,kushner1997stochastic}. For all $0 \leqslant k\leqslant n_0$, $\widetilde \parvec_k = \widehat\parvec_k $ and for all $k>n_0$,
+\[
+\widetilde \parvec_k = \frac{1}{k-n_0}\sum_{j= n_0+1}^k\widehat\parvec_j\eqsp. 
+\]
+The estimated distribution of the final estimates seems to be Gaussian, centered around the true value. 
+This conjecture, which would extend the asymptotic normality obtained in \cite{gloaguen2021pseudo} for the original pseudo-marginal PaRIS, should be proven in future works.
+ 
+{\em Step size influence.} To illustrate the  influence of the gradient step sizes, different settings are considered. 
+In each scenario, the sequence $(\gamma_k)_{k\geqslant 0}$ is given by
+\begin{equation*}
+\gamma_k = \gamma_0 \1_{\left\lbrace k \leq n_0 \right\rbrace} + \frac{\gamma_0}{(k - n_0)^{\kappa}}\1_{\left\lbrace k > n_0 \right\rbrace}\eqsp,
+\end{equation*}
+where $\gamma_0 = 0.5$. In this experiment $\kappa\in\{0.5,0.6,0.7,0.8,0.9,1\}$.
+The results are shown in Figure~\ref{fig:1obs:1start:6Grads}. 
+As expected, the raw estimator shows different rates of convergence depending on $\kappa$, whereas the averaged estimator has the same behavior in all cases. 
+
+\begin{figure}
+\centering
+\includegraphics[width = 0.7\textwidth]{SINE_data.pdf}
+\caption{\label{fig:data} Data set simulated according to the SINE process, observed with noise at discrete time steps.}
+\end{figure}
+\begin{figure}
+\centering
+\begin{tabular}{cc}
+\includegraphics[width = 0.4\textwidth]{oneObs_severalStarts.pdf}&
+\includegraphics[width = 0.4\textwidth]{gradient_steps.pdf}
+\end{tabular} 
+\caption{\label{fig:1obs:50start}(\textit{Left}) online estimation of $\parvec$ for the data set presented in Figure~\ref{fig:data}. The algorithm is performed from 50 starting points. (\textit{Right}) The gradient step sizes (defined in equation \eqref{eq:par:update}).}
+\end{figure}
+\begin{figure}
+\centering
+\begin{tabular}{ccc}
+\includegraphics[width = 0.32\textwidth]{severalObs_oneStart.pdf}&
+\includegraphics[width = 0.32\textwidth]{severalObs_oneStart_smooth.pdf}&
+\includegraphics[width = 0.32\textwidth]{severalObs_oneStart_smooth_dens.pdf}
+\end{tabular}
+\caption{\label{fig:50obs:1start}(\textit{Left}) online estimation of $\parvec$ for 50 different simulated data sets as presented in Figure \ref{fig:data}. The algorithm is performed from 1 starting point with the gradient step size shown in Figure \ref{fig:1obs:50start}. (\textit{Center}) Averaged estimator, where $\hat{\parvec}$ is averaged after a burning phase of 300 time steps. (\textit{Right}) Empirical distribution of $\hat{\parvec}$. The red line is the value of $\parvec^*$.}
+\end{figure}
+
+\begin{figure}
+\centering
+\begin{tabular}{cc}
+\includegraphics[width = 0.4\textwidth]{oneObs_oneStart_severalGrads.pdf}&
+\includegraphics[width = 0.4\textwidth]{oneObs_oneStart_severalGrads_smooth.pdf}
+\end{tabular}
+\caption{\label{fig:1obs:1start:6Grads}(\textit{Left}) online estimation of $\theta$ for the data set presented in Figure \ref{fig:data}, with different decreasing rates values $\kappa$. (\textit{Right}) Averaged estimator, where $\hat{\parvec}$ is averaged after a burning phase of 300 time steps.}
+\end{figure}
+
+
+
+
+\begin{figure}
+\begin{center}
+\includegraphics[scale = 0.4]{smoothing_hares_lynx.pdf}
+\end{center}
+\caption{\label{fig:LV:hares:lynx} Estimated Hares-Lynx abundances using the Hudson bay company data set. Both our IS-PaRIS smoother and the poor man smoother are performed to approximate the MLE and solve the tracking problem. Blue crosses show the observations.}
+\end{figure}
+
 \subsection{Multidimensional diffusion processes: Stochastic Lotka-Volterra model}
 \label{sec:simu:LV}
 
@@ -703,73 +832,19 @@ The proposed algorithm manages to estimate efficiently the actual abundance from
 \subsubsection*{Hares and lynx data}
 
 In this section, the model defined by equations \eqref{eq:LV:SDE} and \eqref{eq:LV:obs:model} is applied to the Hudson Bay company data, giving the number of hares and lynx trapped in Canada during the first 20 years of the 20th century (available in \cite{odum1971fundamentals}). As parameters are unknown in this case, maximum likelihood inference is performed using an EM \cite{dempster1977maximum} algorithm to obtain an estimate $\hat{\theta}$.
-As explained in the introduction, it is then required to estimate iteratively, from an initial guess $\theta_0$, the conditional expectation given in equation \eqref{eq:EM:E:step}.
-This E step is performed using the particle smoother introduced in this paper.
-At each iteration, the estimator $\theta_k$ is updated by finding a parameter $\theta_{k+1}$ for which $\hat Q(\theta_{k+1},\theta_k) >  \hat Q(\theta_k,\theta_k)$, with  a gradient free evolution strategy \cite{hansen2006cma}. The last estimate $\hat{\theta}$ obtained with this EM algorithm  is used to  estimate the actual abundances in the model (similarly to the synthetic data case). Figure \ref{fig:LV:hares:lynx} shows  estimates of $\pE_{\hat{\theta}}\left[ X_k \vert Y_{0:n}\right]$ obtained with 30 independent runs of our algorithm. 
+The E step is performed using the BIS smoother.
+At each iteration, the estimator $\theta_k$ is updated by finding a parameter $\theta_{k+1}$ for which $\hat Q(\theta_{k+1},\theta_k) >  \hat Q(\theta_k,\theta_k)$, with  a gradient free evolution strategy \cite{hansen2006cma}. 
+The last estimate $\hat{\theta}$ obtained with this EM algorithm  is used to  estimate the actual abundances in the model (similarly to the synthetic data case). 
+Figure \ref{fig:LV:hares:lynx} shows  estimates of $\pE_{\hat{\theta}}\left[ X_k \vert Y_{0:n}\right]$ obtained with 30 independent runs of our algorithm. 
 The particle smoother is implemented using $N = 200$ particles and $\tilde{N}=20$. 
-The replicates show that the variance of our estimator (for a given set of observations) is much smaller than the one of the {\em poor man smoother}. This algorithm approximates the smoothing distributions at time $n$ by the weighted samples  where the particle trajectories $\epart{0:n}{\ell}$, $1\leqslant \ell \leqslant N$,  are obtained using the ancestral line of each last sample. The variance of the estimates based on this ancestor tree is doomed to failure due to the degeneracy caused by the successive resampling steps.
-
-\section{Online recursive maximum likelihood}
+The replicates show that the variance of our estimator (for a given set of observations) is much smaller than the one of the {\em poor man smoother}. 
+%This algorithm approximates the smoothing distributions at time $n$ by the weighted samples  where the particle trajectories $\epart{0:n}{\ell}$, $1\leqslant \ell \leqslant N$,  are obtained using the ancestral line of each last sample. The variance of the estimates based on this ancestor tree is doomed to failure due to the degeneracy caused by the successive resampling steps.
 
 %\subsection{Particle based online estimation}
 %\label{sec:tangent:filter}
 
-This section focuses on the context of online recursive maximum likelihood, i.e., where new observations are used only once to update the estimator of the unknown parameter $\parvec$.
-%We first fully describe the algorithm and its particle based implementation. At the end of the section, we give the main arguments behind the method.
-Following \cite{legland1997recursive}, the idea is the build a sequence $\left\lbrace\parvec_k\right\rbrace_{k\geq 0}$ as follows. First, set the initial value of the parameter estimate: $\parvec_0$. The, for each new observation $Y_{k},~k\geqslant 1$, define
-$$
-\theta_{k} = \theta_{k-1} + \gamma_k \deriv \logllh{\parvec}(Y_k \mid Y_{1:k - 1}) \eqsp,
-$$
-where $\logllh{\parvec}(Y_k \mid Y_{1:k - 1})$ is the log likelihood for the new observation given all the past, and $\left\lbrace\gamma_k\right\rbrace_{k\geqslant}$ are positive step sizes such that $\sum_{k \geqslant 1}\gamma_k = \infty$ and $\sum_{k \geqslant 1}\gamma_k^2 < \infty$. The practicalt implementation of such an update relies on the following identity:
-\begin{equation}
-\deriv \logllh{\parvec}(Y_k \mid Y_{1:k - 1})  
-=  \frac{\pred{k;\parvec}[\deriv \md{k;\parvec}] + \filtderiv{k;\parvec}[\md{k;\parvec}]}{\pred{k;\parvec}[\md{k;\parvec}]}\eqsp,
-\label{eq:online:gradient}
-\end{equation}
-where $\pred{k;\parvec} = \phi_{k;\parvec \mid k - 1}$ is the predictive distribution  and 
-$$\filtderiv{k;\parvec}[\md{k;\parvec}] = \post{0:k;\parvec \mid k - 1} [\af{0:k;\parvec} \md{k;\parvec}] - \pred{k;\parvec}[\md{k;\parvec}] \times \post{0:k;\parvec \mid k - 1 }[\af{0:k}]\eqsp,$$
-with
-\begin{equation}
-\label{eq:complete:gradient:log}
-\af{0:k}(x_{0:k}) =  \sum_{j = 0}^{k - 1} \deriv\log \qg{j, \parvec}(x_j,x_{j+1})\eqsp.
-\end{equation}
-%$$\filtderiv{k;\parvec}[\md{k;\parvec}] = \int \md{k;\parvec}(x_k) \deriv \pred{k;\parvec}(x_k) \rmd x_k,$$
-The signed measure $\filtderiv{k;\parvec}$ is known as the \textit{tangent filter}, see \cite[Chapter~10]{cappe2005inference}, \cite{delmoral2015uniform} or \cite{olsson2020particle}. 
-%In order to build a particle-based approximation of $\eqref{eq:online:gradient}$, we can remark that
-%$$\filtderiv{k;\parvec}[\md{k;\parvec}] = \post{0:k;\parvec \mid k - 1} [\af{0:k;\parvec} \md{k;\parvec}] - \pred{k;\parvec}[\md{k;\parvec}] \times \post{0:k;\parvec \mid k - 1 }[\af{0:k}]\eqsp,$$
-%where 
-%\begin{equation}
-%\label{eq:complete:gradient:log}
-%\af{0:k}(x_{0:k}) =  \sum_{j = 0}^{k - 1} \deriv\log \qg{j, \parvec}(x_j,x_{j+1})\eqsp.
-%\end{equation}
-Using the tower property  and the backward decomposition \eqref{eq:property:backward} yields
-\begin{equation} 
-\label{eq:tangent:identity}
-\filtderiv{k;\parvec}[\md{k;\parvec}] = \pred{k;\parvec}\left[\left(\tstat{k} [\af{0:k}] - \pred{k;\parvec}[\tstat{k}[\af{0:k}]]\right) \md{k;\parvec}\right]\eqsp.
-\end{equation}
-Therefore, a particle filter, can be used to compute the following seuqential Monte Carlo approximation:
-$$
-\pred{k}^N[\md{k;\parvec}] = \frac{1}{N}\sum_{\ell = 1}^N \md{k;\parvec}(\epart{n}{\ell})\eqsp,\eqsp \pred{k}^N[\deriv \md{k;\parvec}] = \frac{1}{N}\sum_{\ell = 1}^N \deriv \md{k;\parvec}(\epart{k}{\ell})\eqsp.
-$$
-In addition, the thangent filter can be approximated using a backward sampling procedure, based on the backward statistic associated with  the functional \eqref{eq:complete:gradient:log}:
-\begin{equation} 
-\label{eq:tangent:identity:part:linear}
-\eta_{k;\parvec}^{N}[\md{k;\parvec}] = \frac{1}{\N}\sum_{\ell=1}^\N\tau_\ell^k \md{k;\parvec}
-(\epart{\ell}{k}) - \left(\frac{1}{\N}\sum_{\ell=1}^\N\tau_\ell^n\right)\left(\frac{1}{\N}\sum_{\ell=1}^\N \md{k;\parvec}(\epart{\ell}{k})\right)\eqsp.
-\end{equation}
-Plugging these estimates in equation \eqref{eq:online:gradient} allows to perform the online recursive algorithm. It is worth noting that, in the context of this paper where $\qg{k}$ cannot be evaluated pointwise, one cannot expect to know the functional \eqref{eq:complete:gradient:log}, which involves the gradient of this quantity. 
-In section \ref{sec:xp:tangent:filter}, we illustrate that we can plug-in an estimate of this functionnal instead. The rationale motivating this algorithm relies on the following expression of the normalized loglikelihood:
-$$
-\frac{1}{n} \deriv \logllh{\parvec}(Y_{1:n}) = \frac{1}{n} \sum_{k = 1}^n \deriv \logllh{\parvec}\left(Y_k \mid Y_{1:k - 1}\right)\eqsp.$$
-Moreover, under strong mixing assumptions, for all  $\parvec \in \parvec$, the extended process $\{ (X_n, Y_n, \pred{n}, \filtderiv{n}) \}_{n \geqslant 0}$ is an ergodic Markov chain and for all $\parvec \in \parvec$, the normalized score $\deriv \logllh{\parvec}(Y_{1:n})/n$  converges almost surely to a limiting quantity $\lambda(\parvec, \parvec_{\star})$ such that, under identifiability constraints, $\lambda(\parvec_{\star}, \parvec_{\star}) = 0$. 
-A gradient ascent algorithm cannot be designed as the limiting function $\parvec \mapsto \lambda(\parvec, \parvec_{\star})$ is not available explicitly. 
-However, solving the equation $\lambda(\parvec_{\star}, \parvec_{\star}) = 0$ may be cast into the framework of \emph{stochastic approximation} to produce parameter estimates using the \emph{Robbins-Monro algorithm}
-\begin{equation}
-\label{eq:par:update}
-\parvec_{k} = \parvec_{k - 1} + \gamma_{k} \zeta_{k}\eqsp, \quad n\geqslant 0\eqsp, 
-\end{equation}
-where $\zeta_{k}$ is a noisy observation of $\lambda(\parvec_{k - 1}, \parvec_{\star})$, equal to \eqref{eq:online:gradient}.  
-In the case of a finite state space $\set{X}$ the algorithm was studied in~\cite{legland1997recursive}, which also provides assumptions under which the sequence $\{\parvec_{n}\}_{n\geqslant 0}$ converges towards the parameter $\parvec_{\star}$ (see also \cite{tadic2010analyticity} for refinements). 
+
+
 %
 %
 %As noted for instance in \cite[Section~2]{delmoral2015uniform} and \cite{olsson2017efficient}, for all $\parvec\in\parspace$ and all bounded and measurable function $f_{0:n}$ on $(\Xset)^{n+1}$,
@@ -834,78 +909,7 @@ In the case of a finite state space $\set{X}$ the algorithm was studied in~\cite
 %
 
 
-\subsection{Experiments: online estimation in the SINE model}
-\label{sec:xp:tangent:filter}
-Online recursive maximum likelihood using pseudo marginal SMC is illustrated for the SINE model of section \ref{sec:simu:SINE}. 
-As mentionned, a GPE estimator of the transition density can be computed. 
-Following the idea of this computation, one can actually obtain an unbiased estimated of the gradient of the log-transition density, and thus compute and unbiased estimate of the key quantity given in \eqref{eq:complete:gradient:log}. 
-To the best of our knowledge, this estimator is new, and given in appendix \ref{sec:filter:SDE}.
 
-A simulated data set is displayed in Figure~\ref{fig:data}, where $\parvec_* = \pi/4$. The solution to the SINE SDE is sampled at times $(t_k)_{0\leqslant k\leqslant n}$  using the Exact algorithm of \cite{beskos2006retrospective}. 
-For all  $0\leqslant k \leqslant n-1$,  $\widehat{q}_{k,\parvec}$ and the GPE unbiased estimator of $\nabla_{\parvec}q_{k,\parvec}(x,y)$ are estimated using $M = 30$ independent Monte Carlo replications of the general Poisson estimator. 
-The estimations of $\parvec_*$ are given for $50$ independent runs started at random locations $\theta_0$ with $\N = 100$ particles and $\K = 2$ backward samples. Following \cite{gloaguen2018online}, the proposal distribution of the particle filter is obtained using an approximation of the fully adapted particle filter where $\hd{k,\parvec}$ is replaced by the its Euler scheme approximation.
-
-
-{\em Sensitivity to the starting point $\hat{\parvec}_0$.}
-The inference procedure was performed on the same data set from 50 different starting points uniformly chosen in $(0,2\pi)$. The gradient step size $\gamma_k$ of equation \eqref{eq:par:update} was chosen constant (and equal to 0.5) for the first 300 time steps, and then decreasing with a rate proportional to $k^{-0.6}$. Results are given Figure~\ref{fig:1obs:50start}. There is no sensitivity to the starting point of the algorithm, and after a couple of hundred observations, the estimates all concentrate around the true value. As the gradient step size decreases, the estimates stay around the true value following autocorrelated patterns that are common to all trajectories.
-
-{\em Asymptotic normality.}
-The inference procedure was performed on 50 different data sets simulated with the same $\theta_*$. The 50 estimates were obtained starting from the same starting point (fixed to $\theta_*$, as Figure \ref{fig:1obs:50start} shows no sensitivity to the starting point). Figure \ref{fig:50obs:1start} shows the results for the raw and the averaged estimates. 
- The averaged estimates $(\widetilde \parvec_k)_{k\geqslant 0}$ consist in averaging the values produced by the estimation procedure after a burning phase of $n_0$ time steps (here $n_0 =300$ time steps). This procedure allows to obtain an estimator whose convergence rate does not depend on the step sizes chosen by the user, see \cite{polyak1992acceleration,kushner1997stochastic}. For all $0 \leqslant k\leqslant n_0$, $\widetilde \parvec_k = \widehat\parvec_k $ and for all $k>n_0$,
-\[
-\widetilde \parvec_k = \frac{1}{k-n_0}\sum_{j= n_0+1}^k\widehat\parvec_j\eqsp. 
-\]
-As expected, the estimated distribution of the final estimates tends to be Gaussian, centered around the true value.
- 
-{\em Step size influence.} To illustrate the  influence of the gradient step sizes, different settings are considered. In each scenario, the sequence $(\gamma_k)_{k\geqslant 0}$ is given by
-\begin{equation*}
-\gamma_k = \gamma_0 \1_{\left\lbrace k \leq n_0 \right\rbrace} + \frac{\gamma_0}{(k - n_0)^{\kappa}}\1_{\left\lbrace k > n_0 \right\rbrace}\eqsp,
-\end{equation*}
-where $\gamma_0 = 0.5$. In this experiment $\kappa\in\{0.5,0.6,0.7,0.8,0.9,1\}$.
-The results are shown in Figure~\ref{fig:1obs:1start:6Grads}. 
-As expected, the raw estimator shows different rates of convergence depending on $\kappa$, whereas the averaged estimator has the same behavior in all cases. 
-
-\begin{figure}
-\centering
-\includegraphics[width = 0.7\textwidth]{SINE_data.pdf}
-\caption{\label{fig:data} Data set simulated according to the SINE process, observed with noise at discrete time steps.}
-\end{figure}
-\begin{figure}
-\centering
-\begin{tabular}{cc}
-\includegraphics[width = 0.4\textwidth]{oneObs_severalStarts.pdf}&
-\includegraphics[width = 0.4\textwidth]{gradient_steps.pdf}
-\end{tabular} 
-\caption{\label{fig:1obs:50start}(\textit{Left}) online estimation of $\parvec$ for the data set presented in Figure~\ref{fig:data}. The algorithm is performed from 50 starting points. (\textit{Right}) The gradient step sizes (defined in equation \eqref{eq:par:update}).}
-\end{figure}
-\begin{figure}
-\centering
-\begin{tabular}{ccc}
-\includegraphics[width = 0.32\textwidth]{severalObs_oneStart.pdf}&
-\includegraphics[width = 0.32\textwidth]{severalObs_oneStart_smooth.pdf}&
-\includegraphics[width = 0.32\textwidth]{severalObs_oneStart_smooth_dens.pdf}
-\end{tabular}
-\caption{\label{fig:50obs:1start}(\textit{Left}) online estimation of $\parvec$ for 50 different simulated data sets as presented in Figure \ref{fig:data}. The algorithm is performed from 1 starting point with the gradient step size shown in Figure \ref{fig:1obs:50start}. (\textit{Center}) Averaged estimator, where $\hat{\parvec}$ is averaged after a burning phase of 300 time steps. (\textit{Right}) Empirical distribution of $\hat{\parvec}$. The red line is the value of $\parvec^*$.}
-\end{figure}
-
-\begin{figure}
-\centering
-\begin{tabular}{cc}
-\includegraphics[width = 0.4\textwidth]{oneObs_oneStart_severalGrads.pdf}&
-\includegraphics[width = 0.4\textwidth]{oneObs_oneStart_severalGrads_smooth.pdf}
-\end{tabular}
-\caption{\label{fig:1obs:1start:6Grads}(\textit{Left}) online estimation of $\theta$ for the data set presented in Figure \ref{fig:data}, with different decreasing rates values $\kappa$. (\textit{Right}) Averaged estimator, where $\hat{\parvec}$ is averaged after a burning phase of 300 time steps.}
-\end{figure}
-
-
-
-
-\begin{figure}
-\begin{center}
-\includegraphics[scale = 0.4]{smoothing_hares_lynx.pdf}
-\end{center}
-\caption{\label{fig:LV:hares:lynx} Estimated Hares-Lynx abundances using the Hudson bay company data set. Both our IS-PaRIS smoother and the poor man smoother are performed to approximate the MLE and solve the tracking problem. Blue crosses show the observations.}
-\end{figure}
 
 \section{Discussion}
 \label{sec:discussion} 
