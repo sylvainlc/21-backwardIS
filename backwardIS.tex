@@ -542,7 +542,7 @@ In addition, as shown in Section~\ref{sec:simu:RNN} and \ref{sec:simu:SINE}, thi
 \label{sec:simu:RNN}
 
 
-Recurrent Neural Networks (RNN) were first introduced in \cite{Mozer1989AFB} to model time series using a hidden context state  which is appealing to describe short time dependencies. Although they are poorly designed for problems  requiring long term memory due to vanishing and exploding gradients \cite{Bengio1994LearningLD} and they have been extended by Long Short Term Memory  \cite{Hochreiter1997LongSM} and Gated Recurrent Unit (GRU) \cite{Cho2014LearningPR}, these models  are widely used in practice \cite{mikolov2010recurrent, sutskever2011generating, sutskever2014sequence}.
+Recurrent Neural Networks (RNN) were first introduced in \cite{Mozer1989AFB} to model time series using a hidden context state  which is appealing to describe short time dependencies. Although they are poorly designed for problems  requiring long term memory due to vanishing and exploding gradients \cite{Bengio1994LearningLD}, they have been extended by Long Short Term Memory  \cite{Hochreiter1997LongSM} and Gated Recurrent Unit (GRU) \cite{Cho2014LearningPR}, which are widely used in practice \cite{mikolov2010recurrent, sutskever2011generating, sutskever2014sequence}.
 
 In this section, we propose a general state space model based on a RNN architecture, as follows.  The hidden state is initialized as $X_0 \sim \mathcal{N}(0,\Sigma)$ and for all $k\geqslant 1$,
 $$
@@ -552,7 +552,7 @@ where $W_{1}$, $W_{2}$, $W_3$ and $b$ and $c$ are the weight matrices and bias, 
 
 
 Table~\ref{table:RNN_exp} presents the results for a backward IS smoother versus a Poor Man's smoother when estimating $\mathbb{E}[X_k|Y_{0:n}]$, for $k \in \{0,...,n\}$. The  Poor Man's smoother estimates the joint smoothing distribution using the ancestral lines of each particle at time $n$, see for instance \cite{douc2014nonlinear} for discussions on the path degeneracy issue.
-To generate a sequence of states and observations $(X_{0:n},Y_{0:n})$ from the stochastic RNN, we first trained a deterministic one-layer RNN on 20,000 samples of the weather dataset\footnote{https://www.bgc-jena.mpg.de/wetter/}, and then sampled data post-training.  We considered diagonal covariance matrices $\Sigma$, $Q$ and $R$, with the same variance along all dimensions equal to 0.1 to generate such data. 
+To generate a sequence of states and observations $(X_{0:n},Y_{0:n})$ from the stochastic RNN, we first trained a deterministic one-layer RNN on 20,000 samples of the weather dataset\footnote{https://www.bgc-jena.mpg.de/wetter/}, and then sampled data post-training. The dataset is a multi-variate time-series with 4 input and output features (temperature, air pressure, air humidity, air density): the sequence of observations $(Y_{0:n})$ is consequently made of 4D vectors, while the sequence of the RNN hidden states $(X_{0:n})$ is usually made of higher-dimensional vectors. We considered diagonal covariance matrices $\Sigma$, $Q$ and $R$, with the same variance along all dimensions equal to 0.1 to generate such data. $\Sigma$ and $Q$ are squared matrices with dimension equal to the dimension of the states $(X_{0:n})$, while $R$ is a squared matrix of dimension equal to the dimension of the observations $(Y_{0:n})$. 
 
 The table displays two quantities, when performing 100 runs for each smoothing algorithm: (i) the empirical estimation of the Mean Squared error $\mathbb{E}[\|X_0 - \mathbb{\widehat{E}}[X_0|Y_{0:n}]\|^2]$ and (ii) the empirical estimation of the average Mean Squared Error $\mathbb{E}[\sum_{k=0}^{n}\|X_k - \mathbb{\widehat{E}}[X_k|Y_{0:n}]\|^2]/(n+1)$.
 The experiments were done for RNNs of hidden dimension 32 and 64, and for a sequence of observations with a total length of 200 time steps: the table then presents the evaluation for $n=49$ (sequence truncated at 50 observations), $n=99$ (sequence truncated at 100 observations), and $n=199$ (full sequence). 
@@ -572,7 +572,7 @@ $\|X_0 - \mathbb{\widehat{E}}[X_0|Y_{0:199}]\|^2$ & 0.2147 & 0.1997 & 0.1969 & 0
 $ \sum_{k=0}^{199} \|X_k - \mathbb{\widehat{E}}[X_k|Y_{0:199}]\|^2/200$ & 0.2551 & 0.2056  & 0.1822 & 0.1427 \\
 \hline
 $\|X_0 - \mathbb{\widehat{E}}[X_0|Y_{0:99}]\|^2$ & 0.2135 & 0.1997 & 0.1914 & 0.1649 \\
-$ \sum_{k=0}^{99} \|X_k - \mathbb{\widehat{E}}[X_k|Y_{0:99}]\|^2/100$ & 0.2531 & 0.2189 & 0.1914 & 0.1649\\
+$ \sum_{k=0}^{99} \|X_k - \mathbb{\widehat{E}}[X_k|Y_{0:99}]\|^2/100$ & 0.2531 & 0.2189 & 0.1775 & 0.1519\\
 \hline
 $\|X_0 - \mathbb{\widehat{E}}[X_0|Y_{0:49}]\|^2$ & 0.2018 & 0.1997 & 0.1707 & 0.1650\\
 $\sum_{k=0}^{49} \|X_k - \mathbb{\widehat{E}}[X_k|Y_{0:49}]\|^2/50$ & 0.2307 & 0.2147 & 0.1633 & 0.1589\\
