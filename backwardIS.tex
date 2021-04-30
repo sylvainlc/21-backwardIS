@@ -250,7 +250,7 @@ Among SMC methods, novel algorithms has been designed in the last decades to sol
 These approaches, that comes with strong theoretical guarantees (\cite{delmoral2010backward, douc2011sequential, dubarry2013nonasymptotic, gerber2017convergence}), require the time horizon and all observations to be available  to initialize a backward information filter, and, thus, perform the smoothing.
 The particle-based rapid incremental smoother \cite{olsson2017efficient} is an online version of \cite{douc2011sequential}, specifically designed to approximate conditional expectations of additive functionals. 
 This algorithm relies on a backward sampling procedure performed on the fly thanks to the well known acceptance rejection sampling. 
-This online smoother was proven to be strongly consisteny, asymptoticaly normal, and with a control of the asymptotic variance, when it is performed together with the vanilla bootstrap filter \cite{gordon1993novel}. 
+This online smoother was proven to be strongly consistent, asymptotically normal, and with a control of the asymptotic variance, when it is performed together with the vanilla bootstrap filter \cite{gordon1993novel}. 
 In \cite{olsson2020particle}, the authors show how this algorithm can be used to performed recursive maximum likelihood in state space models.
 However, a major drawback of this approach is the necessity to upper bound the transition density of the hidden signal, as it is required to performed acceptance rejection sampling.
 
@@ -264,7 +264,7 @@ More recently, the online algorithm of \cite{olsson2017efficient} was extended t
 This idea was extended in \cite{gloaguen2021pseudo}, who introduced a pseudo-marginal online smoother to approximate conditional expectations of additive functionals of the hidden states in a very general setting: the user can only evaluate (possibly biased) approximations of the transition density and of the marginal conditional likelihood. 
 The online algorithm of \cite{gloaguen2021pseudo} may be used to approximate expectations of additive functionals under the smoothing distributions by processing the data stream online.
 
-However, as fo the PaRIS algorihm,  when using this pseudo-marginal approach, where transition densities are intractable  the user needs to be able to sample exactly from the associated pseudo-marginal backward kernel. 
+However, as for the PaRIS algorihm,  when using this pseudo-marginal approach, where transition densities are intractable, the user needs to be able to sample exactly from the associated pseudo-marginal backward kernel. 
 This step is again done by rejection sampling, and therefore requires that the estimate of the transition density and of the marginal conditional  likelihood  are almost surely positive and upper bounded.  
 In practice, these assumptions are very restrictive. %and 
 For instance, in the context of diffusion processes, they narrow the possible models to the class of diffusions satisfying the Exact algorithm conditions of \cite{beskos2006retrospective}, for which  General Poisson Estimators (GPEs) \cite{fearnhead2008particle} already lead to eligible unbiased estimators.  
@@ -277,7 +277,7 @@ The paper is organized as follows. Section~\ref{sec:model} displays the latent d
 \begin{itemize}
 \item The proposed approach can be used for any latent data models such as hidden Markov models, or recurrent neural networks with unobserved latent states. Even when the transition densities are available, we show empirically that our backward importance sampling is a computationally efficient solution to solve the online smoothing problem (section \ref{sec:simu:RNN}).
 \item When considering the pseudo-marginal approach, we extend the use of Wald's trick to the backward kernel, and therefore show that our approach can be used in cases where the estimators of the unknown densities  are not positive by construction. This allows to perform sequential Monte Carlo smoothing in models for which no solutions were proposed in the literature to the best of our knowledge, such as multivariate partially observed diffusion processes (section \ref{sec:simu:LV}).
-\item We show that the proposed approach outperforms the existing method in terms of computational efficiency and should be considered even when the acceptance rejection procedure can be performed (section \ref{sec:simu:SINE}). 
+\item We show that the proposed approach outperforms the existing methods in terms of computational efficiency and should be considered even when the acceptance rejection procedure can be performed (section \ref{sec:simu:SINE}). 
 \item We show how the proposed method allows for efficient online recursive maximum likelihood in the context of partially observed diffusion processes \ref{sec:simu:tangent:filter}. This experiment also allows to conjecture for the asymptotic normality of our estimator, which would be an extension of the results of \cite{gloaguen2021pseudo}.
 \end{itemize}
 
@@ -364,7 +364,7 @@ For additive functionals, this statistic satisfies the two following key identit
 \tstat{k}\left[\af{0:k}\right](X_{k}) &= \pE\left[\left.\tstat{k-1}\left[\af{0:(k-1)}\right]\left(X_{k-1}\right) + \addf{k-1}\left(X_{k-1},X_{k}\right)\right|X_{k},Y_{0:k-1} \right]\eqsp, \label{eq:property:backward}
 \end{align} 
 where $\addf{k-1}$ is the function defined in \eqref{eq:additive:functional}.
-Property \eqref{eq:property:filt:smooth} essentialy tells us that the target is the filtering expectation of a well chosen statistic, while property \eqref{eq:property:filt:smooth} provides a recursion to compute this statistics. 
+Property \eqref{eq:property:filt:smooth} essentialy tells us that the target is the filtering expectation of a well chosen statistic, while property \eqref{eq:property:filt:smooth} provides a recursion to compute these statistics. 
 These two properties suggest an \textit{online} procedure to solve the online smoothing problem. Starting at time 0, at each step $k$, this procedure aims at (i) computing the filtering distribution and (ii) computing the backward statistics. %In general, these computations cannot be performed, as they involve intractable integrals. 
 %An approximation procedure will be designed through Sequential Monte Carlo methods.
 %In the following, $\parvec$ may be  dropped from the notations for better clarity when there is no possible confusion. In many situations, SMC methods cannot be used straightforwardly as the transition densities $\hd{k}$, $0\leqslant k \leqslant n-1$ and the marginal likelihood of the observations $\md{k}$, $0\leqslant k \leqslant n-1$, are unknown. Pseudo-marginalisation was originally proposed in \cite{beaumont:2003} in the framework of MCMC methods, and further analyzed in \cite{andrieu:robert:2009}.  
@@ -386,7 +386,7 @@ Its use in Monte Carlo methods, and the related theoretical guarantees, have bee
 
 An appealing application for online smoothing is the context of recursive maximum likelihood, i.e., where new observations are used only once to update the estimator of the unknown parameter $\parvec$.
 %We first fully describe the algorithm and its particle based implementation. At the end of the section, we give the main arguments behind the method.
-Following \cite{legland1997recursive}, the idea is the build a sequence $\left\lbrace\parvec_k\right\rbrace_{k\geq 0}$ as follows. First, set the initial value of the parameter estimate: $\parvec_0$. The, for each new observation $Y_{k},~k\geqslant 1$, define
+Following \cite{legland1997recursive}, the idea is the build a sequence $\left\lbrace\parvec_k\right\rbrace_{k\geq 0}$ as follows. First, set the initial value of the parameter estimate: $\parvec_0$. Then, for each new observation $Y_{k},~k\geqslant 1$, define
 $$
 \theta_{k} = \theta_{k-1} + \gamma_k \deriv \logllh{\parvec}(Y_k \mid Y_{1:k - 1}) \eqsp,
 $$
