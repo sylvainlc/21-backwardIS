@@ -230,7 +230,13 @@
 
 
 \begin{abstract}
-This paper proposes a new Sequential Monte Carlo algorithm to perform maximum likelihood estimation of state space models with unknwon  dynamics. Obtaining low variance estimators of expectations under the posterior distributions of the unobserved states given the observations is challenging when the transition densities of the states cannot be evaluated pointwise. In this paper, following recent theoretical results for pseudo-marginal sequential Monte Carlo smoothers, a pseudo-marginal backward importance sampling step is introduced to estimate such expectations. This new step allows to reduce very significantly the computational time  of the existing numerical solutions based on an acceptance-rejection procedure for similar performance. In the context of multivariate stochastic differential equations, the proposed algorithm makes use of unbiased estimates of the unknown transition densities under much weaker assumptions than standard alternatives. The performance of this estimator is assessed in particular in the case of a partially observed stochastic Lotka-Volterra model. The algorithm is also evaluated in the case of high-dimensional discrete-time latent data models and for recursive maximum likelihood estimation.
+This paper proposes a new Sequential Monte Carlo algorithm to perform maximum likelihood estimation of state space models with unknwon  dynamics. 
+Obtaining low variance estimators of expectations under the posterior distributions of the unobserved states given the observations is challenging when the transition densities of the states cannot be evaluated pointwise. 
+In this paper, following recent theoretical results for pseudo-marginal sequential Monte Carlo smoothers, a pseudo-marginal backward importance sampling step is introduced to estimate such expectations. 
+This new step allows to reduce very significantly the computational time  of the existing numerical solutions based on an acceptance-rejection procedure for similar performance. 
+In the context of multivariate stochastic differential equations, the proposed algorithm makes use of unbiased estimates of the unknown transition densities under much weaker assumptions than standard alternatives. 
+The performance of this estimator is assessed in particular in the case of a partially observed stochastic Lotka-Volterra model. 
+The algorithm is also evaluated in the case of high-dimensional discrete-time latent data models and for recursive maximum likelihood estimation.
 \end{abstract}
 
 
@@ -534,6 +540,7 @@ Plugging these estimates in equation \eqref{eq:online:gradient} allows to perfor
 
 
 \subsection{Positive transition densities estimates}
+\label{sec:wald:trick}
 In this section, we propose to use Wald’s identity for martingales to obtain an  estimator which is guaranteed to be positive.  This step is not required if $\hatqg{k}\langle z\rangle(x,x')$ is positive by construction but this is not necessarily true.
  Wald's trick was for instance applied in \cite{fearnhead2010random} to solve the filtering problem in the context of Poisson based estimators for partially observed diffusions. Our estimator is defined up to an unknown constant of proportionality, which is removed when the importance weights are normalized in equation \eqref{eq:update:paris:marginal:is}. 
 This approach, rather than setting negative weights to 0, which would lead to a biased estimate, uses extra simulation to obtain positiveness. 
@@ -821,7 +828,8 @@ As expected, the raw estimator shows different rates of convergence depending on
 \subsection{Multidimensional diffusion processes: Stochastic Lotka-Volterra model}
 \label{sec:simu:LV}
 
-This section sets the focus on a stochastic model describing in continuous time the population dynamics in a predator-prey system, as fully discussed in \cite{hening2018persistence}. The bivariate process $(X_t)_{t\geqslant 0}$ of predators and preys abundances is assumed to follow the stochastic  Lotka-Volterra model:
+This section sets the focus on a stochastic model describing in continuous time the population dynamics in a predator-prey system, as fully discussed in \cite{hening2018persistence}. 
+The bivariate process $(X_t)_{t\geqslant 0}$ of predators and preys abundances is assumed to follow the stochastic  Lotka-Volterra model:
 \begin{equation}
 \label{eq:LV:SDE}
 \rmd X_t = \alpha_\parvec(X_t) \rmd t + \begin{pmatrix}X_1(t) & 0 \\ 0 & X_2(t)\end{pmatrix} \Gamma \rmd \W_t\eqsp,\
@@ -835,16 +843,21 @@ In this context, the unknow parameter to be estimated is $\parvec = ( a_{10}, a_
 Y_{t_k} = \begin{pmatrix} \text{c}_1X_1(t_k)\mathrm{e}^{\epsilon^{(1)}_{t_k}} \\ \text{c}_2X_2(t_k)\mathrm{e}^{\epsilon^{(2)}_{t_k}}\end{pmatrix}\eqsp, \label{eq:LV:obs:model}
 \end{equation}
 where $\text{c} = (\text{c}_1, \text{c}_2)^T$ is known (the observed fraction of the population) and $\lbrace \epsilon_{t_k} =(\epsilon^{(1)}_{t_k}, \epsilon^{(2)}_{t_k})\rbrace_{1\leqslant k\leqslant n}$ are i.i.d. random variables distributed as a $\mathcal{N}_2(-\text{diag}\ \Sigma/2, \Sigma)$ where $\Sigma$ is an unknown 2 $\times$ 2 covariance matrix. It is straightforward to show that for a generic $\parvec$, in the SDE defined by \eqref{eq:LV:SDE}, the drift function cannot be written (even after the Lamperti transform) as the gradient of a potential. 
-Therefore, the General Poisson estimator cannot be used as an unbiased estimator of the transition density, and the method proposed in this paper is the only solution to obtain a consistent estimate of  the target expectations. The proposal distribution for the particle filter is again a trade off between model dynamics and the observation model (full details are given in the appendix). The simulated set of particles is used to obtain estimates of the true abundances given the observations, both on synthetic and real data.
+Therefore, the General Poisson estimator cannot be used as an unbiased estimator of the transition density. 
+Following Section \ref{sec:wald:trick}, an almost surely positive unbiased estimate of the transition density is obtained by combining the Wald's trick to the parametrix estimators of \cite{fearnhead2017continuous}.
+The proposal distribution for the particle filter is again a trade off between model dynamics and the observation model (full details are given in the appendix).
+ The simulated set of particles is used to obtain estimates of the true abundances given the observations, both on synthetic and real data.
 
 \subsubsection*{Synthetic data}
 
-In a first approach,  simulated data are obtained from the model given by \eqref{eq:LV:SDE} and \eqref{eq:LV:obs:model} for a known set of parameters. Chosen values of $\theta$, $\Sigma$, $\text{c}_1$ and $\text{c}_2$ for the experiment are given in the appendix. 
+In a first approach,  simulated data are obtained from the model given by \eqref{eq:LV:SDE} and \eqref{eq:LV:obs:model} for a known set of parameters.
+ Chosen values of $\theta$, $\Sigma$, $\text{c}_1$ and $\text{c}_2$ for the experiment are given in the appendix. 
 The model is used to simulate abundances indexes $Y_0,\dots Y_{300}$ at times $t_0 = 0,\dots, t_{300} = 3$. 
-The associated time series (after a division by $\text{c}$) is shown in Figure \ref{fig:LV:tracking} (left panel). In this experiment, the goal is to obtain an estimate of the actual predator-prey abundances given all the observed abundances indexes $Y_{0:n}$. 
+The associated time series (after a division by the known constant $\text{c}$) is shown in Figure \ref{fig:LV:tracking} (left panel). 
+In this experiment, the goal is to obtain an estimate of the actual predator-prey abundances given all the observed abundances indexes $Y_{0:n}$. 
 Our estimate is given by the set of conditional expectations $\lbrace\pE[ X_k \vert Y_{0:n}]\rbrace_{k = 0,\dots, n}$, approximated using our backward importance sampling PaRIS smoother, which is run using the true parameters. 
 Figure \ref{fig:LV:tracking} shows the estimated abundance trajectory over time. 
-The proposed algorithm manages to estimate efficiently the actual abundance from noisy data and a model with an intractable transition density.
+The proposed backward importance sampling smoother manages to estimate efficiently the actual abundance from noisy data and a model with an intractable transition density.
 
 \begin{figure}
 \begin{center}
@@ -855,84 +868,14 @@ The proposed algorithm manages to estimate efficiently the actual abundance from
 
 \subsubsection*{Hares and lynx data}
 
-In this section, the model defined by equations \eqref{eq:LV:SDE} and \eqref{eq:LV:obs:model} is applied to the Hudson Bay company data, giving the number of hares and lynx trapped in Canada during the first 20 years of the 20th century (available in \cite{odum1971fundamentals}). As parameters are unknown in this case, maximum likelihood inference is performed using an EM \cite{dempster1977maximum} algorithm to obtain an estimate $\hat{\theta}$.
+In this section, the model defined by equations \eqref{eq:LV:SDE} and \eqref{eq:LV:obs:model} is applied to the Hudson Bay company data, giving the number of hares and lynx trapped in Canada during the first 20 years of the 20th century (available in \cite{odum1971fundamentals}). 
+As parameters are unknown in this case, maximum likelihood inference is performed using an EM \cite{dempster1977maximum} algorithm to obtain an estimate $\hat{\theta}$.
 The E step is performed using the BIS smoother.
 At each iteration, the estimator $\theta_k$ is updated by finding a parameter $\theta_{k+1}$ for which $\hat Q(\theta_{k+1},\theta_k) >  \hat Q(\theta_k,\theta_k)$, with  a gradient free evolution strategy \cite{hansen2006cma}. 
 The last estimate $\hat{\theta}$ obtained with this EM algorithm  is used to  estimate the actual abundances in the model (similarly to the synthetic data case). 
 Figure \ref{fig:LV:hares:lynx} shows  estimates of $\pE_{\hat{\theta}}\left[ X_k \vert Y_{0:n}\right]$ obtained with 30 independent runs of our algorithm. 
 The particle smoother is implemented using $N = 200$ particles and $\tilde{N}=20$. 
-The replicates show that the variance of our estimator (for a given set of observations) is much smaller than the one of the {\em poor man smoother}. 
-%This algorithm approximates the smoothing distributions at time $n$ by the weighted samples  where the particle trajectories $\epart{0:n}{\ell}$, $1\leqslant \ell \leqslant N$,  are obtained using the ancestral line of each last sample. The variance of the estimates based on this ancestor tree is doomed to failure due to the degeneracy caused by the successive resampling steps.
-
-%\subsection{Particle based online estimation}
-%\label{sec:tangent:filter}
-
-
-
-%
-%
-%As noted for instance in \cite[Section~2]{delmoral2015uniform} and \cite{olsson2017efficient}, for all $\parvec\in\parspace$ and all bounded and measurable function $f_{0:n}$ on $(\Xset)^{n+1}$,
-%\[
-%\deriv \post{0:n;\parvec \mid n - 1}[f_{0:n}]  = \post{0:n;\parvec \mid n - 1} [\af{n} f_{0:n}] - \post{0:n;\parvec \mid n - 1} [f_{0:n}] \times \post{0:n;\parvec \mid n - 1 }[\af{n}]\eqsp,
-%\]
-%where
-%\begin{equation*}
-%\af{n}(x_{0:n}) = \sum_{k=0}^{n-1}\addf{k;\parvec}(x_{k},x_{k+1})\eqsp,
-%\end{equation*}
-%with, for all $0\leqslant k \leqslant n-1$,
-%\[
-%\addf{k;\parvec}(x_{k},x_{k+1}) = \nabla_{\parvec}\log \md{k+1;\parvec}(x_{k+1},Y_{k+1}) + \nabla_{\parvec}\log \hd{k;\parvec}(x_k,x_{k+1})\eqsp.
-%\]
-%Considering an objective function $f_{n}$ defined on $\Xset$ which depends on the last state $x_n$ only, the tangent filter $\filtderiv{n}$ is defined as the following signed measure: 
-%$$
-%\filtderiv{n;\parvec}[f_n] \eqdef \deriv \pred{n;\parvec}[f_n] = \post{0:n;\parvec \mid n - 1} [\af{n;\parvec} f_{n}] - \pred{n;\parvec}[f_{n}] \times \post{0:n;\parvec \mid n - 1 }[\af{n}]\eqsp, 
-%$$
-%where $\pred{n}=\post{n:n\mid n - 1}$ is the predictive measure. 
-%The particle based estimator of $\pred{n}[f]$ is given by:
-%$$\pred{n}^N[f] = \frac{1}{N}\sum_{\ell = 1}^N f(\epart{n}{\ell})\eqsp.$$
-%Using the tower property  and the backward decomposition \eqref{eq:property:backward}:
-%\begin{equation} 
-%\label{eq:tangent:identity}
-%\filtderiv{n;\parvec}[f_n] = \pred{n;\parvec}[(\tstat{n} [\af{n}] - \pred{n;\parvec}[\tstat{n}[\af{n}]]) f_n]\eqsp.
-%\end{equation}
-%Therefore, the tangent filter \eqref{eq:tangent:identity} can be approximated on-the-fly using the statistics $(\tau_i^n)_{i=1}^{\N}$ and the weighted particles $\{(\epart{n}{i}, \ewght{n}{i})\}_{i=1}^{\N}$:
-%%\begin{equation} 
-%%\label{eq:tangent:identity:part}
-%%\filtderiv{n;\parvec}^{N,\textrm{FFBS}}[f_n] = \frac{1}{\N}\sum_{i=1}^\N\tstattil{i}{n}f_n(\epart{i}{n}) - \left(\frac{1}{\N}\sum_{i=1}^\N\tstattil{i}{n}\right)\left(\frac{1}{\N}\sum_{i=1}^\N f_n(\epart{i}{n})\right)\eqsp.
-%%\end{equation}
-%%In cases where $\qg{k}$, $0\leqslant k \leqslant n-1$, is unknown and replaced by an unbiased estimate, the associated pseudo marginal particle-based approximation of the tangent filter is given by:
-%\begin{equation} 
-%\label{eq:tangent:identity:part:linear}
-%\eta_{n;\parvec}^{N}[f_n] = \frac{1}{\N}\sum_{i=1}^\N\tau_i^n f_n(\epart{i}{n}) - \left(\frac{1}{\N}\sum_{i=1}^\N\tau_i^n\right)\left(\frac{1}{\N}\sum_{i=1}^\N f_n(\epart{i}{n})\right)\eqsp.
-%\end{equation}
-%%\textcolor{red}{To be adapted if $g_{k}$ depends on both $x_k$ and $x_{k+1}$. As it is more an application of the results displayed in the previous section, I do think that this should be written as it is, with $g_{k}$ depending only on $x_k$. This is the version used in the experiments and this is the one given in the paper with Westerborn...}.
-%Given a set of observations $Y_{1:n}$, maximum likelihood estimation amounts at obtaining a parameter $\hat\parvec_{n} \in \parspace$ such that $\hat\parvec_{n} = \arg\max_{\parvec \in \parspace} \logllh{\parvec;n}(Y_{1:n})$, where $\logllh{\parvec;n}(Y_{1:n}) = \log \llh{\parvec;n}(Y_{1:n})$ is the logarithm of the likelihood. There are many different approaches to compute an estimator of $\hat\parvec_{n}$, see for instance~\cite[Chapter 10]{cappe2005inference}. Following \cite{douc2001asymptotics}, under strong mixing assumptions, for all  $\parvec \in \parvec$, the extended process $\{ (X_n, Y_n, \pred{n}, \filtderiv{n}) \}_{n \geqslant 0}$ is an ergodic Markov chain and for all $\parvec \in \parvec$, the normalized score $\deriv \logllh{\parvec}(Y_{1:n})/n$ of the observations may be shown to converge where:
-%\[
-%\frac{1}{n} \deriv \logllh{\parvec}(Y_{1:n}) = \frac{1}{n} \sum_{k = 1}^n \deriv \logllh{\parvec}(Y_k \mid Y_{1:k - 1})  
-%=  \frac{1}{n} \sum_{k = 0}^n \frac{\pred{k;\parvec}[\deriv \md{k;\parvec}] + \filtderiv{k;\parvec}[\md{k;\parvec}]}{\pred{k;\parvec}[\md{k;\parvec}]}\eqsp.
-%\]
-%Assuming that the observations $Y_{1:n}$ are generated by a model driven by a true parameter $\parvec_{\star}$ for all $\parvec\in\parvec$ this normalized score converges almost surely to a limiting quantity $\lambda(\parvec, \parvec_{\star})$ such that, under identifiability constraints, $\lambda(\parvec_{\star}, \parvec_{\star}) = 0$. A gradient ascent algorithm cannot be designed as the limiting function $\parvec \mapsto \lambda(\parvec, \parvec_{\star})$ is not available explicitly. Solving the equation $\lambda(\parvec_{\star}, \parvec_{\star}) = 0$ may be cast into the framework of \emph{stochastic approximation} to produce parameter estimates using the \emph{Robbins-Monro algorithm}
-%\begin{equation}
-%\label{eq:par:update}
-%\parvec_{n+1} = \parvec_n + \gamma_{n+1} \zeta_{n+1}\eqsp, \quad n\geqslant 0\eqsp, 
-%\end{equation}
-%where $\zeta_{n+1}$ is a noisy observation of $\lambda(\parvec_n, \parvec_{\star})$. Obtaining such an observation is not possible in practice and following \cite{olsson2017efficient} this noisy observation is approximated by 
-%\begin{equation} 
-%\label{eq:def:zeta}
-%\zeta_{n + 1} \eqdef \frac{\zeta^{1}_{n+1} + \zeta^{2}_{n+1}}{\zeta^{3}_{n+1}}\eqsp,
-%\end{equation}
-%where
-%\begin{equation} 
-%\label{eq:zeta:terms}
-%\zeta^{1}_{n+1} \eqdef \pred{n+1;\parvec_n} \left[ (\deriv \md{n+1;\parvec})_{|{\parvec = \parvec_n}} \right]\eqsp,  \quad \zeta^{2}_{n+1} \eqdef \filtderiv{n+1;\parvec_n}[\md{n + 1;\parvec_n}]\quad \mbox{and} \quad\zeta^{3}_{n+1} \eqdef \pred{n+1;\parvec_n}[\md{n + 1;\parvec_n}]\eqsp.
-%\end{equation}
-%In \eqref{eq:zeta:terms}, the measures $\pred{n+1;\parvec_n}$ and $\filtderiv{n+1;\parvec_n}$ depend on \emph{all} the past parameter values. In the case of a finite state space $\set{X}$ the algorithm was studied in~\cite{legland1997recursive}, which also provides assumptions under which the sequence $\{\parvec_{n}\}_{n\geqslant 0}$ converges towards the parameter $\parvec_{\star}$ (see also \cite{tadic2010analyticity} for refinements). In more general cases, these measures may be estimated online using the pseudo marginal smoother presented in this paper.
-%%The PaRIS based approximations of the tangent filter and the recursive maximum likelihood estimator are given in Appendix~\ref{sec:alg}.
-%
-%
-%
-
-
+The replicates show that the variance of our estimator (for a given set of observations) is much smaller than the one of the Poor Man smoother. 
 
 
 \section{Discussion}
