@@ -274,14 +274,17 @@ In practice, these assumptions are very restrictive. %and
 For instance, in the context of diffusion processes, they narrow the possible models to the class of diffusions satisfying the Exact algorithm conditions of \cite{beskos2006retrospective}, for which  General Poisson Estimators (GPEs) \cite{fearnhead2008particle} already lead to eligible unbiased estimators.  
 
 In this paper, a new procedure is introduced to replace the backward acceptance-rejection step of the PaRIS and the pseudo marginal PaRIIS algorithms by a backward importance sampling estimate.  %which 
-It leads to a smoothing algorithm that only requires an almost surely positive estimator of the unknown transition density, and therefore extends widely the class of models for which these online smoothers can be designed. 
-In the context of partially observed diffusion processes, for instance,  we show that an almost surely positive estimator can be obtained using Wald's trick combined with the highly generic parametrix estimators of \cite{andersson2017unbiased} and \cite{fearnhead2017continuous}.
+It leads to a smoothing algorithm that only requires an almost surely positive estimator of the unknown transition or observation density, and therefore extends widely the class of models for which these online smoothers can be designed. 
+In the general case where only signed estimates can be obtained, we propose to use of the Wald trick, ensuring positiveness without addition of bias in the estimator.
+In the context of partially observed diffusion processes, for instance,  we show that combining this Wald trick to the  parametrix estimators of \cite{andersson2017unbiased} and \cite{fearnhead2017continuous} leads to an highly generic algorithm that can be applied to a wide class of models, for which no low variance smoother existed so far.
 
 The paper is organized as follows. Section~\ref{sec:model} displays the latent data models and the main objectives considered in this paper. Then, Section~\ref{sec:method} details online pseudo marginal sequential Monte Carlo algorithms and Section~\ref{sec:backwardis} our proposed algorithm. Section~\ref{sec:application}  provides  extensive numerical experiments to illustrate the performance of our approach. The empirical results of this section can be summarised as follows.
 \begin{itemize}
 \item The proposed approach can be used for any latent data models such as hidden Markov models, or recurrent neural networks with unobserved latent states. Even when the transition densities are available, we show empirically that our backward importance sampling is a computationally efficient solution to solve the online smoothing problem (Section \ref{sec:simu:RNN}).
-\item When considering the pseudo-marginal approach, we extend the use of Wald's trick to the backward kernel, and therefore show that our approach can be used in cases where the estimators of the unknown densities  are not positive by construction. This allows to perform sequential Monte Carlo smoothing in models for which no solutions were proposed in the literature to the best of our knowledge, such as multivariate partially observed diffusion processes (Section \ref{sec:simu:LV}).
-\item We show that the proposed approach outperforms the existing method in terms of computational efficiency and can be considered even when the acceptance rejection procedure cannot be performed (Section \ref{sec:simu:SINE}). 
+\item When considering the pseudo-marginal approach, we extend the use of Wald's trick to the backward kernel, and therefore show that our approach can be used in cases where the estimators of the unknown densities  are not positive by construction.
+\item  We perform sequential Monte Carlo smoothing in models for which no solutions were proposed in the literature to the best of our knowledge, such as multivariate partially observed diffusion processes (Section \ref{sec:simu:LV}).
+\item We show that the proposed approach outperforms the existing acceptance rejection method in terms of computational efficiency %and can be considered even when the acceptance rejection procedure cannot be performed 
+(Section \ref{sec:simu:SINE}). 
 \item We show how the proposed method allows for efficient online recursive maximum likelihood in the context of partially observed diffusion processes (Section \ref{sec:simu:tangent:filter}). This experiment also allows to conjecture for the asymptotic normality of our estimator, which would be an extension of the results of \cite{gloaguen2021pseudo}.
 \end{itemize}
 
@@ -630,7 +633,7 @@ For each RNN,  a single sequence of  hidden states and observations was simulate
   The Monte Carlo  estimate of these quantities is referred to with the classical hat symbol $\mathbb{\widehat{E}}[.]$. 
 
 In the following, the performances of our algorithm was compared to the classical Poor Man's smoother. 
-The  Poor Man's smoother estimates the joint smoothing distribution using the ancestral lines of each particle at time $n$; see for instance \cite{douc2014nonlinear} for discussions on the path degeneracy issue.
+The  Poor Man's smoother (also known as the path-space smoother) estimates the joint smoothing distribution using the ancestral lines of each particle at time $n$; see for instance \cite{douc2014nonlinear} for discussions on the path degeneracy issue.
 For the backward IS smoother, we use $N=1000$ particles for the bootstrap filter and $\K=32$ backward samples (see Section \ref{sec:simu:SINE} and Figure~\ref{fig:sine:timeandbias:N:vary} for the choice of $\K$ from the number of particles $N$). 
 For the Poor Man's smoother $N=3000$ particles were used, which yields a similar computational cost than the backward IS smoother. 
 One interesting aspect of applying the backward IS smoother (BIS) on neural network architectures is the parallelization abilities of such algorithm: the loop over the backward samples in the backward step of the BIS is easily parallelizable, while the Poor Man's smoother requires to store the full past trajectories of the particles. 
@@ -875,8 +878,7 @@ At each iteration, the estimator $\theta_k$ is updated by finding a parameter $\
 The last estimate $\hat{\theta}$ obtained with this EM algorithm  is used to  estimate the actual abundances in the model (similarly to the synthetic data case). 
 Figure \ref{fig:LV:hares:lynx} shows  estimates of $\pE_{\hat{\theta}}\left[ X_k \vert Y_{0:n}\right]$ obtained with 30 independent runs of our algorithm. 
 The particle smoother is implemented using $N = 200$ particles and $\tilde{N}=20$. 
-The replicates show that the variance of our estimator (for a given set of observations) is much smaller than the one of the Poor Man smoother. 
-
+The replicates show that the variance of our estimator (for a given set of observations) is much smaller than the one of the Poor Man's smoother. 
 
 \section{Discussion}
 \label{sec:discussion} 
