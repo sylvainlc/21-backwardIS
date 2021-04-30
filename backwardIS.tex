@@ -601,29 +601,29 @@ Then, the estimator of the conditional expectation of the additive functional is
 \label{sec:simu:RNN}
 
 
-Recurrent Neural Networks (RNNs) were first introduced in \cite{Mozer1989AFB} to model time series using a hidden context state. Such deep learning model is appealing to describe short time dependencies, and RNN extensions \cite{Hochreiter1997LongSM, Cho2014LearningPR} are since then widely used in practice, see for instance \cite{mikolov2010recurrent, sutskever2011generating, sutskever2014sequence}. %They have been extended by Long Short Term Memory  \cite{Hochreiter1997LongSM} and Gated Recurrent Unit (GRU) \cite{Cho2014LearningPR}. 
+Recurrent Neural Networks (RNNs) were first introduced in \cite{Mozer1989AFB} to model time series using a hidden context state. Such deep learning models are appealing to describe short time dependencies, and RNN extensions \cite{Hochreiter1997LongSM, Cho2014LearningPR} are since then widely used in practice, see for instance \cite{mikolov2010recurrent, sutskever2011generating, sutskever2014sequence}. %They have been extended by Long Short Term Memory  \cite{Hochreiter1997LongSM} and Gated Recurrent Unit (GRU) \cite{Cho2014LearningPR}. 
  In this section, we propose a general state space model based on a vanilla RNN architecture, as follows.  
  The hidden state is initialized as $X_0 \sim \mathcal{N}(0,\Sigma)$ and for all $k\geqslant 1$,
 $$
 X_k = \tanh(W_{1} Y_{k-1} + W_{2} X_{k-1} + b + \eta_k)\quad\mathrm{and} \quad Y_k = W_{3} X_{k}  + c + \varepsilon_k\eqsp,
 $$
 where $W_{1}$, $W_{2}$, $W_3$ and $b$ and $c$ are the weight matrices and bias,  $\Sigma$ is an unknown covariance matrix and $(\eta_k)_{k\geqslant 1}$ and $(\varepsilon_k)_{k\geqslant 1}$ are independent Gaussian random variables with covariance matrices $Q$ and $R$.
-One can see that this model do not lie in the framework of Section \ref{sec:model}, as $Y_k$ is not independant from $Y_{k - 1}$ conditionnally to the hidden states. 
-However, we show in this experiment that the proposed algorithm can still be used in this context. 
-It is worth noting that the context of estimation for HMMs with autoregressive structure has been studied \cite{douc2004asymptotic}. 
+%One can see that this model do not lie in the framework of Section \ref{sec:model}, as $Y_k$ is not independant from $Y_{k - 1}$ conditionnally to the hidden states. 
+In this experiment,  we show that the proposed algorithm can be used in this setting which does not fit the usual assumptions of hidden Markov models. 
+%It is worth noting that the context of estimation for HMMs with autoregressive structure has been studied \cite{douc2004asymptotic}. 
 While we here focus on a simple vanilla one-layer recurrent network, such general state space model could be extended to multi-layer RNN architectures by considering noisy state dynamics in each hidden layer, and to RNN variants such as Long Short Term Memory  \cite{Hochreiter1997LongSM} and Gated Recurrent Unit (GRU) \cite{Cho2014LearningPR}.
  
 To generate a synthetic sequence of states and observations $(X_{0:n},Y_{0:n})$ from this stochastic RNN, we considered diagonal covariance matrices $\Sigma$, $Q$ and $R$, with the same variance along all dimensions equal to 0.1. 
  To obtain weights and biases values corresponding to realistic data, we  trained a deterministic one-layer RNN on 20,000 samples of a weather time-series dataset available online\footnote{https://www.bgc-jena.mpg.de/wetter/}. 
-In such setting, the observations $(Y_{0:n})$ consist in a sequence of 4D vectors (originally temperature, air pressure, air humidity, air density).
-Following the classical RNN framework,  the sequence of hidden states $(X_{0:n})$ is usually made of higher-dimensional vectors; the experiments were performed for two RNNs of respective hidden dimension 32 and 64. 
+In such setting, the observations $Y_{0:n}$ consist in a sequence of 4D vectors (originally temperature, air pressure, air humidity, air density).
+Following the classical RNN framework,  the sequence of hidden states $X_{0:n}$ is usually made of higher-dimensional vectors; the experiments were performed for two RNNs of respective hidden dimension 32 and 64. 
 After this training part, we sampled $(X_{0:n}, Y_{0:n})$ according to the model. 
 For each RNN,  a single sequence of  hidden states and observations was simulated with a total length of 200 time steps.
 %$\Sigma$ and $Q$ are squared matrices with dimension equal to the dimension of the states $(X_{0:n})$, while $R$ is a squared matrix of dimension equal to the dimension of the observations $(Y_{0:n})$. 
  
  From this general state space model based on a stochastic RNN, in the context of the \textit{state estimation} problem, we are interested in using particle smoothing algorithms to estimate two smoothing expectations, respectively $\mathbb{E}[X_0|Y_{0:n}]$, and $\mathbb{E}[\sum_{k=0}^{n} X_k|Y_{0:n}]$. 
  In our context of online estimation, the evaluation was made for $n=49$ (sequence truncated at 50 observations), $n=99$ (sequence truncated at 100 observations), and $n=199$ (full sequence). 
-  The Monte Carlo  estimate of these quantities is referred to with the classical hat symbol $\mathbb{\widehat{E}}[.]$. 
+  The Monte Carlo  estimate of these quantities is referred to with the hat symbol: $\mathbb{\widehat{E}}[.]$. 
 
 In the following, the performances of our algorithm was compared to the classical Poor Man's smoother. 
 The  Poor Man's smoother (also known as the path-space smoother) estimates the joint smoothing distribution using the ancestral lines of each particle at time $n$; see for instance \cite{douc2014nonlinear} for discussions on the path degeneracy issue.
@@ -645,7 +645,7 @@ Moreover, the table also shows that while the backward IS's MSE tends to stay st
 
 
 \begin{table}
-\caption{Empirical estimation of $\mathbb{E}[\|X_0 - \mathbb{\widehat{E}}[X_0|Y_{0:n}]\|^2]$ and $\mathbb{E}[ \sum_{k=0}^{n}\|X_k - \mathbb{\widehat{E}}[X_k|Y_{0:n}]\|^2/(n+1)]$ for the Poor man's smoother (PMS) and the Backward IS smoother, for states $(X_{0:n})$ and observations $(Y_{0:n})$ generated with stochastic RNNs of dimension 32 and 64. We consider an online estimation of a sequence of 200 observations, truncated at timestep $n=49$ (50 timesteps), $n=99$ (100 timesteps) and the full sequence ($n=199$).}
+\caption{Empirical estimation of $\mathbb{E}[\|X_0 - \mathbb{\widehat{E}}[X_0|Y_{0:n}]\|^2]$ and $\mathbb{E}[ \sum_{k=0}^{n}\|X_k - \mathbb{\widehat{E}}[X_k|Y_{0:n}]\|^2/(n+1)]$ for the Poor man's smoother (PMS) and the Backward IS smoother, for states $X_{0:n}$ and observations $Y_{0:n}$ generated with stochastic RNNs of dimension 32 and 64. We consider an online estimation of a sequence of 200 observations, truncated at timestep $n=49$ (50 timesteps), $n=99$ (100 timesteps) and the full sequence ($n=199$).}
 \label{table:RNN_exp}
 \centering 
 \begin{tabular}{c|cc|cc}
