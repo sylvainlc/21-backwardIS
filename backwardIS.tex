@@ -230,7 +230,7 @@
 
 
 \begin{abstract}
-This paper proposes a new Sequential Monte Carlo algorithm to perform maximum likelihood estimation of state space models with unknwon  dynamics. Obtaining low variance estimators of expectations under the posterior distributions of the unobserved states given the observations is challenging when the transition densities of the states  cannot be evaluated pointwise. In this paper, following recent theoretical results for  pseudo-marginal sequential Monte Carlo smoothers, a pseudo-marginal backward importance sampling step is introduced to estimate such expectations. This new step allows to reduce very significantly the computational time  of the existing numerical solutions based on an acceptance-rejection procedure for similar performance. In the context of multivariate stochastic differential equations, the proposed algorithm makes  use of unbiased estimates of the unknown transition densities  under much weaker assumptions than standard alternatives. The performance of this estimator is assessed in particular in the case of a partially observed stochastic Lotka-Volterra model. The algorithm is also evaluated in the case of high-dimensional discrete-time latent data models and for recursive maximum likelihood estimation.
+This paper proposes a new Sequential Monte Carlo algorithm to perform maximum likelihood estimation of state space models with unknwon  dynamics. Obtaining low variance estimators of expectations under the posterior distributions of the unobserved states given the observations is challenging when the transition densities of the states cannot be evaluated pointwise. In this paper, following recent theoretical results for pseudo-marginal sequential Monte Carlo smoothers, a pseudo-marginal backward importance sampling step is introduced to estimate such expectations. This new step allows to reduce very significantly the computational time  of the existing numerical solutions based on an acceptance-rejection procedure for similar performance. In the context of multivariate stochastic differential equations, the proposed algorithm makes use of unbiased estimates of the unknown transition densities under much weaker assumptions than standard alternatives. The performance of this estimator is assessed in particular in the case of a partially observed stochastic Lotka-Volterra model. The algorithm is also evaluated in the case of high-dimensional discrete-time latent data models and for recursive maximum likelihood estimation.
 \end{abstract}
 
 
@@ -246,8 +246,8 @@ and engineering domains such as movement ecology \cite{michelot2016movehmm}, ene
 
 
 Markov chain Monte Carlo (MCMC) and sequential Monte Carlo (SMC) methods (also known as particle filters or smoothers) are widespread solutions to propose consistent estimators of such distributions. 
-Among SMC methods, novel algorithms has been designed in the last decades to solve the smoothing problem, such as the Forward Filtering Backward Simulation algorithm \cite{douc2011sequential}  or two-filter based approaches \cite{briers2010smoothing, fearnhead2010sequential, nguyen2017two}. %but 
-These approaches, that comes with strong theoretical guarantees (\cite{delmoral2010backward, douc2011sequential, dubarry2013nonasymptotic, gerber2017convergence}), require the time horizon and all observations to be available  to initialize a backward information filter, and, thus, perform the smoothing.
+Among SMC methods, novel algorithms have been designed in the last decades to solve the smoothing problem, such as the Forward Filtering Backward Simulation algorithm \cite{douc2011sequential}  or two-filter based approaches \cite{briers2010smoothing, fearnhead2010sequential, nguyen2017two}. %but 
+These approaches, which come with strong theoretical guarantees (\cite{delmoral2010backward, douc2011sequential, dubarry2013nonasymptotic, gerber2017convergence}), require the time horizon and all observations to be available  to initialize a backward information filter, and, thus, perform the smoothing.
 The particle-based rapid incremental smoother \cite{olsson2017efficient} is an online version of forward-backward procedures, specifically designed to approximate conditional expectations of additive functionals. 
 This algorithm relies on a backward sampling step performed on the fly thanks to the well known acceptance rejection sampling. 
 This online smoother was proven to be strongly consistent, asymptotically normal, and with a control of the asymptotic variance, when it is performed together with the vanilla bootstrap filter \cite{gordon1993novel}. 
@@ -260,14 +260,14 @@ The authors proposed an important contribution by showing that it is possible to
 Standard data augmentation schemes were then used to extend this random-weight particle filter to provide new inference procedures for partially observed diffusion models \cite{yonekura:beskos:2020}. 
 
 More recently, the online algorithm of \cite{olsson2017efficient} was extended to this case for partially observed diffusion processes by \cite{gloaguen2018online}. 
-This idea was extended in \cite{gloaguen2021pseudo}, who introduced a pseudo-marginal online smoother to approximate conditional expectations of additive functionals of the hidden states in a very general setting: the user can only evaluate (possibly biased) approximations of the transition density and of the marginal conditional likelihood. 
+This idea was extended in \cite{gloaguen2021pseudo}, which introduced a pseudo-marginal online smoother to approximate conditional expectations of additive functionals of the hidden states in a very general setting: the user can only evaluate (possibly biased) approximations of the transition density and of the marginal conditional likelihood. 
 The online algorithm of \cite{gloaguen2021pseudo} may be used to approximate expectations of additive functionals under the smoothing distributions by processing the data stream online.
-However, as for the PaRIS algorihm,  when using this pseudo-marginal approach, where transition densities are intractable, the user needs to be able to sample exactly from the associated pseudo-marginal backward kernel. 
+However, as with the PaRIS algorihm,  when using this pseudo-marginal approach, where transition densities are intractable, the user needs to be able to sample exactly from the associated pseudo-marginal backward kernel. 
 This step is again done by rejection sampling, and therefore requires that the estimate of the transition density and of the marginal conditional  likelihood  are almost surely positive and upper bounded.  
 In practice, these assumptions are very restrictive. %and 
 For instance, in the context of diffusion processes, they narrow the possible models to the class of diffusions satisfying the Exact algorithm conditions of \cite{beskos2006retrospective}, for which  General Poisson Estimators (GPEs) \cite{fearnhead2008particle} already lead to eligible unbiased estimators.  
 
-In this paper, a new procedure is introduced to replace the backward acceptance-rejection step of the PaRIS and the pseudo marginal PaRIIS by a backward importance sampling estimate.  %which 
+In this paper, a new procedure is introduced to replace the backward acceptance-rejection step of the PaRIS and the pseudo marginal PaRIIS algorithms by a backward importance sampling estimate.  %which 
 It leads to a smoothing algorithm that only requires an almost surely positive estimator of the unknown transition density, and therefore extends widely the class of models for which these online smoothers can be designed. 
 In the context of partially observed diffusion processes, for instance,  we show that an almost surely positive estimator can be obtained using Wald's trick combined with the highly generic parametrix estimators of \cite{andersson2017unbiased} and \cite{fearnhead2017continuous}.
 
@@ -275,7 +275,7 @@ The paper is organized as follows. Section~\ref{sec:model} displays the latent d
 \begin{itemize}
 \item The proposed approach can be used for any latent data models such as hidden Markov models, or recurrent neural networks with unobserved latent states. Even when the transition densities are available, we show empirically that our backward importance sampling is a computationally efficient solution to solve the online smoothing problem (Section \ref{sec:simu:RNN}).
 \item When considering the pseudo-marginal approach, we extend the use of Wald's trick to the backward kernel, and therefore show that our approach can be used in cases where the estimators of the unknown densities  are not positive by construction. This allows to perform sequential Monte Carlo smoothing in models for which no solutions were proposed in the literature to the best of our knowledge, such as multivariate partially observed diffusion processes (Section \ref{sec:simu:LV}).
-\item We show that the proposed approach outperforms the existing method in terms of computational efficiency and can be considered even when the acceptance rejection procedure can be performed (Section \ref{sec:simu:SINE}). 
+\item We show that the proposed approach outperforms the existing method in terms of computational efficiency and can be considered even when the acceptance rejection procedure cannot be performed (Section \ref{sec:simu:SINE}). 
 \item We show how the proposed method allows for efficient online recursive maximum likelihood in the context of partially observed diffusion processes (Section \ref{sec:simu:tangent:filter}). This experiment also allows to conjecture for the asymptotic normality of our estimator, which would be an extension of the results of \cite{gloaguen2021pseudo}.
 \end{itemize}
 
@@ -598,27 +598,27 @@ such property does not affect the statistical efficiency of the algorithm.
 \label{sec:simu:RNN}
 
 
-Recurrent Neural Networks (RNN) were first introduced in \cite{Mozer1989AFB} to model time series using a hidden context state  which is appealing to describe short time dependencies, and are since widely used  in practice, see for instance \cite{mikolov2010recurrent, sutskever2011generating, sutskever2014sequence}. %They have been extended by Long Short Term Memory  \cite{Hochreiter1997LongSM} and Gated Recurrent Unit (GRU) \cite{Cho2014LearningPR}. 
- In this section, we propose a general state space model based on a RNN architecture, as follows.  
+Recurrent Neural Networks (RNNs) were first introduced in \cite{Mozer1989AFB} to model time series using a hidden context state. Such deep learning model is appealing to describe short time dependencies, and RNN extensions \cite{Hochreiter1997LongSM, Cho2014LearningPR} are since then widely used in practice, see for instance \cite{mikolov2010recurrent, sutskever2011generating, sutskever2014sequence}. %They have been extended by Long Short Term Memory  \cite{Hochreiter1997LongSM} and Gated Recurrent Unit (GRU) \cite{Cho2014LearningPR}. 
+ In this section, we propose a general state space model based on a vanilla RNN architecture, as follows.  
  The hidden state is initialized as $X_0 \sim \mathcal{N}(0,\Sigma)$ and for all $k\geqslant 1$,
 $$
 X_k = \tanh(W_{1} Y_{k-1} + W_{2} X_{k-1} + b + \eta_k)\quad\mathrm{and} \quad Y_k = W_{3} X_{k}  + c + \varepsilon_k\eqsp,
 $$
 where $W_{1}$, $W_{2}$, $W_3$ and $b$ and $c$ are the weight matrices and bias,  $\Sigma$ is an unknown covariance matrix and $(\eta_k)_{k\geqslant 1}$ and $(\varepsilon_k)_{k\geqslant 1}$ are independent Gaussian random variables with covariance matrices $Q$ and $R$.
-One can see that this model do not lie in the framework of Section \ref{sec:model}, as $Y_k$ is not independant to $Y_{k - 1}$ conditionnaly to the hidden states. 
+One can see that this model do not lie in the framework of Section \ref{sec:model}, as $Y_k$ is not independant from $Y_{k - 1}$ conditionnally to the hidden states. 
 However, we show in this experiment that the proposed algorithm can still be used in this context. 
 It is worth noting that the context of estimation for HMMs with autoregressive structure has been studied \cite{douc2004asymptotic}. 
-More generally, such general state space model could be extended to multi-layer RNN architectures by considering noisy state dynamics in each hidden layer, and to RNN variants such as Long Short Term Memory  \cite{Hochreiter1997LongSM} and Gated Recurrent Unit (GRU) \cite{Cho2014LearningPR}.
+While we here focus on a simple vanilla one-layer recurrent network, such general state space model could be extended to multi-layer RNN architectures by considering noisy state dynamics in each hidden layer, and to RNN variants such as Long Short Term Memory  \cite{Hochreiter1997LongSM} and Gated Recurrent Unit (GRU) \cite{Cho2014LearningPR}.
  
- To generate a synthetic sequence of states and observations $(X_{0:n},Y_{0:n})$ from this stochastic RNN, we considered diagonal covariance matrices $\Sigma$, $Q$ and $R$, with the same variance along all dimensions equal to 0.1. 
- To obtain weights and the biases values, corresponding to realistic data, we  trained a deterministic one-layer RNN on 20,000 samples of a weather time-series dataset available online\footnote{https://www.bgc-jena.mpg.de/wetter/}. 
- In this context, the observations $(Y_{0:n})$ consist in a sequence of 4D vectors (originally temperature, air pressure, air humidity, air density).
-Following classical RNN framework,  the sequence of hidden states $(X_{0:n})$ is usually made of higher-dimensional vectors. 
+To generate a synthetic sequence of states and observations $(X_{0:n},Y_{0:n})$ from this stochastic RNN, we considered diagonal covariance matrices $\Sigma$, $Q$ and $R$, with the same variance along all dimensions equal to 0.1. 
+ To obtain weights and biases values corresponding to realistic data, we  trained a deterministic one-layer RNN on 20,000 samples of a weather time-series dataset available online\footnote{https://www.bgc-jena.mpg.de/wetter/}. 
+In such setting, the observations $(Y_{0:n})$ consist in a sequence of 4D vectors (originally temperature, air pressure, air humidity, air density).
+Following the classical RNN framework,  the sequence of hidden states $(X_{0:n})$ is usually made of higher-dimensional vectors; the experiments were performed for two RNNs of respective hidden dimension 32 and 64. 
 After this training part, we sampled $(X_{0:n}, Y_{0:n})$ according to the model. 
-The experiments were done for RNNs of hidden dimension 32 and 64. For each RNN,  a single  a sequence of  hidden states and  observations was simulated with a total length of 200 time steps.
+For each RNN,  a single sequence of  hidden states and observations was simulated with a total length of 200 time steps.
 %$\Sigma$ and $Q$ are squared matrices with dimension equal to the dimension of the states $(X_{0:n})$, while $R$ is a squared matrix of dimension equal to the dimension of the observations $(Y_{0:n})$. 
  
- From this general state space model based on a stochastic RNN, in the context of the \textit{state estimation} problem, ore goal was to use particle smoothing algorithms to estimate two smoothing expectations, respectively $\mathbb{E}[X_0|Y_{0:n}]$, and $\mathbb{E}[\sum_{k=0}^{n} X_k|Y_{0:n}]$. 
+ From this general state space model based on a stochastic RNN, in the context of the \textit{state estimation} problem, we are interested in using particle smoothing algorithms to estimate two smoothing expectations, respectively $\mathbb{E}[X_0|Y_{0:n}]$, and $\mathbb{E}[\sum_{k=0}^{n} X_k|Y_{0:n}]$. 
  In our context of online estimation, the evaluation was made for $n=49$ (sequence truncated at 50 observations), $n=99$ (sequence truncated at 100 observations), and $n=199$ (full sequence). 
   The Monte Carlo  estimate of these quantities is referred to with the classical hat symbol $\mathbb{\widehat{E}}[.]$. 
 
