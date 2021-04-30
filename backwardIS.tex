@@ -624,7 +624,7 @@ For each RNN,  a single sequence of  hidden states and observations was simulate
   The Monte Carlo  estimate of these quantities is referred to with the classical hat symbol $\mathbb{\widehat{E}}[.]$. 
 
 In the following, the performances of our algorithm was compared to the classical Poor Man's smoother. 
-The  Poor Man's smoother estimates the joint smoothing distribution using the ancestral lines of each particle at time $n$; see for instance \cite{douc2014nonlinear} for discussions on the path degeneracy issue.
+The  Poor Man's smoother (also known as the path-space smoother) estimates the joint smoothing distribution using the ancestral lines of each particle at time $n$; see for instance \cite{douc2014nonlinear} for discussions on the path degeneracy issue.
 For the backward IS smoother, we use $N=1000$ particles for the bootstrap filter and $\K=32$ backward samples (see Section \ref{sec:simu:SINE} and Figure~\ref{fig:sine:timeandbias:N:vary} for the choice of $\K$ from the number of particles $N$). 
 For the Poor Man's smoother $N=3000$ particles were used, which yields a similar computational cost than the backward IS smoother. 
 One interesting aspect of applying the backward IS smoother (BIS) on neural network architectures is the parallelization abilities of such algorithm: the loop over the backward samples in the backward step of the BIS is easily parallelizable, while the Poor Man's smoother requires to store the full past trajectories of the particles. 
