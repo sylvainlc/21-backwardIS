@@ -558,7 +558,7 @@ $$
 \ewght{k}{i}  = \ewght{k}{i} + \frac{\hatqg{k-1}\langle \zeta_k^i\rangle(\epart{k-1}{I_k^{i}},\epart{k}{i}) }{\kissforward{k-1}{k-1}(\epart{k-1}{I_k^{i}},\epart{k}{i})}\eqsp.
 $$
 \end{enumerate}
-We aim at updating the backward statistics $\tstat[i]{k+1}$, $1\leqslant i \leqslant N$ using an importance sampling step as exact accept-reject sampling of the $\bi{k+1}{i}{j}$, $1\leqslant j \leqslant \K$,  with distribution $\overline \upsilon_k^i$ requires restrictive assumpations. Therefore, we introduce the following extension of Wald's trick importance sampling to the online smoothing setting of this paper.
+We aim at updating the backward statistics $\tstat[i]{k+1}$, $1\leqslant i \leqslant N$ using an importance sampling step as exact accept-reject sampling of the $\bi{k+1}{i}{j}$, $1\leqslant j \leqslant \K$,  with distribution $\overline \upsilon_k^i$ requires restrictive assumptions. Therefore, we introduce the following extension of Wald's trick importance sampling to the online smoothing setting of this paper.
 
 \paragraph{Backward simulation weights.} For all $1\leqslant i\leqslant \N$, the backward importance sampling step proceeds then as follows.
 \begin{enumerate}
@@ -589,10 +589,10 @@ Then, the estimator of the conditional expectation of the additive functional is
 \[
 \post{0:n\mid n}^{\N,\textrm{IS}} [\af{0:n}] \eqdef \sum_{i=1}^{\N}\frac{\ewght{n}{i}}{\sumwght{n}}\tstat[i]{n}\eqsp.
 \]
-This estimator does not rely on an accept reject mechanism. %and 
-It is therefore significantly less computationally intensive and can be used under reasonable assumptions for many models. 
-In addition, as shown in Section~\ref{sec:simu:RNN} and \ref{sec:simu:SINE}, %this 
-such property does not affect the statistical efficiency of the algorithm.
+%This estimator does not rely on an accept reject mechanism. %and 
+%It is therefore significantly less computationally intensive and can be used under reasonable assumptions for many models. 
+%In addition, as shown in Sections~\ref{sec:simu:RNN} and \ref{sec:simu:SINE}, %this 
+%such a property does not affect the statistical efficiency of the algorithm.
 
 \section{Application to smoothing expectations and score estimation}
 \label{sec:application}
