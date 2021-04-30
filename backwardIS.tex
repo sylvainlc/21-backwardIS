@@ -275,7 +275,8 @@ The paper is organized as follows. Section~\ref{sec:model} displays the latent d
 \begin{itemize}
 \item The proposed approach can be used for any latent data models such as hidden Markov models, or recurrent neural networks with unobserved latent states. Even when the transition densities are available, we show empirically that our backward importance sampling is a computationally efficient solution to solve the online smoothing problem (Section \ref{sec:simu:RNN}).
 \item When considering the pseudo-marginal approach, we extend the use of Wald's trick to the backward kernel, and therefore show that our approach can be used in cases where the estimators of the unknown densities  are not positive by construction. This allows to perform sequential Monte Carlo smoothing in models for which no solutions were proposed in the literature to the best of our knowledge, such as multivariate partially observed diffusion processes (Section \ref{sec:simu:LV}).
-\item We show that the proposed approach outperforms the existing method in terms of computational efficiency and can be considered even when the acceptance rejection procedure cannot be performed (Section \ref{sec:simu:SINE}). 
+\item We show that the proposed approach outperforms the existing acceptance rejection method in terms of computational efficiency %and can be considered even when the acceptance rejection procedure cannot be performed 
+(Section \ref{sec:simu:SINE}). 
 \item We show how the proposed method allows for efficient online recursive maximum likelihood in the context of partially observed diffusion processes (Section \ref{sec:simu:tangent:filter}). This experiment also allows to conjecture for the asymptotic normality of our estimator, which would be an extension of the results of \cite{gloaguen2021pseudo}.
 \end{itemize}
 
@@ -861,7 +862,7 @@ At each iteration, the estimator $\theta_k$ is updated by finding a parameter $\
 The last estimate $\hat{\theta}$ obtained with this EM algorithm  is used to  estimate the actual abundances in the model (similarly to the synthetic data case). 
 Figure \ref{fig:LV:hares:lynx} shows  estimates of $\pE_{\hat{\theta}}\left[ X_k \vert Y_{0:n}\right]$ obtained with 30 independent runs of our algorithm. 
 The particle smoother is implemented using $N = 200$ particles and $\tilde{N}=20$. 
-The replicates show that the variance of our estimator (for a given set of observations) is much smaller than the one of the {\em poor man smoother}. 
+The replicates show that the variance of our estimator (for a given set of observations) is much smaller than the one of the Poor Man's smoother. 
 %This algorithm approximates the smoothing distributions at time $n$ by the weighted samples  where the particle trajectories $\epart{0:n}{\ell}$, $1\leqslant \ell \leqslant N$,  are obtained using the ancestral line of each last sample. The variance of the estimates based on this ancestor tree is doomed to failure due to the degeneracy caused by the successive resampling steps.
 
 %\subsection{Particle based online estimation}
