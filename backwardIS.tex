@@ -372,10 +372,10 @@ These two properties suggest an \textit{online} procedure to solve the online sm
 %An approximation procedure will be designed through Sequential Monte Carlo methods.
 %In the following, $\parvec$ may be  dropped from the notations for better clarity when there is no possible confusion. In many situations, SMC methods cannot be used straightforwardly as the transition densities $\hd{k}$, $0\leqslant k \leqslant n-1$ and the marginal likelihood of the observations $\md{k}$, $0\leqslant k \leqslant n-1$, are unknown. Pseudo-marginalisation was originally proposed in \cite{beaumont:2003} in the framework of MCMC methods, and further analyzed in \cite{andrieu:robert:2009}.  
 Following \cite{fearnhead2008particle, olsson2011particle, gloaguen2018online, gloaguen2021pseudo}, we do not assume that  \eqref{eq:def:elln} can be evaluated pointwise.
-We assume that there exists an estimator, potentialy relying on some random variable on a general state space $(\marginalset,\mathcal{B}(\marginalset))$ such that the following assumption holds.
+We assume that there exists an estimator, relying on some random variable on a general state space $(\marginalset,\mathcal{B}(\marginalset))$ such that the following assumption holds.
 \begin{hypH} 
 \label{assum:unbiased}
-For all $\parvec \in\parspace$ and $k\geqslant 0$, there exists a Markov kernel on $(\Xset\times\Xset,\mathcal{B}(\marginalset))$ with density $\kernelmarg_{k;\parvec}$ with respect to a reference measure $\mu$ on a general state space $(\marginalset,\mathcal{B}(\marginalset))$,  and a positive mapping $\hatqg{k;\parvec}$ on $\Xset\times\Xset\times\marginalset$ such that, for all $(x,x')\in\Xset \times \Xset$,
+For all $\parvec \in\parspace$ and $k\geqslant 0$, there exists a Markov kernel on $(\Xset\times\Xset,\mathcal{B}(\marginalset))$ with density $\kernelmarg_{k;\parvec}$ with respect to a reference measure $\mu$ on a general state space $(\marginalset,\mathcal{B}(\marginalset))$,  and a positive mapping $\hatqg{k;\parvec}\langle \cdot\rangle$ on $\Xset\times\Xset\times\marginalset$ such that, for all $(x,x')\in\Xset \times \Xset$,
 \begin{equation*}
 \int \kernelmarg_{k;\parvec}(x,x';z)\hatqg{k;\parvec}\langle z\rangle(x,x')\mu(\rmd z) =  \qg{k;\parvec}(x,x')\eqsp.
 \end{equation*}
@@ -420,11 +420,8 @@ Using the tower property  and the backward decomposition \eqref{eq:property:back
 \label{eq:tangent:identity}
 \filtderiv{k;\parvec}[\md{k;\parvec}] = \pred{k;\parvec}\left[\left(\tstat{k} [\af{0:k}] - \pred{k;\parvec}[\tstat{k}[\af{0:k}]]\right) \md{k;\parvec}\right]\eqsp.
 \end{equation}
-
 It is worth noting that, in the context of this paper where $\qg{k}$ cannot be evaluated pointwise, one cannot expect to know the functional \eqref{eq:complete:gradient:log}, which involves the gradient of this quantity. 
-In section \ref{sec:xp:tangent:filter}, we illustrate that we can plug-in an estimate of this functionnal instead. 
-
-The rationale motivating this algorithm relies on the following expression of the normalized loglikelihood:
+In Section \ref{sec:simu:tangent:filter}, we illustrate that we can plug-in an estimate of this functionnal instead. The rationale motivating this algorithm relies on the following expression of the normalized loglikelihood:
 $$
 \frac{1}{n} \deriv \logllh{\parvec}(Y_{1:n}) = \frac{1}{n} \sum_{k = 1}^n \deriv \logllh{\parvec}\left(Y_k \mid Y_{1:k - 1}\right)\eqsp.$$
 Moreover, under strong mixing assumptions, for all  $\parvec \in \parvec$, the extended process $\{ (X_n, Y_n, \pred{n}, \filtderiv{n}) \}_{n \geqslant 0}$ is an ergodic Markov chain and for all $\parvec \in \parvec$, the normalized score $\deriv \logllh{\parvec}(Y_{1:n})/n$  converges almost surely to a limiting quantity $\lambda(\parvec, \parvec_{\star})$ such that, under identifiability constraints, $\lambda(\parvec_{\star}, \parvec_{\star}) = 0$. 
@@ -483,8 +480,8 @@ The choice of the proposal distribution $\kissforward{k-1}{k-1}$ is a pivotal tu
 %In the context of additive functionals, we aim at obtaining a Monte Carlo approximation of $\post{0:n \mid n}[\af{0:n}]$, where $\af{0:n}$ is of the form $\af{0:n}: x_{0:n} \mapsto \sum_{k=0}^{n-1}\addf{k}(x_{k},x_{k+1})$, where $\addf{k}$ is a functional depending on the estimator. The forward-only smoothing algorithm introduced in \cite{delmoral2010backward} proposes a particle approximation of  $\post{0:n \mid n}[\af{0:n}]$ that can be computed \textit{online}. 
 %This algorithm has a computational complexity which  grows \emph{quadratically} with the number of particles $\N$. 
 %This computational cost can be reduced when the transition density of the hidden states is upper bounded following \cite{olsson2017efficient}  by applying the rejection sampling approach proposed in~\cite{douc2011sequential} and illustrated in \cite{dubarry2011fast}. 
-Approximation of the backward statistics (as defined in \eqref{eq:T:stat}) are computed recursively, for each simulated particle. 
-The computations starts with initializing a set $\tstat[1]{0} = 0,\dots \tstat[N]{0} = 0$, which consists in our approximation of $\tstat{0}(\epart{0}{1}), \dots, \tstat{0}(\epart{0}{N})$.  Then, using \eqref{eq:property:backward}, for each $k\geqslant 0$, $1\leqslant i\leqslant \N$, the approximated statistics are updated with:
+Approximation of the backward statistics, as defined in \eqref{eq:T:stat}, are computed recursively, for each simulated particle. 
+The computations starts with initializing a set $\tstat[1]{0} = 0,\dots \tstat[N]{0} = 0$, corresponding to the values of $\tstat{0}(\epart{0}{1}), \dots, \tstat{0}(\epart{0}{N})$.  Then, using \eqref{eq:property:backward}, for each $k\geqslant 0$, $1\leqslant i\leqslant \N$, the approximated statistics are updated with:
 \begin{equation}
 \label{eq:update:paris:marginal}
 \tstat[i]{k+1}  = \frac{1}{\K} \sum_{j=1}^{\K} \left( \tstat[\bi{k+1}{i}{j}]{k} + \addf{k}\left(\epart{k}{\bi{k+1}{i}{j}}, \epart{k+1}{i}\right)\right)\eqsp,
@@ -513,15 +510,15 @@ Therefore, the following  accept-reject mechanism algorithm may be used to sampl
 \end{enumerate}
 \item  $(J^\ast,\zeta^\ast)$ is then accepted with probability $\hatqg{k}\langle \zeta^\ast\rangle(\epart{k}{J^\ast}, \epart{k+1}{i})/\hkup_k^i$ and, upon acceptance, $\bi{k+1}{i}{j} = J^*$.
 \end{enumerate}
-This algorithm is the only SMC smoother proposed in the literature with  theoretical guarantees when no closed-form expressions of  the  transition  densities and the conditional likelihood of the observations are available,  assuming that the user  can only evaluate  approximations of these densities. 
+This algorithm is the only online SMC smoother proposed in the literature with  theoretical guarantees when no closed-form expressions of  the  transition  densities and the conditional likelihood of the observations are available,  assuming that the user  can only evaluate  approximations of these densities. 
 This pseudo-marginal particle smoothing algorithm  requires that the backward sampling step  generates samples exactly according to $\overline \upsilon_k^i$.  
 However, it relies on the key assumptions of the positiveness of $\hatqg{k}\langle \zeta\rangle(x, x')$ and \eqref{eq:AR:bound} which are rather restrictive (especially the second one), and would not be satisfied in practice for a lot of problems (see for instance in Section~\ref{sec:simu:LV}).
- In section \ref{sec:backwardis}, we propose an alternative to this step to obtain a computationally efficient pseudo-marginal smoother in a much wider range of applications for which such assumptions do not hold.
+ In Section \ref{sec:backwardis}, we propose an alternative to this step to obtain a computationally efficient pseudo-marginal smoother in a much wider range of applications for which such assumptions do not hold.
  
 \subsubsection*{Approximations for recursive MLE}
 
 In the case of recursive MLE, one needs to approximate the key quantity \eqref{eq:online:gradient}.
-A particle filter, can be used to compute the following sequential Monte Carlo approximation:
+A particle filter, can be used to compute the following sequential Monte Carlo approximations:
 $$
 \pred{k}^N[\md{k;\parvec}] = \frac{1}{N}\sum_{\ell = 1}^N \md{k;\parvec}(\epart{n}{\ell})\eqsp,\eqsp \pred{k}^N[\deriv \md{k;\parvec}] = \frac{1}{N}\sum_{\ell = 1}^N \deriv \md{k;\parvec}(\epart{k}{\ell})\eqsp.
 $$
