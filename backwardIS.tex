@@ -7,7 +7,7 @@
 \usepackage{times,dsfont,ifthen}
 \usepackage{fancyhdr,xcolor,breakcites,booktabs}
 
-\title{Backward importance sampling for online estimation of models with intractable likelihood}
+\title{Backward importance sampling for online estimation of state space models with intractable likelihood}
 \date{}
 
 
@@ -230,13 +230,12 @@
 
 
 \begin{abstract}
-This paper proposes a new Sequential Monte Carlo algorithm to perform maximum likelihood estimation of state space models with unknwon  dynamics. 
-Obtaining low variance estimators of expectations under the posterior distributions of the unobserved states given the observations is challenging when the transition densities of the states cannot be evaluated pointwise. 
-In this paper, following recent theoretical results for pseudo-marginal sequential Monte Carlo smoothers, a pseudo-marginal backward importance sampling step is introduced to estimate such expectations. 
-This new step allows to reduce very significantly the computational time  of the existing numerical solutions based on an acceptance-rejection procedure for similar performance. 
-In the context of multivariate stochastic differential equations, the proposed algorithm makes use of unbiased estimates of the unknown transition densities under much weaker assumptions than standard alternatives. 
-The performance of this estimator is assessed in particular in the case of a partially observed stochastic Lotka-Volterra model. 
-The algorithm is also evaluated in the case of high-dimensional discrete-time latent data models and for recursive maximum likelihood estimation.
+This paper proposes a new Sequential Monte Carlo algorithm to perform estimation in the context of state space models when either the density of hidden dynamics transition or observation process is intractable. 
+In this setting, obtaining low variance estimators of expectations under the posterior distributions of the unobserved states given the observations is a challenging task. 
+Following recent theoretical results for pseudo-marginal sequential Monte Carlo smoothers, a pseudo-marginal backward importance sampling step is introduced to estimate such expectations. 
+This new step allows to reduce very significantly the computational time  of the existing numerical solutions based on an acceptance-rejection procedure for similar performance, and to broaden the class of eligible models for such methods. 
+For instance, in the context of multivariate stochastic differential equations, the proposed algorithm makes use of unbiased estimates of the unknown transition densities under much weaker assumptions than standard alternatives.
+ The performance of this estimator is assessed in the context of  high-dimensional discrete-time latent data models,  for recursive maximum likelihood estimation in the context of partially observed diffusion process, and  in the case of a bidimensional partially observed stochastic Lotka-Volterra model. 
 \end{abstract}
 
 
@@ -280,11 +279,11 @@ In the general case where only signed estimates can be obtained, we propose to u
 The paper is organized as follows. Section~\ref{sec:model} displays the latent data models and the main objectives considered in this paper. Then, Section~\ref{sec:method} details online pseudo marginal sequential Monte Carlo algorithms and Section~\ref{sec:backwardis} our proposed algorithm. Section~\ref{sec:application}  provides  extensive numerical experiments to illustrate the performance of our approach. The empirical results of this section can be summarised as follows.
 \begin{itemize}
 \item The proposed approach can be used for any latent data models such as hidden Markov models, or recurrent neural networks with unobserved latent states. Even when the transition densities are available, we show empirically that our backward importance sampling is a computationally efficient solution to solve the online smoothing problem (Section \ref{sec:simu:RNN}).
-\item When considering the pseudo-marginal approach, we extend the use of Wald's trick to the backward kernel, and therefore show that our approach can be used in cases where the estimators of the unknown densities  are not positive by construction.
-\item  We perform sequential Monte Carlo smoothing in models for which no solutions were proposed in the literature to the best of our knowledge, such as multivariate partially observed diffusion processes (Section \ref{sec:simu:LV}).
 \item We show that the proposed approach outperforms the existing acceptance rejection method in terms of computational efficiency %and can be considered even when the acceptance rejection procedure cannot be performed 
 (Section \ref{sec:simu:SINE}). 
 \item We show how the proposed method allows for efficient online recursive maximum likelihood in the context of partially observed diffusion processes (Section \ref{sec:simu:tangent:filter}). This experiment also allows to conjecture for the asymptotic normality of our estimator, which would be an extension of the results of \cite{gloaguen2021pseudo}.
+\item When considering the pseudo-marginal approach, we extend the use of Wald's trick to the backward kernel, and therefore show that our approach can be used in cases where the estimators of the unknown densities  are not positive by construction.
+\item  We perform sequential Monte Carlo smoothing in models for which no solutions were proposed in the literature to the best of our knowledge, such as multivariate partially observed diffusion processes (Section \ref{sec:simu:LV}).
 \end{itemize}
 
 \section{Model and objectives}
@@ -721,7 +720,7 @@ The vanishing of the bias might induce more backward sampling, but this remains 
 
 Then, the same estimation was performed (on the same data set) for $\N$ varying from 50 to 2000.
 In this context, $\K$ was set to 2 for the AR method. 
-To have an empirical intuition of how $\K$ must vary with $\N$, the importance sampling algorithm is applied with $\K = \N^{0.5}, \N^{0.6}$ and $N / 10$ (as this last value was sufficient in the first experiment to avoid any bias). The results are shown in Figure~\ref{fig:sine:timeandbias:N:vary}. A  small bias might appear for $\N = 2000$ and $\K~=~45\eqsp(\approx 2000^{0.5})$, but no bias is visible for $\N^{0.6}$ and $\N /10$. 
+To have an empirical intuition of how $\K$ must vary with $\N$ for our algorithm, the backward importance sampling  is applied with $\K = \N^{0.5}, \N^{0.6}$ and $N / 10$ (as this last value was sufficient in the first experiment to avoid any bias). The results are shown in Figure~\ref{fig:sine:timeandbias:N:vary}. A  small bias might appear for $\N = 2000$ and $\K~=~45\eqsp(\approx 2000^{0.5})$, but no bias is visible for $\N^{0.6}$ and $\N /10$. 
 %This suggests an heuristic for choosing $\K$, that would have to be confirmed by theoretical results.
 As expected, the gain in time, compared to the state of the art algorithm, remains important (even if it decreases as $\K$ increases). 
 It is worth noting that the variance of the computational time is greatly reduced compared to the AR technique.% (due to the acceptance rejection step).
