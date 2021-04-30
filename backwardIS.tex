@@ -747,7 +747,7 @@ It is worth noting that the variance of the computational time is greatly reduce
 \label{sec:simu:tangent:filter}
 Online recursive maximum likelihood using pseudo marginal SMC is illustrated for the same Sine model.
 As mentionned, a GPE estimator of the transition density can be computed. 
-Following the idea of this computation, one can actually obtain an unbiased estimated of the gradient of the log-transition density and thus compute and unbiased estimate of the key quantity given in \eqref{eq:complete:gradient:log}. 
+Following the idea of this computation, it is possible to obtain an unbiased estimate of the gradient of the log-transition density and thus compute and unbiased estimate of the key quantity given in \eqref{eq:complete:gradient:log}. 
 To the best of our knowledge, this estimator is new, and given in appendix \ref{sec:filter:SDE}.
 Using the Exact algorithm of \cite{beskos2006retrospective} a data set of 5000 points (displayed in Figure~\ref{fig:data}), was simulated whith the true parameter $\parvec_* = \pi/4$. 
 As in the previous section, particle smoothing was performed, using  the same particle filter, with $\N = 100$ particles and $\K = 10$ backward samples in our backward importance sampling procedure. 
@@ -873,16 +873,16 @@ Figure \ref{fig:LV:hares:lynx} shows  estimates of $\pE_{\hat{\theta}}\left[ X_k
 The particle smoother is implemented using $N = 200$ particles and $\tilde{N}=20$. 
 The replicates show that the variance of our estimator (for a given set of observations) is much smaller than the one of the Poor Man's smoother. 
 
-\section{Discussion}
-\label{sec:discussion} 
-This paper proposes a solution to  perform online smoothing for latent data models with intractable transition densities and marginal conditional likelihood. This allows in particular to estimate smoothing expectations of additive functionals of solutions to generic SDEs.% i.e. obtaining a positive and almost surely bounded estimate of the transition density to run the  backward acceptance rejection mechanism. 
-
-Note that the proposed backward importance sampling may be used to approximate expectations under the smoothing distributions for general state space hidden Markov models and  is not restricted to POD processes. As illustrated in various experiments, this approach may lead to significant  gains in computational time for similar performance than the acceptance rejection approach.  The proposed estimator, unlike the existing methods such as GPE-based algorithms, applies to a large range of multivariate diffusion processes (see \cite{andersson2017unbiased} and \cite{fearnhead2017continuous}).
-
-Theoretical guarantees, such as consistency and asymptotic normality of this estimator remain to be proved. 
-This should be an extension of \cite{gloaguen2021pseudo}; however, this would imply few technicalities which are out of the scope of this paper. The bias of the PaRIS algorithm may be shown to be or order $\mathcal{O}((1 + 1/\K)/\N)$ and vanishes as $\N$ goes to infinity for any choice of $\K\geqslant 2$. 
-The exact sampling being replaced by an importance sampling step, the conjecture is that  the bias of the proposed algorithm involves a $\mathcal{O}(1/\K)$ term, which does not vanish as $\N$ goes to infinity. 
-However, the empirical study illustrates that $\K$ may be chosen to increase with $\N$ sufficiently slowly to remove the additional bias term, while simultaneously ensuring better computational performance. % This empirical analysis could be supported by theoretical guarantees   and motivates future developments.
+%\section{Discussion}
+%\label{sec:discussion} 
+%This paper proposes a solution to  perform online smoothing for latent data models with intractable transition densities and marginal conditional likelihood. This allows in particular to estimate smoothing expectations of additive functionals of solutions to generic SDEs.% i.e. obtaining a positive and almost surely bounded estimate of the transition density to run the  backward acceptance rejection mechanism. 
+%
+%Note that the proposed backward importance sampling may be used to approximate expectations under the smoothing distributions for general state space hidden Markov models and  is not restricted to POD processes. As illustrated in various experiments, this approach may lead to significant  gains in computational time for similar performance than the acceptance rejection approach.  The proposed estimator, unlike the existing methods such as GPE-based algorithms, applies to a large range of multivariate diffusion processes (see \cite{andersson2017unbiased} and \cite{fearnhead2017continuous}).
+%
+%Theoretical guarantees, such as consistency and asymptotic normality of this estimator remain to be proved. 
+%This should be an extension of \cite{gloaguen2021pseudo}; however, this would imply few technicalities which are out of the scope of this paper. The bias of the PaRIS algorithm may be shown to be or order $\mathcal{O}((1 + 1/\K)/\N)$ and vanishes as $\N$ goes to infinity for any choice of $\K\geqslant 2$. 
+%The exact sampling being replaced by an importance sampling step, the conjecture is that  the bias of the proposed algorithm involves a $\mathcal{O}(1/\K)$ term, which does not vanish as $\N$ goes to infinity. 
+%However, the empirical study illustrates that $\K$ may be chosen to increase with $\N$ sufficiently slowly to remove the additional bias term, while simultaneously ensuring better computational performance. % This empirical analysis could be supported by theoretical guarantees   and motivates future developments.
 
 \bibliographystyle{apalike}
 \bibliography{backwardIS}
