@@ -958,7 +958,7 @@ To perform the algorithm proposed in this paper, we therefore have to design a p
 
 Assume that there exist random variables $\gpeLB$ and $\gpeUB$ such that for all $0\leqslant s \leqslant \Delta_k$, $\gpeLB \leqslant \psi_{\parvec}(\omega_s) \leqslant \gpeUB$. Let $\kappa$ be a random variable taking values in $\mathbb{N}$ with distribution $\mu$, $\omega = (\omega_s)_{0 \leq s \leq \Delta_k}$ be the realization of a Brownian Bridge, and $(U_j)_{1\leqslant j \leqslant \kappa}$ be independent uniform random
 variables on $(0,\Delta_k)$ and $\zeta = (\kappa,\omega, U_1, \ldots , U_{\kappa})$. As
-shown in \cite{fearnhead:papaspiliopoulos:roberts:2008}, equation \eqref{eq:q:girsanov} leads to a positive unbiased estimator given by
+shown in \cite{fearnhead2008particle}, equation \eqref{eq:q:girsanov} leads to a positive unbiased estimator given by
 \[
 \hdhat{k+1;\parvec}(x,y;\zeta) = \phi_{\Delta_k}(x-y)\mathrm{exp}\left(A_{\parvec}(y) - A_{\parvec}(x) - \gpeLB\Delta_k\right)\prod_{j=1}^{\kappa}\frac{\gpeUB-\psi_{\parvec}(\omega_{{U_j}})}{\gpeUB-\gpeLB}\eqsp.
 \]
@@ -1024,7 +1024,7 @@ where $\zeta_k$ stands for all the randomness required to produce the parametrix
 The stability of this estimator is studied in \cite{fearnhead2017continuous} which provides $\mathrm{L}_p$ controls for the weight $\mathsf{w}_{s_{N_k}}$. 
 The parametrix algorithm mentioned above is a highly flexible procedure to obtain such an unbiased estimate for a much broader class of diffusions than Poisson based estimations which require strong assumptions. 
 However, as the update \eqref{CIS:eq:rho} involves the difference of two Kolmogorov operators, the parametrix estimator of the transition density may be negative, and has no reason to satisfy \eqref{eq:AR:bound}.
-Thus, the SMC algorithms described above cannot be implemented.
+%Thus, the SMC algorithms described above cannot be implemented.
 
 
 
