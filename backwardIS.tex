@@ -18,8 +18,8 @@
 \author[$\ddag$]{Jimmy Olsson}
 
 \affil[$\dag$]{{\small Samovar, T\'el\'ecom SudParis, d\'epartement CITI, TIPIC, Institut Polytechnique de Paris, Palaiseau.}}
-\affil[$\wr$]{{\small Agrocampus Ouest, CNRS, IRMAR - UMR 6625, F-35000 Rennes.}}
 \affil[$\amalg$]{{\small CMAP, \'Ecole Polytechnique, Institut Polytechnique de Paris, Palaiseau.}}
+\affil[$\wr$]{{\small Agrocampus Ouest, CNRS, IRMAR - UMR 6625, F-35000 Rennes.}}
 \affil[$\star$]{{\small AgroParisTech, UMR MIA 518.}}
 \affil[$\ddag$]{{\small Department of Mathematics, KTH Royal Institute of Technology, Stockholm.}}
 
@@ -293,9 +293,9 @@ Let $\parvec$ be a parameter lying in a $\Theta\subset \rset^q$ and consider a  
 It is assumed that this state  is partially observed  through an observation process $(Y_k)_{0\leqslant k \leqslant n}$ taking values in $\rset^m$. 
 For all $0\leqslant k \leqslant n$, the distribution of $Y_k$ given $X_{0:n}$ depends on $X_k$ only and has density $\md{k;\parvec}(X_k,\cdot)$ with respect to the Lebesgue measure. 
 In this context, for any pair of indexes $0\leqslant\leqslant k_1 \leqslant k_2 \leqslant n$, we define the \textit{joint smoothing distribution} as the conditional law of $X_{k_1:k_2}$ given $Y_{0:n}$. 
-In this framework, the likelihood of the observations $\llh{n,\parvec}(Y_{0:n})$ , which is  in general intractable, is
+In this framework, the likelihood of the observations $\llh{n,\parvec}(Y_{0:n})$, which is  in general intractable, is
 $$
-\llh{n,\parvec}(Y_{0:n})  = \int \chi(x_0)\md{0;\parvec}(x_{0},Y_{0})\prod_{k=0}^{n-1}\qg{k;\parvec}(x_{k},x_{k+1})\rmd x_{0:n},
+\llh{n,\parvec}(Y_{0:n})  = \int \chi(x_0)\md{0;\parvec}(x_{0},Y_{0})\prod_{k=0}^{n-1}\qg{k;\parvec}(x_{k},x_{k+1})\rmd x_{0:n}\eqsp,
 $$
  where, for all $0\leqslant k \leqslant n$ and all $\parvec\in\parspace$,
 \begin{equation}
@@ -305,11 +305,13 @@ $$
 In a large variety of situations, \eqref{eq:def:elln} cannot be evaluated pointwise  (see models of sections \ref{sec:simu:SINE} and \ref{sec:simu:LV}), and we assume in this paper that we have an estimate of this quantity (see assumption \textbf{H\ref{assum:unbiased}} in Section~\ref{sec:method}).
 Note that to avoid future cumbersome expressions, the dependency of the key quantity $\qg{k;\parvec}(\cdot)$ on the observations is implicit, as we always work conditionnaly to the observations. In this paper, we propose an algorithm to compute \textit{smoothing expectations of additive functionals}. 
 Namely, we aim at computing: 
-$$\pE \left[\af{0:n}(X_{0:n})\middle | Y_{0:n}\right],$$
+$$
+\pE \left[\af{0:n}(X_{0:n})\middle | Y_{0:n}\right]\eqsp,
+$$
 where $\af{0:n}$ is an \textit{additive functional}, \textit{i.e.} a function from $\rset^{d \times (n + 1)}$ to $\rset^{d'}$ satisfying:
 \begin{equation}
 \label{eq:additive:functional}
-\af{0:n}: x_{0:n} \mapsto \sum_{k=0}^{n-1}\addf{k}(x_{k},x_{k+1}),
+\af{0:n}: x_{0:n} \mapsto \sum_{k=0}^{n-1}\addf{k}(x_{k},x_{k+1})\eqsp,
 \end{equation}
 where $\addf{k}:\rset^{d} \times \rset^{d}\to\rset^{d'}$.
 Such expectations are the keystones of many common inference problems in state space models.
