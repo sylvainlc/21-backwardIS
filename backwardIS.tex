@@ -536,7 +536,7 @@ Plugging these estimates in equation \eqref{eq:online:gradient} allows to perfor
 \label{sec:backwardis}
 
 
-\subsection{Positive transition densities estimates}
+\subsection{Positive estimates}
 \label{sec:wald:trick}
 In this section, we propose to use Wald’s identity for martingales to obtain an  estimator which is guaranteed to be positive.  This step is not required if $\hatqg{k}\langle z\rangle(x,x')$ is positive by construction but this is not necessarily true.
  Wald's trick was for instance applied in \cite{fearnhead2010random} to solve the filtering problem in the context of Poisson based estimators for partially observed diffusions. Our estimator is defined up to an unknown constant of proportionality, which is removed when the importance weights are normalized in equation \eqref{eq:update:paris:marginal:is}. 
@@ -586,7 +586,7 @@ where $\varpi_k^{(i,j)}$, $1\leqslant j \leqslant \K$ are computed using the pse
 %\varpi_k^{(i,j)} = \hatqg{k}(\epart{k}{J_{k+1}^{(i,j)}}, \epart{k+1}{i};\zeta_k^{(i,j)}) \quad\mathrm{and}\quad \mathcal{W}_k^i=  \sum_{j=1}^{\K}\varpi_k^{(i,j)}
 %\]
 %with $(\zeta_k^{(i,j)})_{1\leqslant j \leqslant \K}$ i.i.d. conditionally with distribution $\kernelmarg_{k}$. 
-Then, the estimator of the conditional expectation of the additive functional is set as
+Then, the estimator of the conditional expectation of the additive functional $\post{0:n\mid n}^{} [\af{0:n}]$ is set as
 \[
 \post{0:n\mid n}^{\N,\textrm{IS}} [\af{0:n}] \eqdef \sum_{i=1}^{\N}\frac{\ewght{n}{i}}{\sumwght{n}}\tstat[i]{n}\eqsp.
 \]
