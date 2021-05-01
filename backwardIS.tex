@@ -394,7 +394,7 @@ Following \cite{legland1997recursive}, the idea is the build a sequence $\left\l
 $$
 \theta_{k} = \theta_{k-1} + \gamma_k \deriv \logllh{\parvec}(Y_k \mid Y_{1:k - 1}) \eqsp,
 $$
-where $\logllh{\parvec}(Y_k \mid Y_{1:k - 1})$ is the log likelihood for the new observation given all the past, and $\left\lbrace\gamma_k\right\rbrace_{k\geqslant}$ are positive step sizes such that $\sum_{k \geqslant 1}\gamma_k = \infty$ and $\sum_{k \geqslant 1}\gamma_k^2 < \infty$. The practicalt implementation of such an update relies on the following identity:
+where $\logllh{\parvec}(Y_k \mid Y_{1:k - 1})$ is the log likelihood for the new observation given all the past, and $\left\lbrace\gamma_k\right\rbrace_{k\geqslant}$ are positive step sizes such that $\sum_{k \geqslant 1}\gamma_k = \infty$ and $\sum_{k \geqslant 1}\gamma_k^2 < \infty$. The practical implementation of such an update relies on the following identity:
 \begin{equation}
 \deriv \logllh{\parvec}(Y_k \mid Y_{1:k - 1})  
 =  \frac{\pred{k;\parvec}[\deriv \md{k;\parvec}] + \filtderiv{k;\parvec}[\md{k;\parvec}]}{\pred{k;\parvec}[\md{k;\parvec}]}\eqsp,
@@ -438,7 +438,7 @@ In the case of a finite state space $\set{X}$ the algorithm was studied in~\cite
 \subsection{Approximation of the filtering distribution}
 \label{sec:filtering}
 Let $(\epart{0}{\ell})_{\ell = 1}^\N$ be independent and identically distributed according to an instrumental proposal density $\rho_0$ on $\mathbb{R}^d$ and define the importance weights $\ewght{0}{\ell} \eqdef \Xinit(\epart{0}{\ell})/\XinitIS{0}(\epart{0}{\ell})$, where $\chi$ is the density of the distribution of $X_0$ as defined in Section~\ref{sec:model}. 
-For any bounded and measurable function  $h$ defined on $\mathbb{R}^d$, the importance sampling estimator
+For any bounded and measurable function  $h$ defined on $\mathbb{R}^d$, the importance sampling estimator defined as 
 \begin{align*}
 \post{0}^\N[h]&\eqdef \sumwght{0}^{-1}\sum_{\ell=1}^\N \ewght{0}{\ell}h(\epart{0}{\ell})\eqsp,\quad\mbox{where}\quad\sumwght{0}\eqdef \sum_{\ell=1}^N \ewght{0}{\ell}\eqsp.
 \end{align*}
