@@ -251,7 +251,7 @@ and engineering domains such as movement ecology \cite{michelot2016movehmm}, ene
 
 
 Markov chain Monte Carlo (MCMC) and sequential Monte Carlo (SMC) methods (also known as particle filters or smoothers) are widespread solutions to propose consistent estimators of such distributions. 
-Among SMC methods, novel algorithms have been designed in the last decades to solve the smoothing problem, such as the Forward Filtering Backward Simulation algorithm \cite{douc2011sequential}  or two-filter based approaches \cite{briers2010smoothing, fearnhead2010sequential, nguyen2017two}. %but 
+Among SMC methods, algorithms have been designed in the last decades to solve the smoothing problem, such as the Forward Filtering Backward Simulation algorithm \cite{douc2011sequential}  or two-filter based approaches \cite{briers2010smoothing, fearnhead2010sequential, nguyen2017two}. %but 
 These approaches, which come with strong theoretical guarantees (\cite{delmoral2010backward, douc2011sequential, dubarry2013nonasymptotic, gerber2017convergence}), require the time horizon and all observations to be available  to initialize a backward information filter, and, thus, perform the smoothing.
 The particle-based rapid incremental smoother \cite{olsson2017efficient} is an online version of forward-backward procedures, specifically designed to approximate conditional expectations of additive functionals. 
 This algorithm relies on a backward sampling step performed on the fly thanks to the well known acceptance rejection sampling. 
@@ -281,7 +281,7 @@ The paper is organized as follows. Section~\ref{sec:model} displays the latent d
 \item The proposed approach can be used for any latent data models such as hidden Markov models, or recurrent neural networks with unobserved latent states. Even when the transition densities are available, we show empirically that our backward importance sampling is a computationally efficient solution to solve the online smoothing problem (Section \ref{sec:simu:RNN}).
 \item We show that the proposed approach outperforms the existing acceptance rejection method in terms of computational efficiency %and can be considered even when the acceptance rejection procedure cannot be performed 
 (Section \ref{sec:simu:SINE}). 
-\item We show how the proposed method allows for efficient online recursive maximum likelihood in the context of partially observed diffusion processes (Section \ref{sec:simu:tangent:filter}). This experiment also allows to conjecture for the asymptotic normality of our estimator, which would be an extension of the results of \cite{gloaguen2021pseudo}.
+\item We show how the proposed method allows for efficient online recursive maximum likelihood in the context of partially observed diffusion processes (Section \ref{sec:simu:tangent:filter}). %This experiment also allows to conjecture for the asymptotic normality of our estimator, which would be an extension of the results of \cite{gloaguen2021pseudo}.
 \item When considering the pseudo-marginal approach, we extend the use of Wald's trick to the backward kernel, and therefore show that our approach can be used in cases where the estimators of the unknown densities  are not positive by construction.
 \item  We perform sequential Monte Carlo smoothing in models for which no solutions were proposed in the literature to the best of our knowledge, such as multivariate partially observed diffusion processes (Section \ref{sec:simu:LV}).
 \end{itemize}
