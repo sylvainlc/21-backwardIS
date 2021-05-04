@@ -6,3 +6,9 @@ pdflatex26104.fls
 backwardIS.aux
 backwardIS.blg
 backwardIS.bbl
+JCGS/*.aux
+JCGS/*.gz
+JCGS/*.blg
+JCGS/*.bbl
+JCGS/*.log
+JCGS/main.pdf
