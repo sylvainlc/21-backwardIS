@@ -106,7 +106,9 @@
 \def\plim{\overset{\pP}{\longrightarrow}}
 \def\dlim{\Longrightarrow}
 \def\gauss{\mathcal{N}}
-
+\newcommand{\Sf}{\Sigma_{\text{filt}}}
+\newcommand{\Sp}{\Sigma_{\text{prop}}}
+\newcommand{\mf}{m_{\text{filt}}}
 
 \newcommand{\esssup}[2][]
 {\ifthenelse{\equal{#1}{}}{\left\| #2 \right\|_\infty}{\left\| #2 \right\|^2_{\infty}}}
@@ -512,7 +514,7 @@ Therefore, the following  accept-reject mechanism algorithm may be used to sampl
 \item $J^\ast$ is sampled with probabilities proportional to  $(\ewght{k}{\ell})_{\ell=1}^{\N}$ ;
 \item $\zeta^\ast$ is sampled independently with distribution $\kernelmarg_{k}(\epart{k}{J^\ast},\epart{k+1}{i};\zeta^\ast)$.
 \end{enumerate}
-\item  $(J^\ast,\zeta^\ast)$ is then accepted with probability $\hatqg{k}\langle \zeta^\ast\rangle(\epart{k}{J^\ast}, \epart{k+1}{i})/\hkup_k^i$ and, upon acceptance, $\bi{k+1}{i}{j} = J^*$.
+\item  $(J^\ast,\zeta^\ast)$ is accepted with probability $\hatqg{k}\langle \zeta^\ast\rangle(\epart{k}{J^\ast}, \epart{k+1}{i})/\hkup_k^i$ . Upon acceptance, $\bi{k+1}{i}{j} = J^*$.
 \end{enumerate}
 This algorithm is the only online SMC smoother proposed in the literature with  theoretical guarantees when no closed-form expressions of  the  transition  densities and the conditional likelihood of the observations are available,  assuming that the user  can only evaluate  approximations of these densities. 
 This pseudo-marginal particle smoothing algorithm  requires that the backward sampling step  generates samples exactly according to $\overline \upsilon_k^i$.  
@@ -651,7 +653,7 @@ $\sum_{k=0}^{49} \|X_k - \mathbb{\widehat{E}}[X_k|Y_{0:49}]\|^2/50$ & 0.2307 & 0
 
 \begin{figure}[h]
 \begin{center}
-    \includegraphics[width=\textwidth, trim = 1cm 1cm 1cm 1cm, clip]{RNN_dim64_mse_all_Xk.pdf}
+    \includegraphics[width=\textwidth, trim = 1cm 1cm 1cm 1cm, clip]{Figure1.pdf}
 \end{center}
     \caption{Plot of the empirical estimate of $\mathbb{E}[\|X_k - \mathbb{\widehat{E}}[X_k|Y_{0:199}]\|^2]$ for $k \in \{0,...,199\}$ for 100 runs of the Backward IS and Poor Man smoothers.}
     \label{fig:RNN:mseperXk}
@@ -695,17 +697,17 @@ It is worth noting that the variance of the computational time is greatly reduce
 
 \begin{figure}[h]
 \begin{center}
-\includegraphics[scale = .4]{comparing_IS_AR_Ntilde_vary.pdf}
+\includegraphics[width = \textwidth]{Figure2.pdf}
 \end{center}
-\caption{Computational complexity and estimation of a posterior mean as a function of the number of backward samples. Results are shown for the state of the art acceptance-rejection algorithm and the proposed backward importance sampling technique.}
+\caption{Computational complexity and estimation of a posterior mean as a function of the number of backward samples. Results are shown for the state of the art acceptance-rejection (AR) algorithm and the proposed backward importance sampling (IS) technique.}
 \label{fig:sine:timeandbias}
 \end{figure}
 
 \begin{figure}[h]
 \begin{center}
-\includegraphics[scale = .4]{comparing_IS_AR_N_vary.pdf}
+\includegraphics[width = \textwidth]{Figure3.pdf}
 \end{center}
-\caption{Computational complexity and estimation of a posterior mean as a function of the number of particles. Results are shown for the state of the art acceptance-rejection algorithm and the proposed backward  importance sampling technique. The number of backward samples is set to 2 for the AR, and $N/10$ for the IS.}
+\caption{Computational complexity and estimation of a posterior mean as a function of the number of particles. Results are shown for the state of the art acceptance-rejection (AR) algorithm and the proposed backward  importance sampling (IS) technique. The number of backward samples is set to 2 for the AR, and to $N^{0.5}, N^{0.6}$ and $N/10$ for the IS.}
 \label{fig:sine:timeandbias:N:vary}
 \end{figure}
 
@@ -716,7 +718,7 @@ Online recursive maximum likelihood using pseudo marginal SMC is illustrated for
 As mentionned, a GPE estimator of the transition density can be computed. 
 Following the idea of this computation, it is possible to obtain an unbiased estimate of the gradient of the log-transition density and thus compute and unbiased estimate of the key quantity given in \eqref{eq:complete:gradient:log}. 
 To the best of our knowledge, this estimator is new, and given in appendix \ref{sec:filter:SDE}.
-Using the Exact algorithm of \cite{beskos2006retrospective} a data set of 5000 points (displayed in Figure~\ref{fig:data}), was simulated whith the true parameter $\parvec_* = \pi/4$. 
+Using the Exact algorithm of \cite{beskos2006retrospective} a data set of 5000 points (displayed in Figure~\ref{fig:1obs:50start}), was simulated whith the true parameter $\parvec_* = \pi/4$. 
 As in the previous section, particle smoothing was performed, using  the same particle filter, with $\N = 100$ particles and $\K = 10$ backward samples in our backward importance sampling procedure. 
 In this setup, we explore three key features of our estimator.
 
@@ -748,41 +750,26 @@ As expected, the raw estimator shows different rates of convergence depending on
 
 \begin{figure}
 \centering
-\includegraphics[width = 0.7\textwidth]{SINE_data.pdf}
-\caption{\label{fig:data} Data set simulated according to the SINE process, observed with noise at discrete time steps.}
-\end{figure}
-\begin{figure}
-\centering
 \begin{tabular}{cc}
-\includegraphics[width = 0.4\textwidth]{oneObs_severalStarts.pdf}&
-\includegraphics[width = 0.4\textwidth]{gradient_steps.pdf}
+\includegraphics[width = \textwidth]{Figure4.pdf}&
 \end{tabular} 
-\caption{\label{fig:1obs:50start}(\textit{Left}) online estimation of $\parvec$ for the data set presented in Figure~\ref{fig:data}. The algorithm is performed from 50 starting points. (\textit{Right}) The gradient step sizes (defined in equation \eqref{eq:par:update}).}
+\caption{\label{fig:1obs:50start}(\textit{Left}) Data set simulated according to the SINE process, observed with noise at discrete time steps. (\textit{Middle}) Gradient step sizes (defined in equation \eqref{eq:par:update}) for online estimation. (\textit{Right}) Online estimation of $\parvec$. Colors differentiate the 50 different starting points. The red horizontal line shows the true value.}
 \end{figure}
+
 \begin{figure}
 \centering
 \begin{tabular}{ccc}
-\includegraphics[width = 0.32\textwidth]{severalObs_oneStart.pdf}&
-\includegraphics[width = 0.32\textwidth]{severalObs_oneStart_smooth.pdf}&
-\includegraphics[width = 0.32\textwidth]{severalObs_oneStart_smooth_dens.pdf}
+\includegraphics[width = \textwidth]{Figure5.pdf}
 \end{tabular}
-\caption{\label{fig:50obs:1start}(\textit{Left}) online estimation of $\parvec$ for 50 different simulated data sets as presented in Figure \ref{fig:data}. The algorithm is performed from 1 starting point with the gradient step size shown in Figure \ref{fig:1obs:50start}. (\textit{Center}) Averaged estimator, where $\hat{\parvec}$ is averaged after a burning phase of 300 time steps. (\textit{Right}) Empirical distribution of $\hat{\parvec}$. The red line is the value of $\parvec^*$.}
+\caption{\label{fig:50obs:1start}(\textit{Left}) online estimation of $\parvec$ for 50 different simulated data sets. The algorithm is performed from 1 starting point with the gradient step size shown in Figure \ref{fig:1obs:50start}. (\textit{Middle}) Averaged estimator, where $\hat{\parvec}$ is averaged after a burning phase of 300 time steps. (\textit{Right}) Empirical distribution of $\hat{\parvec}$. The red line is the value of $\parvec^*$.}
 \end{figure}
 
 \begin{figure}
 \centering
 \begin{tabular}{cc}
-\includegraphics[width = 0.4\textwidth]{oneObs_oneStart_severalGrads.pdf}&
-\includegraphics[width = 0.4\textwidth]{oneObs_oneStart_severalGrads_smooth.pdf}
+\includegraphics[height = .333\textwidth]{Figure6.pdf}
 \end{tabular}
-\caption{\label{fig:1obs:1start:6Grads}(\textit{Left}) online estimation of $\theta$ for the data set presented in Figure \ref{fig:data}, with different decreasing rates values $\kappa$. (\textit{Right}) Averaged estimator, where $\hat{\parvec}$ is averaged after a burning phase of 300 time steps.}
-\end{figure}
-
-\begin{figure}
-\begin{center}
-\includegraphics[scale = 0.4]{smoothing_hares_lynx.pdf}
-\end{center}
-\caption{\label{fig:LV:hares:lynx} Estimated Hares-Lynx abundances using the Hudson bay company data set. Both our IS-PaRIS smoother and the poor man smoother are performed to approximate the MLE and solve the tracking problem. Blue crosses show the observations.}
+\caption{\label{fig:1obs:1start:6Grads}(\textit{Left}) online estimation of $\theta$ for the data set presented in Figure \ref{fig:1obs:50start}, with different decreasing rates values $\kappa$. (\textit{Right}) Averaged estimator, where $\hat{\parvec}$ is averaged after a burning phase of 300 time steps.}
 \end{figure}
 
 \subsection{Multidimensional diffusion processes: Stochastic Lotka-Volterra model}
@@ -805,26 +792,8 @@ Y_{t_k} = \begin{pmatrix} \text{c}_1X_1(t_k)\mathrm{e}^{\epsilon^{(1)}_{t_k}} \\
 where $\text{c} = (\text{c}_1, \text{c}_2)^T$ is known (the observed fraction of the population) and $\lbrace \epsilon_{t_k} =(\epsilon^{(1)}_{t_k}, \epsilon^{(2)}_{t_k})\rbrace_{1\leqslant k\leqslant n}$ are i.i.d. random variables distributed as a $\mathcal{N}_2(-\text{diag}\ \Sigma/2, \Sigma)$ where $\Sigma$ is an unknown 2 $\times$ 2 covariance matrix. It is straightforward to show that for a generic $\parvec$, in the SDE defined by \eqref{eq:LV:SDE}, the drift function cannot be written (even after the Lamperti transform) as the gradient of a potential. 
 Therefore, the General Poisson estimator cannot be used as an unbiased estimator of the transition density. 
 Following Section \ref{sec:wald:trick}, an almost surely positive unbiased estimate of the transition density is obtained by combining the Wald's trick to the parametrix estimators of \cite{fearnhead2017continuous}.
-The proposal distribution for the particle filter is again a trade off between model dynamics and the observation model (full details are given in the appendix).
- The simulated set of particles is used to obtain estimates of the true abundances given the observations, both on synthetic and real data.
+The proposal distribution for the particle filter is again a trade off between model dynamics and the observation model (full details are given in the appendix). We focus below on the applications of the model on the real dataset. Synthetic experiments were also performed to ensure the performance of our algorithm in a fully supervised context, and are shown in appendix.
 
-\subsubsection*{Synthetic data}
-
-In a first approach,  simulated data are obtained from the model given by \eqref{eq:LV:SDE} and \eqref{eq:LV:obs:model} for a known set of parameters.
- Chosen values of $\theta$, $\Sigma$, $\text{c}_1$ and $\text{c}_2$ for the experiment are given in the appendix. 
-The model is used to simulate abundances indexes $Y_0,\dots Y_{300}$ at times $t_0 = 0,\dots, t_{300} = 3$. 
-The associated time series (after a division by the known constant $\text{c}$) is shown in Figure \ref{fig:LV:tracking} (left panel). 
-In this experiment, the goal is to obtain an estimate of the actual predator-prey abundances given all the observed abundances indexes $Y_{0:n}$. 
-Our estimate is given by the set of conditional expectations $\lbrace\pE[ X_k \vert Y_{0:n}]\rbrace_{k = 0,\dots, n}$, approximated using our backward importance sampling PaRIS smoother, which is run using the true parameters. 
-Figure \ref{fig:LV:tracking} shows the estimated abundance trajectory over time. 
-The proposed backward importance sampling smoother manages to estimate efficiently the actual abundance from noisy data and a model with an intractable transition density.
-
-\begin{figure}
-\begin{center}
-\includegraphics[scale = .4]{smoothed_tracking_LV.pdf}
-\end{center}
-\caption{\label{fig:LV:tracking} Estimated predator-prey abundances (center) in a stochastic Lotka Volterra model using our backward sampling estimate on simulated abundance indexes (left). Right panel shows the ground truth.}
-\end{figure}
 
 \subsubsection*{Hares and lynx data}
 
@@ -835,11 +804,18 @@ At each iteration, the estimator $\theta_k$ is updated by finding a parameter $\
 The last estimate $\hat{\theta}$ obtained with this EM algorithm  is used to  estimate the actual abundances in the model (similarly to the synthetic data case). 
 Figure \ref{fig:LV:hares:lynx} shows  estimates of $\pE_{\hat{\theta}}\left[ X_k \vert Y_{0:n}\right]$ obtained with 30 independent runs of our algorithm. 
 The particle smoother is implemented using $N = 200$ particles and $\tilde{N}=20$. 
-The replicates show that the variance of our estimator (for a given set of observations) is much smaller than the one of the Poor Man's smoother. 
+The replicates show that the variance of our estimator (for a given set of observations) is much smaller than the one of the Poor Man's smoother.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width = .45\textwidth]{Figure7.pdf}
+\end{center}
+\caption{\label{fig:LV:hares:lynx} Estimated Hares-Lynx abundances using the Hudson bay company data set. Both our IS-PaRIS smoother and the poor man smoother are performed to approximate the MLE and solve the tracking problem. Blue crosses show the observations.}
+\end{figure} 
 
 
 \bibliographystyle{Chicago}
-\bibliography{backwardIS}
+\bibliography{references}
 
 \appendix 
 
@@ -850,9 +826,8 @@ Let $(X_t)_{t\ge 0}$ be defined as a weak solution to the following Stochastic D
 \label{eq:sde}
 X_0 = x_0 \quad\mbox{and}\quad \rmd X_t = \alpha_{\parvec}(X_t)\rmd t + \rmd W_t\eqsp,
 \end{equation}
-where $(W_t)_{t\geqslant 0}$ is a standard Brownian motion, $\alpha_{\parvec}: \Xset\to\Xset$ is the drift function
-% and $\Sigma_{\parvec}:\Xset\to\mathbb{R}^{2\dimX}$ is the diffusion
-. The inference procedure presented in this paper is applied in the case where the solution to \eqref{eq:sde} is supposed to be partially observed at times $t_0 = 0,\ldots,t_n$, for a given $n\geqslant 1$, through an observation process $(Y_k)_{0\leqslant k \leqslant n}$ taking values in $\mathbb{R}^m$. For all $0\leqslant k \leqslant n$, the distribution of $Y_k$ given $(X_t)_{t\geqslant 0}$ depends on $X_k = X_{t_k}$ only and has density $\md{k;\parvec}$ with respect to $\nu$. The distribution of $X_0$ has density $\chi$ with respect to $\mu$ and for all $0\leqslant k \leqslant n-1$, the conditional distribution of $X_{k+1} $ given $(X_{t})_{0\leqslant t\leqslant k}$ has density $\hd{k+1;\parvec}(X_{k},\cdot)$ with respect to $\mu$. 
+where $(W_t)_{t\geqslant 0}$ is a standard Brownian motion, $\alpha_{\parvec}: \Xset\to\Xset$ is the drift function. 
+The inference procedure presented in this paper is applied in the case where the solution to \eqref{eq:sde} is supposed to be partially observed at times $t_0 = 0,\ldots,t_n$, for a given $n\geqslant 1$, through an observation process $(Y_k)_{0\leqslant k \leqslant n}$ taking values in $\mathbb{R}^m$. For all $0\leqslant k \leqslant n$, the distribution of $Y_k$ given $(X_t)_{t\geqslant 0}$ depends on $X_k = X_{t_k}$ only and has density $\md{k;\parvec}$ with respect to $\nu$. The distribution of $X_0$ has density $\chi$ with respect to $\mu$ and for all $0\leqslant k \leqslant n-1$, the conditional distribution of $X_{k+1} $ given $(X_{t})_{0\leqslant t\leqslant k}$ has density $\hd{k+1;\parvec}(X_{k},\cdot)$ with respect to $\mu$. 
 
 \subsection{Unbiased estimators of the transition densities}
 
@@ -957,5 +932,67 @@ where $\zeta_k$ stands for all the randomness required to produce the parametrix
 The stability of this estimator is studied in \cite{fearnhead2017continuous} which provides $\mathrm{L}_p$ controls for the weight $\mathsf{w}_{s_{N_k}}$. 
 The parametrix algorithm mentioned above is a highly flexible procedure to obtain such an unbiased estimate for a much broader class of diffusions than Poisson based estimations which require strong assumptions. 
 However, as the update \eqref{CIS:eq:rho} involves the difference of two Kolmogorov operators, the parametrix estimator of the transition density may be negative, and has no reason to satisfy \eqref{eq:AR:bound}.
+
+\section{Supplementary material for Section \ref{sec:simu:LV}}
+
+\subsection*{Proposal distribution in the Lotka-Volterra experiment}
+
+In this section, we detail the proposal distribution chosen for the particle filter applied to the Lotka-Voltera model defined in the experiment section of the article. 
+
+
+At each time ${k +1}$, for $k\geqslant 0$, the objective is to to sample a new particle $\xi_{k+1}$ conditionally on a particle $\xi_{k}$ at time $k$, an observation $Y_{k+1}$, and a parameter $\theta$. 
+In the following,  $\theta$ is dropped from the notations. Unlike in the Sine example, it is not straightforward to sample from the p.d.f. proportional to the product
+$$
+q^{\mathsf{Eul}}_{k+1}(x_{k},x_{k+1})g(x_{k+1})\eqsp,
+$$
+as there is no explicit conjugation.
+A simple  Gaussian approximation of the optimal filter is:
+$$
+p_{k}(x_{k},x_{k+1})\!\propto\! q^{\mathsf{Eul}}_{k+1}(x_{k},x_{k+1})\varphi_{y_{k+1}, \Sp}(x_{k+1})\eqsp,
+$$
+where $\varphi_{y_{k+1}, \Sp}(x_{k+1})$ the Gaussian p.d.f. whose first moment is the one of $Y_{k+1}\vert X_{K+1}$ given by \eqref{eq:LV:obs:model} and variance $\Sp$ is chosen by the user. We denote $ \mf(\x_{k}, y_{k+1})$ and $\Sf$ the mean and variance of this approximate optimal Gaussian filter that can be easily computed.
+However, particles sampled from this distribution can take negative, which is not consistent with the model. 
+As a workaround, $\xi_{k + 1}$ is defined as $\xi_{k+1} \sim\exp(\varepsilon_{k+1})$ where
+$$
+\varepsilon_{k+1} \sim \mathcal{N}\left(\ln \mf(\xi_{k}, y_{k+1}) - \text{diag}(\Sf)/2, \Sf\right)\eqsp .
+$$
+The term $\text{diag}(\Sf)/2$ in the mean of $\varepsilon_{k+1} $ ensures that $\pE\left[\xi_{k+1}\right] =  \mf(\xi_{k}, y_{k+1})$. In our experiments, $\Sp$ was chosen as equal to $\Sigma$.
+
+\subsubsection*{Estimation on synthetic data}
+
+Simulated data are obtained from the model given by \eqref{eq:LV:SDE} and \eqref{eq:LV:obs:model} for a known set of parameters.
+ Chosen values of $\theta$, $\Sigma$, $\text{c}_1$ and $\text{c}_2$ are the following:
+ \begin{align*}
+\begin{array}{rcll}
+a_1 &=& (a_{11} = 12, a_{12} = 0.05, a_{13} = 1) & \text{ Prey dynamics parameters}\\
+a_2 &=& (a_{21} = 2, a_{22} =  0.2, a_{23} = 0.1) & \text{ Predator dynamics param.}\\
+\Gamma &=&
+\begin{pmatrix}
+0.5 & 0.1\\
+0.1 & 0.2
+\end{pmatrix} & \text{ Diffusion parameters}\\
+\mu_0 &=& (50,20) &\text{ Mean of the inital state}\\
+\Sigma_0 &=& I_2 &\text{ Variance of the initial state}\\
+\Sigma_{obs} &=&
+\begin{pmatrix}
+0.01& 0.005\\
+ 0.005& 0.01
+\end{pmatrix}& \text{ Observation variance}\\
+\sf{c} &=& (0.2, 0.3) & \text{ Detectability values}
+\end{array}
+\end{align*} 
+The stochastic model is used to simulate abundances indexes $Y_0,\dots Y_{300}$ at times $t_0 = 0,\dots, t_{300} = 3$. 
+The associated time series (after a division by the known constant $\text{c}$) is shown in Figure \ref{fig:LV:tracking} (left panel). 
+In this experiment, the goal is to obtain an estimate of the actual predator-prey abundances given all the observed abundances indexes $Y_{0:n}$. 
+Our estimate is given by the set of conditional expectations $\lbrace\pE[ X_k \vert Y_{0:n}]\rbrace_{k = 0,\dots, n}$, approximated using our backward importance sampling PaRIS smoother, which is run using the true parameters. 
+Figure \ref{fig:LV:tracking} shows the estimated abundance trajectory over time. 
+The proposed backward importance sampling smoother manages to estimate efficiently the actual abundance from noisy data and a model with an intractable transition density.
+
+\begin{figure}
+\begin{center}
+\includegraphics[scale = .4]{Figure8.pdf}
+\end{center}
+\caption{\label{fig:LV:tracking} Estimated predator-prey abundances (middle) in a stochastic Lotka Volterra model using our backward sampling estimate on simulated abundance indexes (left). Right panel shows the ground truth.}
+\end{figure}
 
 \end{document}

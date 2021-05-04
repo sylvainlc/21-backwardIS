@@ -1,0 +1,334 @@
+\begin{thebibliography}{}
+
+\bibitem[\protect\citeauthoryear{A\"{i}t-Shalia}{A\"{i}t-Shalia}{2008}]{ait-sahalia2008closed}
+A\"{i}t-Shalia, Y. (2008).
+\newblock Closed-form likelihood expansions for multivariate diffusions.
+\newblock {\em Annals of {S}tatistics\/}~{\em 36\/}(2), 906--937.
+
+\bibitem[\protect\citeauthoryear{Andersson and Kohatsu-Higa}{Andersson and
+  Kohatsu-Higa}{2017}]{andersson2017unbiased}
+Andersson, P. and A.~Kohatsu-Higa (2017).
+\newblock Unbiased simulation of stochastic differential equations using
+  parametrix expansions.
+\newblock {\em Bernoulli\/}~{\em 23\/}(3), 2028--2057.
+
+\bibitem[\protect\citeauthoryear{Andrieu and Roberts}{Andrieu and
+  Roberts}{2009}]{andrieu2009pseudo}
+Andrieu, C. and G.~O. Roberts (2009).
+\newblock {The pseudo-marginal approach for efficient Monte Carlo
+  computations}.
+\newblock {\em The Annals of Statistics\/}~{\em 37\/}(2), 697 -- 725.
+
+\bibitem[\protect\citeauthoryear{Beskos, Papaspiliopoulos, and Roberts}{Beskos
+  et~al.}{2006}]{beskos2006retrospective}
+Beskos, A., O.~Papaspiliopoulos, and G.~O. Roberts (2006).
+\newblock Retrospective exact simulation of diffusion sample paths with
+  applications.
+\newblock {\em Bernoulli\/}~{\em 12\/}(6), 1077--1098.
+
+\bibitem[\protect\citeauthoryear{Beskos, Papaspiliopoulos, Roberts, and
+  Fearnhead}{Beskos et~al.}{2006}]{beskos2006exact}
+Beskos, A., O.~Papaspiliopoulos, G.~O. Roberts, and P.~Fearnhead (2006).
+\newblock Exact and computationally efficient likelihood-based estimation for
+  discretely observed diffusion processes (with discussion).
+\newblock {\em Journal of the Royal Statistical Society: Series B (Statistical
+  Methodology)\/}~{\em 68\/}(3), 333--382.
+
+\bibitem[\protect\citeauthoryear{Briers, Doucet, and Maskell}{Briers
+  et~al.}{2010}]{briers2010smoothing}
+Briers, M., A.~Doucet, and S.~Maskell (2010).
+\newblock Smoothing algorithms for state--space models.
+\newblock {\em Annals of the Institute of Statistical Mathematics\/}~{\em
+  62\/}(1), 61.
+
+\bibitem[\protect\citeauthoryear{Candanedo, Feldheim, and Deramaix}{Candanedo
+  et~al.}{2017}]{candanedo2017methodology}
+Candanedo, L.~M., V.~Feldheim, and D.~Deramaix (2017).
+\newblock A methodology based on hidden markov models for occupancy detection
+  and a case study in a low energy residential building.
+\newblock {\em Energy and Buildings\/}~{\em 148}, 327--341.
+
+\bibitem[\protect\citeauthoryear{Capp\'e, Moulines, and Ryd\'en}{Capp\'e
+  et~al.}{2005}]{cappe2005inference}
+Capp\'e, O., E.~Moulines, and T.~Ryd\'en (2005).
+\newblock {\em Inference in Hidden Markov Models}.
+\newblock Springer.
+
+\bibitem[\protect\citeauthoryear{Cho, van Merriënboer, Gulcehre, Bougares,
+  Schwenk, and Bengio}{Cho et~al.}{2014}]{Cho2014LearningPR}
+Cho, K., B.~van Merriënboer, C.~Gulcehre, F.~Bougares, H.~Schwenk, and
+  Y.~Bengio (2014, 06).
+\newblock Learning phrase representations using rnn encoder-decoder for
+  statistical machine translation.
+
+\bibitem[\protect\citeauthoryear{Del~Moral, Doucet, and Singh}{Del~Moral
+  et~al.}{2010}]{delmoral2010backward}
+Del~Moral, P., A.~Doucet, and S.~S. Singh (2010).
+\newblock A backward particle interpretation of feynman-kac formulae.
+\newblock {\em ESAIM: Mathematical Modelling and Numerical Analysis\/}~{\em
+  44\/}(5), 947--975.
+
+\bibitem[\protect\citeauthoryear{Del~Moral, Doucet, and Singh}{Del~Moral
+  et~al.}{2015}]{delmoral2015uniform}
+Del~Moral, P., A.~Doucet, and S.~S. Singh (2015).
+\newblock Uniform stability of a particle approximation of the optimal filter
+  derivative.
+\newblock {\em SIAM Journal on Control and Optimization\/}~{\em 53\/}(3),
+  1278--1304.
+
+\bibitem[\protect\citeauthoryear{Dempster, Laird, and Rubin}{Dempster
+  et~al.}{1977}]{dempster1977maximum}
+Dempster, A., N.~Laird, and D.~Rubin (1977).
+\newblock Maximum likelihood from incomplete data via the {EM} algorithm (with
+  discussion).
+\newblock ~{\em 39}, 1--38.
+
+\bibitem[\protect\citeauthoryear{Douc, Garivier, Moulines, and Olsson}{Douc
+  et~al.}{2011}]{douc2011sequential}
+Douc, R., A.~Garivier, E.~Moulines, and J.~Olsson (2011).
+\newblock Sequential monte carlo smoothing for general state space hidden
+  markov models.
+\newblock {\em The Annals of Applied Probability\/}~{\em 21\/}(6), 2109--2145.
+
+\bibitem[\protect\citeauthoryear{Douc, Moulines, and Stoffer}{Douc
+  et~al.}{2014}]{douc2014nonlinear}
+Douc, R., E.~Moulines, and D.~Stoffer (2014).
+\newblock {\em Nonlinear time series: theory, methods and applications with {R}
+  examples}.
+\newblock CRC Press.
+
+\bibitem[\protect\citeauthoryear{Dubarry and Le~Corff}{Dubarry and
+  Le~Corff}{2013}]{dubarry2013nonasymptotic}
+Dubarry, C. and S.~Le~Corff (2013).
+\newblock Non-asymptotic deviation inequalities for smoothed additive
+  functionals in nonlinear state-space models.
+\newblock {\em Bernoulli\/}~{\em 19\/}(5B), 2222--2249.
+
+\bibitem[\protect\citeauthoryear{Fearnhead, Latuszynski, Roberts, and
+  Sermaidis}{Fearnhead et~al.}{2017}]{fearnhead2017continuous}
+Fearnhead, P., K.~Latuszynski, G.~O. Roberts, and G.~Sermaidis (2017).
+\newblock Continuous-time importance sampling: Monte carlo methods which avoid
+  time-discretisation error.
+\newblock {\em arXiv preprint arXiv:1712.06201\/}.
+
+\bibitem[\protect\citeauthoryear{Fearnhead, Papaspiliopoulos, Roberts, and
+  Stuart}{Fearnhead et~al.}{2010}]{fearnhead2010random}
+Fearnhead, P., O.~Papaspiliopoulos, G.~Roberts, and A.~Stuart (2010).
+\newblock Random ­weight particle filtering of continuous time stochastic
+  processes.
+\newblock {\em Journal of the Royal Statistical Society: Series B (Statistical
+  Methodology)\/}~{\em 72\/}(4), 497--512.
+
+\bibitem[\protect\citeauthoryear{Fearnhead, Papaspiliopoulos, and
+  Roberts}{Fearnhead et~al.}{2008}]{fearnhead2008particle}
+Fearnhead, P., O.~Papaspiliopoulos, and G.~O. Roberts (2008).
+\newblock Particle filters for partially observed diffusions.
+\newblock {\em Journal of the Royal Statistical Society: Series B (Statistical
+  Methodology)\/}~{\em 70\/}(4), 755--777.
+
+\bibitem[\protect\citeauthoryear{Fearnhead, Wyncoll, and Tawn}{Fearnhead
+  et~al.}{2010}]{fearnhead2010sequential}
+Fearnhead, P., D.~Wyncoll, and J.~Tawn (2010).
+\newblock A sequential smoothing algorithm with linear computational cost.
+\newblock {\em Biometrika\/}~{\em 97\/}(2), 447--464.
+
+\bibitem[\protect\citeauthoryear{Gassiat, Cleynen, and Robin}{Gassiat
+  et~al.}{2016}]{gassiat2016inference}
+Gassiat, {\'E}., A.~Cleynen, and S.~Robin (2016).
+\newblock Inference in finite state space non parametric hidden markov models
+  and applications.
+\newblock {\em Statistics and Computing\/}~{\em 26\/}(1-2), 61--71.
+
+\bibitem[\protect\citeauthoryear{Gerber and Chopin}{Gerber and
+  Chopin}{2017}]{gerber2017convergence}
+Gerber, M. and N.~Chopin (2017).
+\newblock Convergence of sequential quasi-{M}onte {C}arlo smoothing algorithms.
+\newblock {\em Bernoulli\/}~{\em 23\/}(4B), 2951--2987.
+
+\bibitem[\protect\citeauthoryear{Gloaguen, Etienne, and Le~Corff}{Gloaguen
+  et~al.}{2018}]{gloaguen2018online}
+Gloaguen, P., M.-P. Etienne, and S.~Le~Corff (2018).
+\newblock Online sequential monte carlo smoother for partially observed
+  diffusion processes.
+\newblock {\em EURASIP Journal on Advances in Signal Processing\/}~{\em
+  2018\/}(1), 9.
+
+\bibitem[\protect\citeauthoryear{Gloaguen, Le~Corff, and Olsson}{Gloaguen
+  et~al.}{2021}]{gloaguen2021pseudo}
+Gloaguen, P., S.~Le~Corff, and J.~Olsson (2021, July).
+\newblock {A pseudo-marginal sequential Monte Carlo online smoothing
+  algorithm}.
+\newblock working paper or preprint.
+
+\bibitem[\protect\citeauthoryear{Gordon, Salmond, and Smith}{Gordon
+  et~al.}{1993}]{gordon1993novel}
+Gordon, N.~J., D.~J. Salmond, and A.~F. Smith (1993).
+\newblock Novel approach to nonlinear/non-gaussian bayesian state estimation.
+\newblock In {\em IEE proceedings F (radar and signal processing)}, Volume 140,
+  pp.\  107--113. IET.
+
+\bibitem[\protect\citeauthoryear{Hansen}{Hansen}{2006}]{hansen2006cma}
+Hansen, N. (2006).
+\newblock The cma evolution strategy: a comparing review.
+\newblock In {\em Towards a new evolutionary computation}, pp.\  75--102.
+  Springer.
+
+\bibitem[\protect\citeauthoryear{Hening and Nguyen}{Hening and
+  Nguyen}{2018}]{hening2018persistence}
+Hening, A. and D.~H. Nguyen (2018).
+\newblock Persistence in stochastic lotka--volterra food chains with
+  intraspecific competition.
+\newblock {\em Bulletin of mathematical biology\/}~{\em 80\/}(10), 2527--2560.
+
+\bibitem[\protect\citeauthoryear{Hochreiter and Schmidhuber}{Hochreiter and
+  Schmidhuber}{1997}]{Hochreiter1997LongSM}
+Hochreiter, S. and J.~Schmidhuber (1997).
+\newblock Long short-term memory.
+\newblock {\em Neural Computation\/}~{\em 9}, 1735--1780.
+
+\bibitem[\protect\citeauthoryear{Kushner and Yin}{Kushner and
+  Yin}{1997}]{kushner1997stochastic}
+Kushner, H.~J. and G.~G. Yin (1997).
+\newblock {\em Stochastic Approximation Algorithms and Applications}.
+\newblock Springer.
+
+\bibitem[\protect\citeauthoryear{{Le~Gland} and Mevel}{{Le~Gland} and
+  Mevel}{1997}]{legland1997recursive}
+{Le~Gland}, F. and L.~Mevel (1997).
+\newblock Recursive estimation in {HMM}s.
+\newblock In {\em Proc. IEEE Conf. Decis. Control}, pp.\  3468--3473.
+
+\bibitem[\protect\citeauthoryear{Martin, Jasra, Singh, Whiteley, {D}el {M}oral,
+  and Mc{C}oy}{Martin
+  et~al.}{2014}]{martin:jasra:singh:whiteley:delmoral:maccoy:2014}
+Martin, J.~S., A.~Jasra, S.~S. Singh, N.~Whiteley, P.~{D}el {M}oral, and
+  E.~Mc{C}oy (2014).
+\newblock Approximate {B}ayesian {C}omputation for smoothing.
+\newblock {\em Stochastic Analysis and Applications\/}~{\em 32}, 397--420.
+
+\bibitem[\protect\citeauthoryear{Michelot, Langrock, and Patterson}{Michelot
+  et~al.}{2016}]{michelot2016movehmm}
+Michelot, T., R.~Langrock, and T.~A. Patterson (2016).
+\newblock movehmm: an r package for the statistical modelling of animal
+  movement data using hidden markov models.
+\newblock {\em Methods in Ecology and Evolution\/}~{\em 7\/}(11), 1308--1315.
+
+\bibitem[\protect\citeauthoryear{Mikolov, Karafi{\'a}t, Burget,
+  {\v{C}}ernock{\`y}, and Khudanpur}{Mikolov
+  et~al.}{2010}]{mikolov2010recurrent}
+Mikolov, T., M.~Karafi{\'a}t, L.~Burget, J.~{\v{C}}ernock{\`y}, and
+  S.~Khudanpur (2010).
+\newblock Recurrent neural network based language model.
+\newblock In {\em Eleventh annual conference of the international speech
+  communication association}.
+
+\bibitem[\protect\citeauthoryear{Mozer}{Mozer}{1989}]{Mozer1989AFB}
+Mozer, M.~C. (1989).
+\newblock A focused backpropagation algorithm for temporal pattern recognition.
+\newblock {\em Complex Systems\/}~{\em 3}.
+
+\bibitem[\protect\citeauthoryear{Nguyen, Le~Corff, and Moulines}{Nguyen
+  et~al.}{2017}]{nguyen2017two}
+Nguyen, T., S.~Le~Corff, and {\'E}.~Moulines (2017).
+\newblock On the two-filter approximations of marginal smoothing distributions
+  in general state-space models.
+\newblock {\em Advances in Applied Probability\/}~{\em 50\/}(1), 154--177.
+
+\bibitem[\protect\citeauthoryear{Odum and Barrett}{Odum and
+  Barrett}{1971}]{odum1971fundamentals}
+Odum, E.~P. and G.~W. Barrett (1971).
+\newblock {\em Fundamentals of ecology}, Volume~3.
+\newblock Saunders Philadelphia.
+
+\bibitem[\protect\citeauthoryear{Olsson and Alenl{\"o}v}{Olsson and
+  Alenl{\"o}v}{2020}]{olsson2020particle}
+Olsson, J. and J.~W. Alenl{\"o}v (2020).
+\newblock Particle-based online estimation of tangent filters with application
+  to parameter estimation in nonlinear state-space models.
+\newblock {\em Annals of the Institute of Statistical Mathematics\/}~{\em
+  72\/}(2), 545--576.
+
+\bibitem[\protect\citeauthoryear{Olsson, Str{\"o}jby, et~al.}{Olsson
+  et~al.}{2011}]{olsson2011particle}
+Olsson, J., J.~Str{\"o}jby, et~al. (2011).
+\newblock Particle-based likelihood inference in partially observed diffusion
+  processes using generalised poisson estimators.
+\newblock {\em Electronic Journal of Statistics\/}~{\em 5}, 1090--1122.
+
+\bibitem[\protect\citeauthoryear{Olsson, Westerborn, et~al.}{Olsson
+  et~al.}{2017}]{olsson2017efficient}
+Olsson, J., J.~Westerborn, et~al. (2017).
+\newblock Efficient particle-based online smoothing in general hidden markov
+  models: the paris algorithm.
+\newblock {\em Bernoulli\/}~{\em 23\/}(3), 1951--1996.
+
+\bibitem[\protect\citeauthoryear{Polyak and Juditsky}{Polyak and
+  Juditsky}{1992}]{polyak1992acceleration}
+Polyak, B.~T. and A.~B. Juditsky (1992).
+\newblock Acceleration of stochastic approximation by averaging.
+\newblock {\em SIAM J. Control Optim.\/}~{\em 30\/}(4), 838--855.
+
+\bibitem[\protect\citeauthoryear{Rabiner}{Rabiner}{1989}]{rabiner1989tutorial}
+Rabiner, L. (1989).
+\newblock A tutorial on hidden markov models and selected applications in
+  speech recognition.
+\newblock In {\em Proceedings of the IEEE}, pp.\  257--286.
+
+\bibitem[\protect\citeauthoryear{S\"arkk\"a}{S\"arkk\"a}{2013}]{sarkka2013bayesian}
+S\"arkk\"a, S. (2013).
+\newblock {\em Bayesian Filtering and Smoothing}.
+\newblock New York, NY, USA: Cambridge University Press.
+
+\bibitem[\protect\citeauthoryear{S\"arkk\"a, Vehtari, and Lampinen}{S\"arkk\"a
+  et~al.}{2007}]{sarkka2007rao}
+S\"arkk\"a, S., A.~Vehtari, and J.~Lampinen (2007).
+\newblock Rao-{B}lackwellized particle filter for multiple target tracking.
+\newblock {\em Inofrmation Fusion\/}~{\em 8\/}(1), 2--15.
+
+\bibitem[\protect\citeauthoryear{Sutskever, Martens, and Hinton}{Sutskever
+  et~al.}{2011}]{sutskever2011generating}
+Sutskever, I., J.~Martens, and G.~E. Hinton (2011).
+\newblock Generating text with recurrent neural networks.
+\newblock In {\em ICML}.
+
+\bibitem[\protect\citeauthoryear{Sutskever, Vinyals, and Le}{Sutskever
+  et~al.}{2014}]{sutskever2014sequence}
+Sutskever, I., O.~Vinyals, and Q.~V. Le (2014).
+\newblock Sequence to sequence learning with neural networks.
+\newblock {\em arXiv preprint arXiv:1409.3215\/}.
+
+\bibitem[\protect\citeauthoryear{Tadi\'c}{Tadi\'c}{2010}]{tadic2010analyticity}
+Tadi\'c, V. (2010).
+\newblock {Analyticity, convergence, and convergence rate of recursive
+  maximum-likelihood estimation in hidden Markov models}.
+\newblock {\em {IEEE Transactions on Information Theory}\/}~{\em 56},
+  6406--6432.
+
+\bibitem[\protect\citeauthoryear{Wang, Lebarbier, Aubert, and Robin}{Wang
+  et~al.}{2017}]{wang2017variational}
+Wang, X., E.~Lebarbier, J.~Aubert, and S.~Robin (2017, 06).
+\newblock Variational inference for coupled hidden markov models applied to the
+  joint detection of copy number variations.
+\newblock {\em The International Journal of Biostatistics\/}~{\em 15}.
+
+\bibitem[\protect\citeauthoryear{Yau, Papaspiliopoulos, Roberts, and
+  Holmes}{Yau et~al.}{2011}]{yau2011bayesian}
+Yau, C., O.~Papaspiliopoulos, G.~O. Roberts, and C.~Holmes (2011).
+\newblock Bayesian non-parametric hidden {M}arkov models with applications in
+  genomics.
+\newblock ~{\em 73}, 1--21.
+
+\bibitem[\protect\citeauthoryear{Yonekura and Beskos}{Yonekura and
+  Beskos}{2020}]{yonekura:beskos:2020}
+Yonekura, S. and A.~Beskos (2020).
+\newblock Online smoothing for diffusion processes observed with noise.
+\newblock ArXiv:2003.12247.
+
+\bibitem[\protect\citeauthoryear{Zucchini, Mac~Donald, and Langrock}{Zucchini
+  et~al.}{2017}]{zucchini2017hidden}
+Zucchini, W., I.~Mac~Donald, and R.~Langrock (2017).
+\newblock {\em Hidden {M}arkov models for time series: an introduction using
+  {R}}.
+\newblock CRC Press.
+
+\end{thebibliography}
