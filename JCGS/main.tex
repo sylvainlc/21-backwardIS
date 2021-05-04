@@ -300,7 +300,7 @@ For instance, in the context of diffusion processes, they narrow the possible mo
 
 In this paper, a new procedure is introduced to replace the backward acceptance-rejection step of the PaRIS and the pseudo marginal PaRIS algorithms by a backward importance sampling estimate.  %which 
 It leads to a smoothing algorithm that only requires an almost surely positive estimator of the unknown transition or observation density, and therefore extends widely the class of models for which these online smoothers can be designed. 
-In the general case where only signed estimates can be obtained, we propose to use  Wald's trick, ensuring positiveness. % without addition of bias in the estimator.
+In the general case where only signed estimates can be obtained, we propose to use  Wald's trick, ensuring positiveness. 
  In the context of partially observed diffusion processes, for instance,  we show that combining Wald's trick to the  parametrix estimators of \cite{andersson2017unbiased} and \cite{fearnhead2017continuous} leads to a highly generic algorithm that can be applied to a wide class of models, for which no low variance smoother existed so far.
 
 The paper is organized as follows. Section~\ref{sec:model} displays the latent data models and the main objectives considered in this paper. Then, Section~\ref{sec:method} details online pseudo marginal sequential Monte Carlo algorithms and Section~\ref{sec:backwardis} our proposed algorithm. Section~\ref{sec:application}  provides  extensive numerical experiments to illustrate the performance of our approach. The empirical results of this section can be summarised as follows.
@@ -425,7 +425,6 @@ with
 \label{eq:complete:gradient:log}
 \af{0:k}(x_{0:k}) =  \sum_{j = 0}^{k - 1} \deriv\log \qg{j, \parvec}(x_j,x_{j+1})\eqsp.
 \end{equation}
-%$$\filtderiv{k;\parvec}[\md{k;\parvec}] = \int \md{k;\parvec}(x_k) \deriv \pred{k;\parvec}(x_k) \rmd x_k,$$
 The signed measure $\filtderiv{k;\parvec}$ is known as the \textit{tangent filter}, see \cite[Chapter~10]{cappe2005inference}, \cite{delmoral2015uniform} or \cite{olsson2020particle}. 
 Using the tower property  and the backward decomposition \eqref{eq:property:backward} yields
 \begin{equation} 
@@ -464,7 +463,6 @@ $$
 \kissforward{k-1}{k-1}(\epart{k-1}{\ell},x) \kernelmarg_{k}(\epart{k-1}{\ell},x;z) \eqsp,
 $$
 where 
-%$\adjfuncforward{k-1}$ is an adjustment multiplier weight function and 
 $\kissforward{k-1}{k-1}$ is a Markovian transition density.  In practice, this step is performed as follows:
 \begin{enumerate}
 \item Sample $I_k^{\ell}$ in $\{1,\ldots,N\}$ with probabilities proportional to $\{\ewght{k-1}{j}
@@ -538,7 +536,6 @@ Plugging these estimates in equation \eqref{eq:online:gradient} allows to perfor
 
 \section{Pseudo-marginal backward importance sampling}
 \label{sec:backwardis}
-
 
 \subsection{Positive estimates}
 \label{sec:wald:trick}
