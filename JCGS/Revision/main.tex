@@ -682,8 +682,8 @@ In this first experiment, particles are used to solve the state estimation probl
 Figure~\ref{fig:sine:timeandbias} displays the computational complexity and the estimation of the posterior mean with the acceptance-rejection algorithm and the proposed backward sampling technique as a function of $\K$. 
 In this setting, $N=100$, and each unbiased estimate of $\hat{q}$ is computed using 30 Monte Carlo replicates.
 
-For $\K = 2$ (which is the recommended value for the PaRIS algorithm, see \cite{olsson2017efficient}), our estimate shows a bias, which is no surprise, as it is based on a biased normalized importance sampling step. However, this bias quickly vanishes for $\K \geqslant 10$. 
-Interestingly, our method comes with a drastic (a factor 10) reduction of computational time. 
+For $\K = 2$ (which is the recommended value for the PaRIS algorithm, see \cite{olsson2017efficient}), our estimate shows a bias, which is not surprising, as it is based on a biased normalized importance sampling step. However, this bias quickly vanishes for $\K \geqslant 10$. 
+Interestingly, our method comes with a drastic (of a factor of 10) reduction of computational time. 
 The vanishing of the bias might induce more backward sampling, but this remains much faster than the acceptance rejection method with $\K = 2$.
 
 Then, the same estimation was performed (on the same data set) for $\N$ varying from 50 to 2000.
