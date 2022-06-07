@@ -303,13 +303,12 @@ It leads to a smoothing algorithm that only requires an almost surely positive e
 In the general case where only signed estimates can be obtained, we propose to use  Wald's trick, ensuring positiveness. 
  In the context of partially observed diffusion processes, for instance,  we show that combining Wald's trick to the  parametrix estimators of \cite{andersson2017unbiased} and \cite{fearnhead2017continuous} leads to a highly generic algorithm that can be applied to a wide class of models, for which no low variance smoother existed so far.
 
-The paper is organized as follows. Section~\ref{sec:model} displays the latent data models and the main objectives considered in this paper. Then, Section~\ref{sec:method} details online pseudo marginal sequential Monte Carlo algorithms and Section~\ref{sec:backwardis} our proposed algorithm. Section~\ref{sec:application}  provides  extensive numerical experiments to illustrate the performance of our approach. The empirical results of this section can be summarised as follows.
+The paper is organized as follows. Section~\ref{sec:model} displays the latent data models and the main objectives considered in this paper. Then, Section~\ref{sec:method} details online pseudo marginal sequential Monte Carlo algorithms and Section~\ref{sec:backwardis} our proposed algorithm. Section~\ref{sec:application} and Section~\ref{sec:real:data}  provide  extensive numerical experiments to illustrate the performance of our approach. The empirical results of this section can be summarised as follows.
 \begin{itemize}
 \item The proposed approach can be used for any latent data models such as hidden Markov models, or recurrent neural networks with unobserved latent states. Even when the transition densities are available, we show empirically that our backward importance sampling is a computationally efficient solution to solve the online smoothing problem (Section \ref{sec:simu:RNN}).
-\item We show that the proposed approach outperforms the existing acceptance rejection method in terms of computational efficiency.
-(Section \ref{sec:simu:SINE}). 
+\item We show that the proposed approach outperforms the existing acceptance rejection method in terms of computational efficiency (Section \ref{sec:simu:SINE}). 
 \item We show how the proposed method allows for efficient online recursive maximum likelihood estimation in the context of partially observed diffusion processes (Section \ref{sec:simu:tangent:filter}).
-\item When considering the pseudo-marginal approach, we extend the use of Wald's trick to the backward kernel, and therefore show that our approach can be used in cases where the estimators of the unknown densities  are not positive by construction.
+\item In the context of the pseudo-marginal approach, we extend the use of Wald's trick to the backward kernel, and therefore show that our approach can be used in cases where the estimators of the unknown densities  are not positive by construction.
 \item  We perform sequential Monte Carlo smoothing in models for which no solutions were proposed in the literature to the best of our knowledge, such as multivariate partially observed diffusion processes (Section \ref{sec:simu:LV}).
 \end{itemize}
 
@@ -319,8 +318,8 @@ The paper is organized as follows. Section~\ref{sec:model} displays the latent d
 Let $\parvec$ be a parameter lying in a $\Theta\subset \rset^q$ and consider a  \textit{state space model} where the hidden Markov chain  in $\rset^d$ is denoted by $(X_k)_{k\geqslant 0}$. The distribution of $X_0$ has density $\chi$ with respect to the Lebesgue measure and for all $0\leqslant k \leqslant n-1$, the conditional distribution of $X_{k+1} $ given $X_{0:k}$ has density $\hd{k+1;\parvec}(X_{k},\cdot)$, where $a_{u:v}$ is a short-hand notation for $(a_u,\ldots,a_v)$. 
 It is assumed that this state  is partially observed  through an observation process $(Y_k)_{0\leqslant k \leqslant n}$ taking values in $\rset^m$. 
 For all $0\leqslant k \leqslant n$, the distribution of $Y_k$ given $X_{0:n}$ depends on $X_k$ only and has density $\md{k;\parvec}(X_k,\cdot)$ with respect to the Lebesgue measure. 
-In this context, for any pair of indexes $0\leqslant\leqslant k_1 \leqslant k_2 \leqslant n$, we define the \textit{joint smoothing distribution} as the conditional law of $X_{k_1:k_2}$ given $Y_{0:n}$. 
-In this framework, the likelihood of the observations $\llh{n,\parvec}(Y_{0:n})$, which is  in general intractable, is
+In this context, for any pair of indexes $0\leqslant k_1 \leqslant k_2 \leqslant n$, we define the \textit{joint smoothing distribution} as the conditional law of $X_{k_1:k_2}$ given $Y_{0:n}$. 
+In this framework, the likelihood of the observations  is
 $$
 \llh{n,\parvec}(Y_{0:n})  = \int \chi(x_0)\md{0;\parvec}(x_{0},Y_{0})\prod_{k=0}^{n-1}\qg{k;\parvec}(x_{k},x_{k+1})\rmd x_{0:n}\eqsp,
 $$
@@ -329,13 +328,9 @@ $$
 \label{eq:def:elln}
 \qg{k;\parvec}(x_{k},x_{k+1}) = \hd{k+1;\parvec}(x_{k}, x_{k+1}, Y_{k})\md{k+1;\parvec}(x_{k+1},Y_{k+1})\eqsp.
 \end{equation}
-In a large variety of situations, \eqref{eq:def:elln} cannot be evaluated pointwise  (see models of sections \ref{sec:simu:SINE} and \ref{sec:simu:LV}), and we assume in this paper that we have an estimate of this quantity (see assumption \textbf{H\ref{assum:unbiased}} in Section~\ref{sec:method}).
-Note that to avoid future cumbersome expressions, the dependency of the key quantity $\qg{k;\parvec}(\cdot)$ on the observations is implicit, as we always work conditionally to the observations. In this paper, we propose an algorithm to compute \textit{smoothing expectations of additive functionals}. 
-Namely, we aim at computing: 
-$$
-\pE \left[\af{0:n}(X_{0:n})\middle | Y_{0:n}\right]\eqsp,
-$$
-where $\af{0:n}$ is an \textit{additive functional}, \textit{i.e.} a function from $\rset^{d \times (n + 1)}$ to $\rset^{d'}$ satisfying:
+In a large variety of situations, \eqref{eq:def:elln} cannot be evaluated pointwise  (see for instance models of sections \ref{sec:simu:SINE} and \ref{sec:simu:LV}), and we assume in this paper that we have an estimate of this quantity (see assumption \textbf{H\ref{assum:unbiased}} in Section~\ref{sec:method}).
+Note that to avoid future cumbersome expressions, the dependency of the key quantity $\qg{k;\parvec}$ on the observations is implicit, as we always work conditionally to the observations. In this paper, we propose an algorithm to compute \textit{smoothing expectations of additive functionals}. 
+Namely, we aim at computing $\pE_\parvec \left[\af{0:n}(X_{0:n})\middle | Y_{0:n}\right]$,  where $\pE_\parvec$ is the expectation under the law of the hidden Markov model parameterized by $\parvec$, and where $\af{0:n}$ is an \textit{additive functional}, \textit{i.e.} a function from $\rset^{d \times (n + 1)}$ to $\rset^{d'}$ satisfying:
 \begin{equation}
 \label{eq:additive:functional}
 \af{0:n}: x_{0:n} \mapsto \sum_{k=0}^{n-1}\addf{k}(x_{k},x_{k+1})\eqsp,
@@ -345,7 +340,7 @@ Such expectations are the keystones of many common inference problems in state s
 
 \begin{example}[State estimation.]
 \label{ex:state:tracking}
-Suppose that the model parameter $\theta$ is known, a common objective is to recover the underlying signal $X_{k^*}$ for some index $0\leqslant k^* \leqslant n$ given the observations $Y_{0:n}$. A standard estimator is $\pE[X_{k^*}\vert Y_{0:n}]$, which is a particular instance of our problem with $\addf{k}(x_k, x_{k+1}) = x_k$ if $k = k^*$ and 0 otherwise. 
+Suppose that $\theta$ is known, a common objective is to recover the underlying signal $X_{k^*}$ for some index $0\leqslant k^* \leqslant n$ given the observations $Y_{0:n}$. A standard estimator is $\pE_\parvec[X_{k^*}\vert Y_{0:n}]$, which is a particular instance of our problem with $\addf{k}(x_k, x_{k+1}) = x_k$ if $k = k^*$ and 0 otherwise. 
 \end{example}
 
 \begin{example}[EM algorithm.]
@@ -356,17 +351,16 @@ The pivotal concept of the EM algorithm is that the intermediate quantity define
 \parvec\mapsto Q(\parvec,\parvec') = \pE_{\parvec'}\left[\sum_{k=0}^{n-1} \log \qg{k;\parvec}(X_{k}, X_{k+1})\middle | Y_{0:n}\right] 
 %\label{eq:EM:E:step}
 \end{equation*}
-may be used as a surrogate for $\llh{n}(\parvec)$ in the maximization procedure,  where $\pE_{\parvec'}$ is the expectation under the joint distribution of the latent states and the observations when the model is parameterized by $\parvec'$. 
-Again, this inference setting is a special case of our framework where $\addf{k}(x_k, x_{k+1}) = \log \qg{k;\parvec}(x_{k}, x_{k+1})$.
+may be used as a surrogate for $\llh{n}(\parvec)$ in the maximization procedure.  Again, this inference setting is a special case of our framework where $\addf{k}(x_k, x_{k+1}) = \log \qg{k;\parvec}(x_{k}, x_{k+1})$.
 \end{example}
 
 \begin{example}[Fisher's identity and online gradient ascent.]
 An alternative to the EM algorithm is to maximize the loglikelihood through gradient based methods.
-Indeed, in state space models, under some regularity conditions (see \cite{cappe2005inference}, Chapter~10), the gradient of the log likelihood can be obtained thanks to Fisher's identity:
+Indeed, in state space models, under some regularity conditions (see \cite{cappe2005inference}, Chapter~10), the gradient of the log likelihood can be obtained using Fisher's identity:
 $$\deriv \log \llh{n}(\parvec) = \pE_\theta\left[\sum_{k=0}^{n-1} \deriv \log \qg{k;\parvec}(X_{k},X_{k+1})\middle | Y_{0:n}\right],$$
-which relies on the expectation of a smoothing additive functional.
+which relies on the conditional expectation of an additive functional.
 It has been noted (see \cite{cappe2005inference}, chapter 10, or \cite{olsson2020particle} how this identity, coupled with the smoothing recursions of Section \ref{sec:smoothing}, can lead to an online gradient ascent, that provides an online estimate of the MLE.
-An extension of this method will be illustrated in Section~\ref{sec:simu:tangent:filter} in a challenging setting where the transition density cannot be evaluated.
+An extension of this method is illustrated in Section~\ref{sec:simu:tangent:filter} in a challenging setting where the transition density, and therefore \eqref{eq:def:elln}, cannot be evaluated.
 \end{example}
 
 \section{Online sequential Monte Carlo smoothing}
@@ -770,6 +764,7 @@ As expected, the raw estimator shows different rates of convergence depending on
 \end{figure}
 
 \section{Applications to real data}
+\label{sec:real:data}
 
 \subsection{Stochastic volatility model}
 \label{sec:simu:sv}
