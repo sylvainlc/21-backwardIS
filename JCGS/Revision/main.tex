@@ -368,7 +368,7 @@ An extension of this method is illustrated in Section~\ref{sec:simu:tangent:filt
 
 \subsection{Backward statistic for online smoothing}
 
-In this section, the parameter $\parvec$ is dropped from notation for a better clarity. For any pair of integers $0\leq k \leq k' \leq n$, and any measurable function $h$ on $\rset^{d \times (k' - k + 1)}$, the expectation with respect to the joint smoothing distribution is denoted by:
+In this section, the parameter $\parvec$ is dropped from notation for a better clarity. For any pair of integers $0\leqslant k \leqslant k' \leqslant n$, and any measurable function $h$ on $\rset^{d \times (k' - k + 1)}$, the expectation with respect to the joint smoothing distribution is denoted by:
 $$
 \post{k:k' \mid n} \left[ h \right] := \pE\left[ h(X_{k:k'}) \middle | Y_{0:n} \right]\eqsp .
 $$
@@ -402,18 +402,18 @@ Its use in Monte Carlo methods, and the related theoretical guarantees, have bee
 \subsubsection*{Recursive maximum likelihood}
 
 An appealing application for online smoothing is the context of recursive maximum likelihood, i.e., where new observations are used only once to update the estimator of the unknown parameter $\parvec$.
-Following \cite{legland1997recursive}, the idea is to build a sequence $\left\lbrace\parvec_k\right\rbrace_{k\geq 0}$ as follows. First, set the initial value of the parameter estimate: $\parvec_0$. Then, for each new observation $Y_{k},~k\geqslant 1$, define
+Following \cite{legland1997recursive}, the idea is to build a sequence $\left\lbrace\parvec_k\right\rbrace_{k\geqslant 0}$ as follows. First, set the initial value $\parvec_0$ of the parameter estimate and then, for each new observation $Y_{k},~k\geqslant 1$, define
 $$
 \theta_{k} = \theta_{k-1} + \gamma_k \deriv \logllh{\parvec}(Y_k \mid Y_{1:k - 1}) \eqsp,
 $$
-where $\logllh{\parvec}(Y_k \mid Y_{1:k - 1})$ is the log likelihood for the new observation given all the past, and $\left\lbrace\gamma_k\right\rbrace_{k\geqslant}$ are positive step sizes such that $\sum_{k \geqslant 1}\gamma_k = \infty$ and $\sum_{k \geqslant 1}\gamma_k^2 < \infty$. The practical implementation of such an update relies on the following identity:
+where $\logllh{\parvec}(Y_k \mid Y_{1:k - 1})$ is the log likelihood for the new observation given all the past, and $\left\lbrace\gamma_k\right\rbrace_{k\geqslant 1}$ are positive step sizes such that $\sum_{k \geqslant 1}\gamma_k = \infty$ and $\sum_{k \geqslant 1}\gamma_k^2 < \infty$. The practical implementation of such an update relies on the following identity:
 \begin{equation}
 \deriv \logllh{\parvec}(Y_k \mid Y_{1:k - 1})  
 =  \frac{\pred{k;\parvec}[\deriv \md{k;\parvec}] + \filtderiv{k;\parvec}[\md{k;\parvec}]}{\pred{k;\parvec}[\md{k;\parvec}]}\eqsp,
 \label{eq:online:gradient}
 \end{equation}
-where $\pred{k;\parvec} = \phi_{k;\parvec \mid k - 1}$ is the predictive distribution  and 
-$$\filtderiv{k;\parvec}[\md{k;\parvec}] = \post{0:k;\parvec \mid k - 1} [\af{0:k;\parvec} \md{k;\parvec}] - \pred{k;\parvec}[\md{k;\parvec}] \times \post{0:k;\parvec \mid k - 1 }[\af{0:k}]\eqsp,$$
+where $\pred{k;\parvec} = \phi_{k;\parvec \mid k - 1}$ is the predictive distribution at time $k$, i.e. the law of $X_k$ given $Y_{1:k-1}$,   and 
+$$\filtderiv{k;\parvec}[\md{k;\parvec}] = \post{0:k;\parvec \mid k - 1} [\af{0:k;\parvec} \md{k;\parvec}] - \pred{k;\parvec}[\md{k;\parvec}]  \post{0:k;\parvec \mid k - 1 }[\af{0:k}]\eqsp,$$
 with
 \begin{equation}
 \label{eq:complete:gradient:log}
@@ -425,11 +425,10 @@ Using the tower property  and the backward decomposition \eqref{eq:property:back
 \label{eq:tangent:identity}
 \filtderiv{k;\parvec}[\md{k;\parvec}] = \pred{k;\parvec}\left[\left(\tstat{k} [\af{0:k}] - \pred{k;\parvec}[\tstat{k}[\af{0:k}]]\right) \md{k;\parvec}\right]\eqsp.
 \end{equation}
-It is worth noting that, in the context of this paper where $\qg{k}$ cannot be evaluated pointwise, one cannot expect to know the functional \eqref{eq:complete:gradient:log}, which involves the gradient of this quantity. 
-In Section \ref{sec:simu:tangent:filter}, we illustrate that we can plug-in an estimate of this functional instead. The rationale motivating this algorithm relies on the following expression of the normalized loglikelihood:
+It is worth noting that, in the context of this paper where $\qg{k}$ cannot be evaluated pointwise,  the functional \eqref{eq:complete:gradient:log} is unknown.  In Section \ref{sec:simu:tangent:filter}, we illustrate that we can plug-in an estimate of this functional instead. The rationale motivating this algorithm relies on the following expression of the normalized loglikelihood:
 $$
-\frac{1}{n} \deriv \logllh{\parvec}(Y_{1:n}) = \frac{1}{n} \sum_{k = 1}^n \deriv \logllh{\parvec}\left(Y_k \mid Y_{1:k - 1}\right)\eqsp.$$
-Moreover, under strong mixing assumptions, for all  $\parvec \in \parspace$, the extended process $\{ (X_n, Y_n, \pred{n}, \filtderiv{n}) \}_{n \geqslant 0}$ is an ergodic Markov chain and for all $\parvec \in \parspace$, the normalized score $\deriv \logllh{\parvec}(Y_{1:n})/n$  converges almost surely to a limiting quantity $\lambda(\parvec, \parvec_{\star})$ such that, under identifiability constraints, $\lambda(\parvec_{\star}, \parvec_{\star}) = 0$. 
+\frac{1}{n} \deriv \logllh{\parvec}(Y_{1:n}) = \frac{1}{n} \sum_{k = 1}^n \deriv \logllh{\parvec}\left(Y_k \mid Y_{1:k - 1}\right)\eqsp,$$
+with the convention $ \logllh{\parvec}(Y_1 \mid Y_{1:0}) = \logllh{\parvec}(Y_1)$. Moreover, under strong mixing assumptions, for all  $\parvec \in \parspace$, the extended process $\{ (X_n, Y_n, \pred{n}, \filtderiv{n}) \}_{n \geqslant 0}$ is an ergodic Markov chain and for all $\parvec \in \parspace$, the normalized score $\deriv \logllh{\parvec}(Y_{1:n})/n$  converges almost surely to a limiting quantity $\lambda(\parvec, \parvec_{\star})$ such that, under identifiability constraints, $\lambda(\parvec_{\star}, \parvec_{\star}) = 0$. 
 A gradient ascent algorithm cannot be designed as the limiting function $\parvec \mapsto \lambda(\parvec, \parvec_{\star})$ is not available explicitly. 
 However, solving the equation $\lambda(\parvec_{\star}, \parvec_{\star}) = 0$ may be cast into the framework of \emph{stochastic approximation} to produce parameter estimates using the \emph{Robbins-Monro algorithm}
 \begin{equation}
@@ -441,7 +440,7 @@ In the case of a finite state space $\set{X}$ the algorithm was studied in~\cite
 
 \subsection{Approximation of the filtering distribution}
 \label{sec:filtering}
-Let $(\epart{0}{\ell})_{\ell = 1}^\N$ be independent and identically distributed according to an instrumental proposal density $\rho_0$ on $\mathbb{R}^d$ and define the importance weights $\ewght{0}{\ell} \eqdef \Xinit(\epart{0}{\ell})/\XinitIS{0}(\epart{0}{\ell})$, where $\chi$ is the density of the distribution of $X_0$ as defined in Section~\ref{sec:model}. 
+Let $(\epart{0}{\ell})_{\ell = 1}^\N$ be independent and identically distributed according to an instrumental proposal density $\rho_0$ on $\mathbb{R}^d$ and define the importance weights $\ewght{0}{\ell} \eqdef \Xinit(\epart{0}{\ell})\md{0}(\epart{0}{\ell},Y_{0})/\XinitIS{0}(\epart{0}{\ell})$, where $\chi$ is the density of the distribution of $X_0$ as defined in Section~\ref{sec:model}. 
 For any bounded and measurable function  $h$ defined on $\mathbb{R}^d$, the importance sampling estimator defined as 
 \begin{align*}
 \post{0}^\N[h]&\eqdef \sumwght{0}^{-1}\sum_{\ell=1}^\N \ewght{0}{\ell}h(\epart{0}{\ell})\eqsp,\quad\mbox{where}\quad\sumwght{0}\eqdef \sum_{\ell=1}^N \ewght{0}{\ell}\eqsp.
@@ -473,7 +472,7 @@ to produce the following approximation of $\post{k}[f]$:
 \begin{align*}
 \post{k}^\N[f]&\eqdef \sumwght{k}^{-1}\sum_{\ell=1}^N \ewght{k}{\ell}f(\epart{k}{\ell})\eqsp,\quad\mbox{where}\quad\sumwght{k}\eqdef \sum_{\ell=1}^\N \ewght{k}{\ell}\eqsp.
 \end{align*}
-The choice of the proposal distribution $\kissforward{k-1}{k-1}$ is a pivotal tuning step to obtain efficient estimations of the filtering distributions.  This point will be discussed in each example considered in Section~\ref{sec:application}.
+The choice of the proposal distribution $\kissforward{k-1}{k-1}$ is a pivotal tuning step to obtain efficient estimations of the filtering distributions.  This point is discussed in each example considered in Section~\ref{sec:application}.
 
 
 \subsection{Approximation of the backward statistics}
@@ -494,7 +493,7 @@ In \cite{gloaguen2018online}, the authors assumed that  almost surely, for all $
 \begin{equation}
 \mathrm{sup}_{\ell,\zeta}\;\hatqg{k}\langle \zeta\rangle(\epart{k}{\ell},\epart{k+1}{i})\leqslant \hkup^i_k\eqsp. \label{eq:AR:bound}
 \end{equation}
-Then,  if the positiveness assumption of  $\hatqg{k}\langle \zeta\rangle(x, x')$ is satistified, the sampling from the distribution $\overline\upsilon_k$ is possible thanks to condition \eqref{eq:AR:bound}, as, for all $(i, z) \in \lbrace 1,\dots,N\rbrace\times\marginalset$, 
+Then,  if the positiveness assumption of  $\hatqg{k}\langle \zeta\rangle(x, x')$ is satistified, the sampling from the distribution $\overline\upsilon_k$ is possible under assumption \eqref{eq:AR:bound}, as, for all $(i, z) \in \lbrace 1,\dots,N\rbrace\times\marginalset$, 
 $$
 \ewght{k}{\ell}\hatqg{k}\langle z \rangle(\epart{k}{\ell},\epart{k+1}{i})\kernelmarg_{k}(\epart{k}{\ell},\epart{k+1}{i};z) \leqslant \hkup_k \ewght
 {k}{\ell} \kernelmarg_{k}(\epart{k}{\ell},\epart{k+1}{i};z)\eqsp. 
@@ -515,7 +514,7 @@ However, it relies on the key assumptions of the positiveness of $\hatqg{k}\lang
  
 \subsubsection*{Approximations for recursive MLE}
 
-In the case of recursive MLE, one needs to approximate the key quantity \eqref{eq:online:gradient}.
+In the case of recursive MLE, it is required to approximate the key quantity \eqref{eq:online:gradient}.
 A particle filter, can be used to compute the following sequential Monte Carlo approximations:
 $$
 \pred{k}^N[\md{k;\parvec}] = \frac{1}{N}\sum_{\ell = 1}^N \md{k;\parvec}(\epart{n}{\ell})\eqsp,\eqsp \pred{k}^N[\deriv \md{k;\parvec}] = \frac{1}{N}\sum_{\ell = 1}^N \deriv \md{k;\parvec}(\epart{k}{\ell})\eqsp.
@@ -524,7 +523,7 @@ In addition, the tangent filter can be approximated using a backward sampling pr
 \begin{equation} 
 \label{eq:tangent:identity:part:linear}
 \eta_{k;\parvec}^{N}[\md{k;\parvec}] = \frac{1}{\N}\sum_{\ell=1}^\N\tau_\ell^k \md{k;\parvec}
-(\epart{\ell}{k}) - \left(\frac{1}{\N}\sum_{\ell=1}^\N\tau_\ell^n\right)\left(\frac{1}{\N}\sum_{\ell=1}^\N \md{k;\parvec}(\epart{\ell}{k})\right)\eqsp.
+(\epart{\ell}{k}) - \left(\frac{1}{\N}\sum_{\ell=1}^\N\tau_\ell^k\right)\left(\frac{1}{\N}\sum_{\ell=1}^\N \md{k;\parvec}(\epart{\ell}{k})\right)\eqsp.
 \end{equation}
 Plugging these estimates in equation \eqref{eq:online:gradient} allows to perform the online recursive algorithm. 
 
