@@ -656,7 +656,7 @@ $\sum_{k=0}^{49} \|X_k - \mathbb{\widehat{E}}[X_k|Y_{0:49}]\|^2/50$ & 0.2307 & 0
     \label{fig:RNN:mseperXk}
 \end{figure}
 
-\subsection{One dimensional diffusion processe: the Sine model}
+\subsection{One dimensional diffusion process: the Sine model}
 \label{sec:simu:SINE}
 This section investigates the performance of the proposed algorithm to compute  expectations under the smoothing distributions in a context where  alternatives are available for comparison. Consider the Sine model where $(X_t)_{t\geqslant 0}$ is assumed to be a weak solution to
 $$
@@ -769,6 +769,12 @@ As expected, the raw estimator shows different rates of convergence depending on
 \caption{\label{fig:1obs:1start:6Grads}(\textit{Left}) online estimation of $\theta$ for the data set presented in Figure \ref{fig:1obs:50start}, with different decreasing rates values $\kappa$. (\textit{Right}) Averaged estimator, where $\hat{\parvec}$ is averaged after a burning phase of 300 time steps.}
 \end{figure}
 
+\section{Applications to real data}
+
+\subsection{Stochastic volatility model}
+\label{sec:simu:sv}
+
+
 \subsection{Multidimensional diffusion processes: Stochastic Lotka-Volterra model}
 \label{sec:simu:LV}
 
@@ -789,12 +795,12 @@ Y_{t_k} = \begin{pmatrix} \text{c}_1X_1(t_k)\mathrm{e}^{\epsilon^{(1)}_{t_k}} \\
 where $\text{c} = (\text{c}_1, \text{c}_2)^T$ is known (the observed fraction of the population) and $\lbrace \epsilon_{t_k} =(\epsilon^{(1)}_{t_k}, \epsilon^{(2)}_{t_k})\rbrace_{1\leqslant k\leqslant n}$ are i.i.d. random variables distributed as a $\mathcal{N}_2(-\text{diag}\ \Sigma/2, \Sigma)$ where $\Sigma$ is an unknown 2 $\times$ 2 covariance matrix. It is straightforward to show that for a generic $\parvec$, in the SDE defined by \eqref{eq:LV:SDE}, the drift function cannot be written (even after the Lamperti transform) as the gradient of a potential. 
 Therefore, the General Poisson estimator cannot be used as an unbiased estimator of the transition density. 
 Following Section \ref{sec:wald:trick}, an almost surely positive unbiased estimate of the transition density is obtained by combining the Wald's trick to the parametrix estimators of \cite{fearnhead2017continuous}.
-The proposal distribution for the particle filter is again a trade off between model dynamics and the observation model (full details are given in the appendix). We focus below on the applications of the model on the real dataset. Synthetic experiments were also performed to ensure the performance of our algorithm in a fully supervised context, and are shown in appendix.
+The proposal distribution for the particle filter is again a trade off between model dynamics and the observation model (full details are given in the appendix). We focus below on the applications of the model on a real dataset. Synthetic experiments were also performed to ensure the performance of our algorithm in a fully supervised context, and are shown in appendix.
 
 
-\subsubsection*{Hares and lynx data}
+%\subsubsection*{Hares and lynx data}
 
-In this section, the model defined by equations \eqref{eq:LV:SDE} and \eqref{eq:LV:obs:model} is applied to the Hudson Bay company data, giving the number of hares and lynx trapped in Canada during the first 20 years of the 20th century (available in \cite{odum1971fundamentals}). 
+The model defined by equations \eqref{eq:LV:SDE} and \eqref{eq:LV:obs:model} is applied to the Hudson Bay company data, giving the number of hares and lynx trapped in Canada during the first 20 years of the 20th century (available in \cite{odum1971fundamentals}). 
 As parameters are unknown in this case, maximum likelihood inference is performed using an EM \cite{dempster1977maximum} algorithm to obtain an estimate $\hat{\theta}$.
 The E step is performed using the BIS smoother.
 At each iteration, the estimator $\theta_k$ is updated by finding a parameter $\theta_{k+1}$ for which $\hat Q(\theta_{k+1},\theta_k) >  \hat Q(\theta_k,\theta_k)$, with  a gradient free evolution strategy \cite{hansen2006cma}. 
