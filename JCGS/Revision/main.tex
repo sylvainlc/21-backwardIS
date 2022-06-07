@@ -391,7 +391,7 @@ For additive functionals, this statistic satisfies the two following key identit
 \tstat{k}\left[\af{0:k}\right](X_{k}) &= \pE\left[\left.\tstat{k-1}\left[\af{0:(k-1)}\right]\left(X_{k-1}\right) + \addf{k-1}\left(X_{k-1},X_{k}\right)\right|X_{k},Y_{0:k-1} \right]\eqsp, \label{eq:property:backward}
 \end{align} 
 where $\addf{k-1}$ is the function defined in \eqref{eq:additive:functional}.
-Property \eqref{eq:property:filt:smooth} essentialy tells us that the target is the filtering expectation of a well chosen statistic, while property \eqref{eq:property:filt:smooth} provides a recursion to compute these statistics. 
+Property \eqref{eq:property:filt:smooth}, which results from the tower property for conditional expectations\footnote{\textit{i.e}, for any  function $h$ and random variables $Z_1, Z_2$, $\mathbb{E}\left[h(Z_1, Z_2)\right] = \mathbb{E}\left[\mathbb{E}\left[h(Z_1, Z_2) \vert Z_2\right]\right]$} essentialy tells us that the target is the filtering expectation of a well chosen statistic, while property \eqref{eq:property:filt:smooth} provides a recursion to compute these statistics. 
 These two properties suggest an \textit{online} procedure to solve the online smoothing problem. Starting at time 0, at each step $k$, this procedure aims at (i) computing the filtering distribution and (ii) computing the backward statistics. 
 Following \cite{fearnhead2008particle, olsson2011particle, gloaguen2018online, gloaguen2021pseudo}, we do not assume that  \eqref{eq:def:elln} can be evaluated pointwise.
 We assume that there exists an estimator, relying on some random variable on a general state space $(\marginalset,\mathcal{B}(\marginalset))$ such that the following assumption holds.
@@ -409,9 +409,10 @@ Its use in Monte Carlo methods, and the related theoretical guarantees, have bee
 
 An appealing application for online smoothing is the context of recursive maximum likelihood, i.e., where new observations are used only once to update the estimator of the unknown parameter $\parvec$.
 Following \cite{legland1997recursive}, the idea is to build a sequence $\left\lbrace\parvec_k\right\rbrace_{k\geq 0}$ as follows. First, set the initial value of the parameter estimate: $\parvec_0$. Then, for each new observation $Y_{k},~k\geqslant 1$, define
-$$
-\theta_{k} = \theta_{k-1} + \gamma_k \deriv \logllh{\parvec}(Y_k \mid Y_{1:k - 1}) \eqsp,
-$$
+\begin{equation}
+\theta_{k} = \theta_{k-1} + \gamma_k \deriv \logllh{\parvec}(Y_k \mid Y_{1:k - 1}) \eqsp, \label{eq:RMLE:update}
+\end{equation}
+
 where $\logllh{\parvec}(Y_k \mid Y_{1:k - 1})$ is the log likelihood for the new observation given all the past, and $\left\lbrace\gamma_k\right\rbrace_{k\geqslant}$ are positive step sizes such that $\sum_{k \geqslant 1}\gamma_k = \infty$ and $\sum_{k \geqslant 1}\gamma_k^2 < \infty$. The practical implementation of such an update relies on the following identity:
 \begin{equation}
 \deriv \logllh{\parvec}(Y_k \mid Y_{1:k - 1})  
@@ -432,7 +433,9 @@ Using the tower property  and the backward decomposition \eqref{eq:property:back
 \filtderiv{k;\parvec}[\md{k;\parvec}] = \pred{k;\parvec}\left[\left(\tstat{k} [\af{0:k}] - \pred{k;\parvec}[\tstat{k}[\af{0:k}]]\right) \md{k;\parvec}\right]\eqsp.
 \end{equation}
 It is worth noting that, in the context of this paper where $\qg{k}$ cannot be evaluated pointwise, one cannot expect to know the functional \eqref{eq:complete:gradient:log}, which involves the gradient of this quantity. 
-In Section \ref{sec:simu:tangent:filter}, we illustrate that we can plug-in an estimate of this functional instead. The rationale motivating this algorithm relies on the following expression of the normalized loglikelihood:
+In Section \ref{sec:simu:tangent:filter}, we illustrate that we can plug-in an estimate of this functional instead. 
+
+The rationale motivating the algorithm given by \eqref{eq:RMLE:update} relies on the following expression of the normalized loglikelihood:
 $$
 \frac{1}{n} \deriv \logllh{\parvec}(Y_{1:n}) = \frac{1}{n} \sum_{k = 1}^n \deriv \logllh{\parvec}\left(Y_k \mid Y_{1:k - 1}\right)\eqsp.$$
 Moreover, under strong mixing assumptions, for all  $\parvec \in \parspace$, the extended process $\{ (X_n, Y_n, \pred{n}, \filtderiv{n}) \}_{n \geqslant 0}$ is an ergodic Markov chain and for all $\parvec \in \parspace$, the normalized score $\deriv \logllh{\parvec}(Y_{1:n})/n$  converges almost surely to a limiting quantity $\lambda(\parvec, \parvec_{\star})$ such that, under identifiability constraints, $\lambda(\parvec_{\star}, \parvec_{\star}) = 0$. 
@@ -491,7 +494,7 @@ The computations starts with initializing a set $\tstat[1]{0} = 0,\dots \tstat[N
 \label{eq:update:paris:marginal}
 \tstat[i]{k+1}  = \frac{1}{\K} \sum_{j=1}^{\K} \left( \tstat[\bi{k+1}{i}{j}]{k} + \addf{k}\left(\epart{k}{\bi{k+1}{i}{j}}, \epart{k+1}{i}\right)\right)\eqsp,
 \end{equation}
-where $\K\geqslant 1$ is a sample size which  is typically small compared to $\N$ and where $(\bi{k+1}{i}{j},\zeta_{k+1}^{(i,j)})$, $1\leqslant j\leqslant \K$, are i.i.d. in $\{1,\ldots,\N\}\times\marginalset$ with distribution 
+where $\K\geqslant 1$ is a sample size which  is typically small compared to $\N$ (\citealp{olsson2017efficient} typically suggests to take $\K = 2$) and where $(\bi{k+1}{i}{j},\zeta_{k+1}^{(i,j)})$, $1\leqslant j\leqslant \K$, are i.i.d. in $\{1,\ldots,\N\}\times\marginalset$ with distribution 
 $$
 \overline \upsilon_k^i(\ell,z)\propto\ewght{k}{\ell}\hatqg{k}\langle z\rangle(\epart{k}{\ell},\epart{k+1}{i})\kernelmarg_{k}(\epart{k}{\ell},\epart{k+1}{i};z)\eqsp.
 $$
@@ -727,7 +730,7 @@ As the gradient step size decreases, the estimates stay around the true value fo
 
 {\em Asymptotic normality.}
 The inference procedure was performed on 50 different data sets simulated with the same $\theta_*$. 
-The 50 estimates were obtained starting from the same starting point (fixed to $\theta_*$, as Figure \ref{fig:1obs:50start} shows no sensitivity to the starting point). Figure \ref{fig:50obs:1start} shows the results for the raw and the averaged estimates. 
+The 50 estimates were obtained from the same starting point (fixed to $\theta_*$, as Figure \ref{fig:1obs:50start} shows no sensitivity to the starting point). Figure \ref{fig:50obs:1start} shows the results for the raw and the averaged estimates. 
  The averaged estimates $(\widetilde \parvec_k)_{k\geqslant 0}$ consist in averaging the values produced by the estimation procedure after a burning phase of $n_0$ time steps (here $n_0 =300$ time steps). 
  This procedure allows to obtain an estimator whose convergence rate does not depend on the step sizes chosen by the user, see \cite{polyak1992acceleration,kushner1997stochastic}. For all $0 \leqslant k\leqslant n_0$, $\widetilde \parvec_k = \widehat\parvec_k $ and for all $k>n_0$,
 \[
