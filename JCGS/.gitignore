@@ -1,0 +1,6 @@
+Revision/main.pdf
+*.aux
+*.bbl
+*.log
+*.blg
+*.synctex.gz
