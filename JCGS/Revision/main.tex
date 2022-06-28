@@ -423,9 +423,9 @@ with
 The signed measure $\filtderiv{k;\parvec}$ is known as the \textit{tangent filter}, see \cite[Chapter~10]{cappe2005inference}, \cite{delmoral2015uniform} or \cite{olsson2020particle}. 
 Using the tower property  and the backward decomposition \eqref{eq:property:backward} yields
 \begin{align*}
-\post{0:k;\parvec \mid k - 1} [\af{0:k;\parvec} \md{k;\parvec}]  &= \mathbb{E}_\parvec\left[\af{0:k;\parvec}(X_{0:k}) \md{k;\parvec}(X_k,Y_k)\middle|Y_{0:k-1}\right]\eqsp,\\
-&= \mathbb{E}_\parvec\left[\mathbb{E}_\parvec\left[\af{0:k;\parvec}(X_{0:k}) \middle|X_k,Y_{0:k-1}\right]\md{k;\parvec}(X_k,Y_k)\middle|Y_{0:k-1}\right]\eqsp,\\
-&= \mathbb{E}_\parvec\left[\tstat{k} [\af{0:k}](X_k) \md{k;\parvec}(X_k,Y_k)\middle|Y_{0:k-1}\right] =  \pred{k;\parvec}\left[\tstat{k} [\af{0:k}]\md{k;\parvec}\right]\eqsp,
+\post{0:k;\parvec \mid k - 1} [\af{0:k;\parvec} \md{k;\parvec}]  &= \mathbb{E}_\parvec\left[\af{0:k;\parvec}(X_{0:k}) \md{k;\parvec}(X_k)\middle|Y_{0:k-1}\right]\eqsp,\\
+&= \mathbb{E}_\parvec\left[\mathbb{E}_\parvec\left[\af{0:k;\parvec}(X_{0:k}) \middle|X_k,Y_{0:k-1}\right]\md{k;\parvec}(X_k)\middle|Y_{0:k-1}\right]\eqsp,\\
+&= \mathbb{E}_\parvec\left[\tstat{k} [\af{0:k}](X_k) \md{k;\parvec}(X_k)\middle|Y_{0:k-1}\right] =  \pred{k;\parvec}\left[\tstat{k} [\af{0:k}]\md{k;\parvec}\right]\eqsp,
 \end{align*}
 so that
 \begin{equation} 
@@ -558,12 +558,13 @@ For all $k\geqslant 0$, the Wald-based random weight particle filtering proceeds
 \item Sample $\epart{k}{i}$ with distribution $\kissforward{k-1}{k-1}(\epart{k-1}{I_k^{i}},\cdot)$.
 \end{enumerate}
 \item For all $1\leqslant i\leqslant \N$, set  $\ewght{k}{i}= 0$.
-\item While there exists $i_* \in\{1,\ldots,\N\}$ such that $\ewght{k}{i_*} \leqslant 0$, for all $1\leqslant i\leqslant \N$, sample $\zeta_k^{i}$ with distribution $\kernelmarg_{k}(\epart{k-1}{I_k^{i}},\epart{k}{i};\cdot)$ (i.e. compute an estimator of the transition density) and set 
+\item While there exists $i_* \in\{1,\ldots,\N\}$ such that $\ewght{k}{i_*} \leqslant 0$, for all $1\leqslant i\leqslant \N$, sample $\zeta_k^{i}$ with distribution $\kernelmarg_{k}(\epart{k-1}{I_k^{i}},\epart{k}{i};\cdot)$, i.e. compute an estimator of the transition density, and set 
 $$
 \ewght{k}{i}  = \ewght{k}{i} + \frac{\hatqg{k-1}\langle \zeta_k^i\rangle(\epart{k-1}{I_k^{i}},\epart{k}{i}) }{\kissforward{k-1}{k-1}(\epart{k-1}{I_k^{i}},\epart{k}{i})}\eqsp.
 $$
 \end{enumerate}
-We aim at updating the backward statistics $\tstat[i]{k+1}$, $1\leqslant i \leqslant N$ using an importance sampling step as exact accept-reject sampling of the $\bi{k+1}{i}{j}$, $1\leqslant j \leqslant \K$,  with distribution $\overline \upsilon_k^i$ requiring restrictive assumptions. Therefore, we introduce the following extension of Wald's trick importance sampling to the online smoothing setting of this paper.
+We aim now at updating the backward statistics $\tstat[i]{k+1}$, $1\leqslant i \leqslant N$ using an importance sampling step. % as exact accept-reject sampling of the $\bi{k+1}{i}{j}$, $1\leqslant j \leqslant \K$,  with distribution $\overline \upsilon_k^i$ requiring restrictive assumptions. 
+Therefore, we introduce the following extension of Wald's trick importance sampling to the online smoothing setting of this paper.
 
 \paragraph{Backward simulation weights.} For all $1\leqslant i\leqslant \N$, the backward importance sampling step proceeds then as follows.
 \begin{enumerate}
@@ -601,7 +602,7 @@ $$
 X_k = \tanh(W_{1} Y_{k-1} + W_{2} X_{k-1} + b + \eta_k)\quad\mathrm{and} \quad Y_k = W_{3} X_{k}  + c + \varepsilon_k\eqsp,
 $$
 where $W_{1}$, $W_{2}$, $W_3$ and $b$ and $c$ are the weight matrices and bias,  $\Sigma$ is an unknown covariance matrix and $(\eta_k)_{k\geqslant 1}$ and $(\varepsilon_k)_{k\geqslant 1}$ are independent Gaussian random variables with covariance matrices $Q$ and $R$.
-In this experiment,  we show that the proposed algorithm can be used in this setting which does not fit the usual assumptions of hidden Markov models, as, here, $Y_k$ is not independent from $Y_{k - 1}$ conditionally to the hidden states. 
+In this experiment,  we show that the proposed algorithm can be used in this setting which does not fit the usual assumptions of hidden Markov models. %, as $Y_k$ is not independent from $Y_{k - 1}$ conditionally to $$.
 While here we focus on a simple vanilla one-layer recurrent network, such a general state space model could be extended to multi-layer RNN architectures by considering noisy state dynamics in each hidden layer, and to RNN variants such as Long Short Term Memory  \citep{Hochreiter1997LongSM} and Gated Recurrent Unit (GRU) \citep{Cho2014LearningPR}.
  
 To generate a synthetic sequence of states and observations $(X_{0:n},Y_{0:n})$ from this stochastic RNN, we considered diagonal covariance matrices $\Sigma$, $Q$ and $R$, with the same variance along all dimensions equal to 0.1. 
@@ -682,8 +683,8 @@ where $q^{\mathsf{Eul}}_{k+1}$ is the probability density function of Gaussian d
 As the observation model is linear and Gaussian, the proposal distribution is therefore Gaussian with explicit mean and variance. 
 
 In this first experiment, particles are used to solve the state estimation problem for the first observation i.e. to compute an estimate of $ \pE[ X_{0} | Y_{0:n}]$.
-Figure~\ref{fig:sine:timeandbias} displays the computational complexity and the estimation of the posterior mean with the acceptance-rejection algorithm and the proposed backward sampling technique as a function of $\K$. 
-In this setting, $N=100$, and each unbiased estimate of $\hat{q}$ is computed using 30 Monte Carlo replicates.
+Figure~\ref{fig:sine:timeandbias} displays the computational complexity and the estimation of the posterior mean with the accept-reject algorithm and the proposed backward sampling technique as a function of $\K$. 
+In this setting, $N=100$, and each unbiased estimate is computed using 30 Monte Carlo replicates.
 
 For $\K = 2$ (which is the recommended value for the PaRIS algorithm, see \cite{olsson2017efficient}), our estimate shows a bias, which is not surprising, as it is based on a biased normalized importance sampling step. However, this bias quickly vanishes for $\K \geqslant 10$. 
 Interestingly, our method comes with a drastic (of a factor of 10) reduction of computational time. 
