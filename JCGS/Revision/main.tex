@@ -283,7 +283,7 @@ These approaches, which come with strong theoretical guarantees (\cite{delmoral2
 The particle-based rapid incremental smoother \citep{olsson2017efficient} is an online version of forward-backward procedures, specifically designed to approximate conditional expectations of additive functionals. 
 This algorithm relies on a backward sampling step performed on the fly thanks to an acceptance rejection procedure. 
 This online smoother was proven to be strongly consistent, asymptotically normal, and with a control of the asymptotic variance, when it is performed together with the vanilla bootstrap filter \citep{gordon1993novel}. 
-In \cite{olsson2020particle}, the authors show how this algorithm can be used to perform recursive maximum likelihood in state space models. This approach relies on the necessity to upper bound the transition density of the hidden signal, as it is required to perform acceptance rejection sampling.
+In \cite{olsson2020particle}, the authors show how this algorithm can be used to perform recursive maximum likelihood estimation in state space models. This approach relies on the necessity to upper bound the transition density of the hidden signal, as it is required to perform acceptance rejection sampling.
 
 Moreover, a pivotal step of all SMC approaches is the evaluation of this transition density and of the density of the conditional distribution of an observation given the corresponding latent state (the marginal conditional likelihood).
 In many practical settings, though, no closed-form expressions of these distributions are available: for instance, in the case of partially observed diffusions \citep{andersson2017unbiased,fearnhead2017continuous} or in the context of  approximate Bayesian computation smoothing \citep{martin:jasra:singh:whiteley:delmoral:maccoy:2014}.
@@ -384,11 +384,11 @@ A pivotal quantity to estimate $\post{0:n \mid n}[\af{0:n}]$ is the \textit{back
 Note that for each $k$, $\tstat{k}[\af{0:k}]$ is a function of $X_k$, and is defined relatively to the functional of interest $\af{0:k}$.
 For additive functionals, this statistic satisfies the two following key identities, for all $1\leqslant k \leqslant n$:
 \begin{align}
-\post{0:n \mid n}[\af{0:n}] &= \post{n}\left[\tstat{n}[\af{0:n}] \right], \label{eq:property:filt:smooth}\\
+\post{0:n \mid n}[\af{0:n}] &= \pE\left[\af{0:n}(X_{0:n})\middle| Y_{0:n}\right] = \pE\left[\pE\left[\af{0:n}(X_{0:n})\middle|Y_{0:n},X_n\right]\middle| Y_{0:n}\right] = \post{n}\left[\tstat{n}[\af{0:n}] \right], \label{eq:property:filt:smooth}\\
 \tstat{k}\left[\af{0:k}\right](X_{k}) &= \pE\left[\left.\tstat{k-1}\left[\af{0:(k-1)}\right]\left(X_{k-1}\right) + \addf{k-1}\left(X_{k-1},X_{k}\right)\right|X_{k},Y_{0:k-1} \right]\eqsp, \label{eq:property:backward}
 \end{align} 
 where $\addf{k-1}$ is the function defined in \eqref{eq:additive:functional}.
- Property \eqref{eq:property:filt:smooth}, which results from the tower property for conditional expectations\footnote{\textit{i.e}, for all  functions $h$ and random variables $Z_1, Z_2$, $\mathbb{E}\left[h(Z_1, Z_2)\right] = \mathbb{E}\left[\mathbb{E}\left[h(Z_1, Z_2) \vert Z_2\right]\right]$} means that the target quantity is the filtering expectation of a well chosen statistic, while property \eqref{eq:property:filt:smooth} provides a recursion to compute these statistics.  These two properties suggest an \textit{online} procedure to solve the online smoothing problem. Starting at time 0, at each step $k$, this procedure aims at (i) computing the filtering distribution and (ii) computing the backward statistics. 
+ Property \eqref{eq:property:filt:smooth}, which results from the tower property for conditional expectations means that the target quantity is the filtering expectation of a well chosen statistic, while property \eqref{eq:property:filt:smooth} provides a recursion to compute these statistics.  These two properties suggest an \textit{online} procedure to solve the online smoothing problem. Starting at time 0, at each step $k$, this procedure aims at (i) computing the filtering distribution and (ii) computing the backward statistics. 
 Following \cite{fearnhead2008particle, olsson2011particle, gloaguen2018online, gloaguen2021pseudo}, we do not assume that  \eqref{eq:def:elln} can be evaluated pointwise.
 We assume that there exists an estimator, depending on some random variable in a general state space $(\marginalset,\mathcal{B}(\marginalset))$ such that the following assumption holds.
 \begin{hypH} 
@@ -401,9 +401,9 @@ For all $\parvec \in\parspace$ and $k\geqslant 0$, there exists a Markov kernel 
 This framework, known as \textit{pseudo marginalisation}, is based on the plug-in principle, as a pointwise estimate of $\qg{k;\parvec}(x,x')$ can be obtained by generating $\zeta$ from $\kernelmarg_{k;\parvec}(x,x';\rmd z)$ and computing the statistic $\hatqg{k;\parvec}\langle \zeta\rangle(x,x')$. 
 Its use in Monte Carlo methods, and the related theoretical guarantees, have been studied in the context of MCMC \citep{andrieu2009pseudo}, and more recently, of SMC \citep{gloaguen2021pseudo}.
 
-\subsubsection*{Recursive maximum likelihood}
+\subsubsection*{Recursive maximum likelihood estimation}
 
-An appealing application for online smoothing is the context of recursive maximum likelihood, i.e., where new observations are used only once to update the estimator of the unknown parameter $\parvec$. Following \cite{legland1997recursive}, the idea is to build a sequence $\left\lbrace\parvec_k\right\rbrace_{k\geqslant 0}$ as follows. First, set the initial value $\parvec_0$ of the parameter estimate and then, for each new observation $Y_{k},~k\geqslant 1$, define
+An appealing application for online smoothing is the context of recursive maximum likelihood estimation, i.e., where new observations are used only once to update the estimator of the unknown parameter $\parvec$. Following \cite{legland1997recursive}, the idea is to build a sequence $\left\lbrace\parvec_k\right\rbrace_{k\geqslant 0}$ as follows. First, set the initial value $\parvec_0$ of the parameter estimate and then, for each new observation $Y_{k},~k\geqslant 1$, define
 \begin{equation}
 \theta_{k} = \theta_{k-1} + \gamma_k \deriv \logllh{\parvec}(Y_k \mid Y_{0:k - 1}) \eqsp,  \label{eq:RMLE:update}
 \end{equation}
@@ -622,11 +622,11 @@ For the backward IS smoother, we use $N=1000$ particles for the bootstrap filter
 For the Poor Man's smoother $N=3000$ particles were used, which yields a similar computational cost than the backward IS smoother. 
 One interesting aspect of applying the backward IS smoother (BIS) on neural network architectures is the parallelization abilities of such algorithm: the loop over the backward samples in the backward step of the BIS is easily parallelizable, while the Poor Man's smoother requires to store the full past trajectories of the particles. 
 
-Table~\ref{table:RNN_exp} displays the result when performing 100 runs for each smoothing algorithm. 
+Table~\ref{table:RNN_exp} displays the results from performing 100 runs for each smoothing algorithm. 
 The performance metric is the classical mean squared error (MSE), which is approximated with the empirical mean over the 100 runs.
 The backward IS smoother outperforms the Poor Man's smoother when estimating both quantities. 
 This is also illustrated in Figure~\ref{fig:RNN:mseperXk}, displaying for the stochastic RNN of dimension $64$ the MSE over 100 runs of $\mathbb{\widehat{E}}[X_k|Y_{0:199}]$, for $k \in \{0,...,199\}$: the backward IS smoother has a significantly  smaller MSE than the Poor Man's smoother for all observations that are recorded far in the past (in our example, for all $k \leqslant 150$).  
-Moreover, the table also shows that while the backward IS's MSE tends to stay stable for all given $n$ (49,99, and 199), as expected the Poor Man's estimation is less accurate for a longer sequence of observations, with a MSE increasing as $n$ increases.
+Moreover, the table also shows that while the backward IS's MSE tends to stay stable for all given $n$ (49,99, and 199), as expected the Poor Man's estimation is less accurate for a longer sequence of observations, with the MSE increasing as $n$ increases.
 
 \begin{table}
 \caption{Empirical estimation of $\mathbb{E}[\|X_0 - \mathbb{\widehat{E}}[X_0|Y_{0:n}]\|^2]$ and $\mathbb{E}[ \sum_{k=0}^{n}\|X_k - \mathbb{\widehat{E}}[X_k|Y_{0:n}]\|^2/(n+1)]$ for the Poor man's smoother (PMS) and the Backward IS smoother, for states $X_{0:n}$ and observations $Y_{0:n}$ generated with stochastic RNNs of dimension 32 and 64. We consider an online estimation of a sequence of 200 observations, truncated at timestep $n=49$ (50 timesteps), $n=99$ (100 timesteps) and the full sequence ($n=199$).}
@@ -719,14 +719,14 @@ Online recursive maximum likelihood using pseudo marginal SMC is illustrated for
 As mentionned, a GPE estimator of the transition density can be computed. 
 Following the idea of this computation, it is possible to obtain an unbiased estimate of the gradient of the log-transition density and thus compute and unbiased estimate of the key quantity given in \eqref{eq:complete:gradient:log}. 
 To the best of our knowledge, this estimator is new, and given in appendix \ref{sec:filter:SDE}.
-Using the Exact algorithm of \cite{beskos2006retrospective} a data set of 5000 points (displayed in Figure~\ref{fig:1obs:50start}), was simulated whith the true parameter $\parvec_* = \pi/4$. 
+Using the Exact algorithm of \cite{beskos2006retrospective} a data set of 5000 points (displayed in Figure~\ref{fig:1obs:50start}), was simulated using the true parameter $\parvec_* = \pi/4$. 
 As in the previous section, particle smoothing was performed, using  the same particle filter, with $\N = 100$ particles and $\K = 10$ backward samples in our backward importance sampling procedure. 
 In this setup, we explore three key features of our estimator.
 
 {\em Sensitivity to the starting point $\hat{\parvec}_0$.}
 The inference procedure was performed on the same data set from 50 different starting points uniformly chosen in $(0,2\pi)$. 
-The gradient step size $\gamma_k$ of equation \eqref{eq:par:update} was chosen constant (and equal to 0.5) for the first 300 time steps, and then decreasing with a rate proportional to $k^{-0.6}$. 
-Results are given Figure~\ref{fig:1obs:50start}. There is no sensitivity to the starting point of the algorithm, and after a couple of hundred observations, the estimates all concentrate around the true value. 
+The gradient step size $\gamma_k$ of equation \eqref{eq:par:update} was chosen to be constant (and equal to 0.5) for the first 300 time steps, and then decreasing with a rate proportional to $k^{-0.6}$. 
+Results are given in Figure~\ref{fig:1obs:50start}. There is no sensitivity to the starting point of the algorithm, and after a couple of hundred observations, the estimates all concentrate around the true value. 
 As the gradient step size decreases, the estimates stay around the true value following autocorrelated patterns that are common to all trajectories.
 
 {\em Asymptotic normality.}
@@ -968,7 +968,7 @@ The term $\text{diag}(\Sf)/2$ in the mean of $\varepsilon_{k+1} $ ensures that $
 
 \subsubsection*{Estimation on synthetic data}
 
-Simulated data are obtained from the model given by \eqref{eq:LV:SDE} and \eqref{eq:LV:obs:model} for a known set of parameters.
+Simulated data are obtained using the model given by \eqref{eq:LV:SDE} and \eqref{eq:LV:obs:model} for a known set of parameters.
  Chosen values of $\theta$, $\Sigma$, $\text{c}_1$ and $\text{c}_2$ are the following:
  \begin{align*}
 \begin{array}{rcll}
