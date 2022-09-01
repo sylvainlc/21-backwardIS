@@ -260,7 +260,7 @@ In this setting, obtaining low variance estimators of expectations under the pos
 Following recent theoretical results for pseudo-marginal sequential Monte Carlo smoothers, a pseudo-marginal backward importance sampling step is introduced to estimate such expectations. 
 This new step allows to reduce very significantly the computational time  of the existing numerical solutions based on an acceptance-rejection procedure for similar performance, and to broaden the class of eligible models for such methods. 
 For instance, in the context of multivariate stochastic differential equations, the proposed algorithm makes use of unbiased estimates of the unknown transition densities under much weaker assumptions than standard alternatives.
- The performance of this estimator is assessed for high-dimensional discrete-time latent data models,  for recursive maximum likelihood estimation in the context of partially observed diffusion process, and  in the case of a bidimensional partially observed stochastic Lotka-Volterra model. 
+ The performance of this estimator is assessed for high-dimensional discrete-time latent data models,  for recursive maximum likelihood estimation in the context of partially observed diffusion process (POD), and  in the case of a bidimensional partially observed stochastic Lotka-Volterra model. 
 \end{abstract}
 
 \noindent%
@@ -779,7 +779,32 @@ As expected, the raw estimator shows different rates of convergence depending on
 \subsection{Stochastic volatility model}
 \label{sec:simu:sv}
 
+We first consider a classical data set of the daily log-returns of the Standard \& Poor's 500 Index from 2005 to 2018, freely available in the \texttt{R} package \texttt{stochvolTMB} \citep{wahl2021stochvolTMB}. 
+Our goal is to estimate the volatility through a classical stochastic volatility model \citep{taylor1982financial}. Namely, we consider the following model:
+\begin{align*}
+X_k &= \left\lbrace 
+\begin{array}{lr}
+\frac{\sigma}{\sqrt{1 - \phi^2}}\varepsilon_k & \text{ for } k = 0\\
+\phi X_{k-1} + \sigma  \varepsilon_k 
+& \text{ for } k > 0
+\end{array}
+\right., \\
+Y_k &= \beta\exp\left(X_k/2\right)\zeta_k,
+\end{align*}
+ where, $X_k$ is the hidden volatility at day $k$, $Y_k$ are the observed dayly log-returns, $\beta, \phi$ and $\sigma$ are unknown positive parameters (and such that $\phi < 1$), and for  $k \geqslant 0$, $(\varepsilon_k)_{k\geqslant0}$ and $(\zeta_k)_{k\geqslant0}$ are sequences of independent random variables with distribution $\mathcal{N}(0, 1)$.
+ We aim at performing maximum likelihood inference through an EM algorithm, where the E-step is performed using our backward importance sampling algorithm. 
+ The E step for this model rely on the approximation of 5 expectations of elementary additive functionals. Knowing these expectations, the M step is then explicit (see, for instance, \citealp[Chapter 12]{douc2014nonlinear}, for computation details).
 
+The particle smoother is implemented using $N = 400$ particles and $\tilde{N}=200$. 
+ Estimated parameters are $\hat{\beta} = 0.01, \hat{\phi} = 0.98, \hat{\sigma} = 0.24$, which are consistant with usual estimations for this data set (see for instance \cite{wahl2021stochvolTMB}).  Figure \ref{fig:stoch:vol} shows the resulting estimated volatility, where the exceptional periods such as the aftermath of the 2008 crisis are characterized by high volatility.
+ 
+\begin{figure}
+\begin{center}
+\includegraphics[width = .45\textwidth]{FigureSup.pdf}
+\end{center}
+\caption{\label{fig:stoch:vol} \textit{Left:} S\& P 500 daily log return between 2005 and 2018. \textit{Right:} Estimated volatility after estimation of unknown parameters via an EM algorithm. High volatility correspond to periods of high variance in log returns.}
+\end{figure}  
+ 
 \subsection{Multidimensional diffusion processes: Stochastic Lotka-Volterra model}
 \label{sec:simu:LV}
 
@@ -800,7 +825,8 @@ Y_{t_k} = \begin{pmatrix} \text{c}_1X_1(t_k)\mathrm{e}^{\epsilon^{(1)}_{t_k}} \\
 where $\text{c} = (\text{c}_1, \text{c}_2)^T$ is known (the observed fraction of the population) and $\lbrace \epsilon_{t_k} =(\epsilon^{(1)}_{t_k}, \epsilon^{(2)}_{t_k})\rbrace_{1\leqslant k\leqslant n}$ are i.i.d. random variables distributed as a $\mathcal{N}_2(-\text{diag}\ \Sigma/2, \Sigma)$ where $\Sigma$ is an unknown 2 $\times$ 2 covariance matrix. It is straightforward to show that for a generic $\parvec$, in the SDE defined by \eqref{eq:LV:SDE}, the drift function cannot be written (even after the Lamperti transform) as the gradient of a potential. 
 Therefore, the General Poisson estimator cannot be used as an unbiased estimator of the transition density. 
 Following Section \ref{sec:wald:trick}, an almost surely positive unbiased estimate of the transition density is obtained by combining the Wald's trick to the parametrix estimators of \cite{fearnhead2017continuous}.
-The proposal distribution for the particle filter is again a trade off between model dynamics and the observation model (full details are given in the appendix). We focus below on the applications of the model on a real dataset. Synthetic experiments were also performed to ensure the performance of our algorithm in a fully supervised context, and are shown in appendix.
+The proposal distribution for the particle filter is again a trade off between model dynamics and the observation model (full details are given in the appendix). We focus below on the applications of the model on a real dataset. 
+Synthetic experiments were also performed to ensure the performance of our algorithm in a fully supervised context, and are shown in appendix.
 
 
 %\subsubsection*{Hares and lynx data}
@@ -821,6 +847,18 @@ The replicates show that the variance of our estimator (for a given set of obser
 \caption{\label{fig:LV:hares:lynx} Estimated Hares-Lynx abundances using the Hudson bay company data set. Both our IS-PaRIS smoother and the poor man smoother are performed to approximate the MLE and solve the tracking problem. Blue crosses show the observations.}
 \end{figure} 
 
+\section{Conclusion}
+
+In this work we presented a novel algorithm for inference in general state space models where  some key quantities such as transition densities cannot be evaluated.
+Following \cite{gloaguen2021pseudo}, we used 
+a pseudo marginal SMC approach, proposing a workaround, the backward importance sampling, to the computationally intensive accept-rejection trick of \cite{gloaguen2018online}.
+In section \ref{sec:simu:RNN}, we showed the performances of this estimator in the context of hidden state estimation for RNN and showed that we perform better than the classical Poor Man smoother when the dimension of the hidden state increases. 
+In section \ref{sec:simu:SINE}, an empirical study on a partially diffusion process suggest that the bias of this estimator can quickly become negligible with enough Monte Carlo effort, and is less computationnaly intensive than the state of the art unbiased estimator.
+We showed how in section \ref{sec:simu:SINE}, conjugate to a novel unbiased estimate of the gradient of log transition density for diffusion process, pseudo marginal SMC can be used to perform online estimation in partially observed diffusion process.
+At last, on section \ref{sec:real:data}, we showed how inference our estimator can be used for generic multidimensional POD by conjugating our approach with a novel unbiased and positive estimator of filtering weights in this pseudo marginal context.
+
+Future research remains to study the theoretical properties of this algorithm, and the theoretical impact of the biased introduced by self normalized importance sampling in that context. 
+Such a study could provide insights on how to choose $\tilde{N}$ relatively to $N$.
 
 \bibliographystyle{Chicago}
 \bibliography{references}
