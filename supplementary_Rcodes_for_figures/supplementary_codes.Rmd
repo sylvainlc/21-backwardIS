@@ -66,10 +66,11 @@ rm(list = ls())
 
 # Packages ----------------------------------------------------------------
 
-library(GrandParisPackage)
+library(GrandParisPackage) # For the main algorithm
 library(parallel) # For parallel computing (do not work on windows)
 library(tidyverse) # For data processing
 library(tictoc) # For time comparisons
+library(gridExtra) # For multiple plots
 
 # Simulating data ---------------------------------------------------------
 
@@ -230,7 +231,7 @@ res_npart  <- lapply(my_n_particles,
                                              alphas = c(0.5, 0.6, 1), 
                                              frac = c(1, 1, 0.1))) 
 res_df_npart <- do.call(rbind.data.frame, res_npart)
-save(res_df_npart, file = "res_df_npart.RData")
+# save(res_df_npart, file = "res_df_npart.RData")
 # Plotting results
 
 my_labels <- expression("AR,"~tilde(N)==2, "IS,"~tilde(N)== N^0.5,
@@ -269,6 +270,7 @@ rm(list = ls())
 library(GrandParisPackage)
 library(tidyverse)
 library(parallel)
+library(gridExtra)
 ```
 
 
@@ -281,9 +283,10 @@ library(parallel)
 trueTheta <- pi/4; trueSigma2 <- 1;
 n <- 5000; times <- seq(0, by = 1, length = n)
 base_pow <- 0.6
-get_grad_steps <- function(gradient_power, cst = 8){
+# Function to obtain a sequence of gradient steps
+get_grad_steps <- function(gradient_power, cst = 8, n = n){
   firstStep <- 0.5
-  nStart <- 300
+  nStart <- 300 # Number
   steps <- c(rep(firstStep, nStart), sapply(cst * firstStep * (1:(n - nStart) )^(-gradient_power),
                                             function(x) min(x, firstStep)))
   matrix(steps , ncol = 2, nrow = n)
