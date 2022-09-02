@@ -359,10 +359,10 @@ may be used as a surrogate for $\llh{n,\parvec}(Y_{0:n})$ in the maximization pr
 
 \begin{example}[Fisher's identity and online gradient ascent.]
 An alternative to the EM algorithm is to maximize the loglikelihood through gradient based methods.
-Indeed, in state space models, under some regularity conditions (see \cite{cappe2005inference}, Chapter~10), the gradient of the loglikelihood can be obtained using Fisher's identity:
+Indeed, in state space models, under some regularity conditions, the gradient of the loglikelihood can be obtained using Fisher's identity:
 $$\deriv \log \llh{n,\parvec}(Y_{0:n}) = \pE_\theta\left[\sum_{k=0}^{n-1} \deriv \log \qg{k;\parvec}(X_{k},X_{k+1})\middle | Y_{0:n}\right],$$
 which relies on the conditional expectation of an additive functional.
-It has been noted, see \cite[Chapter 10]{cappe2005inference} or \cite{olsson2020particle}, how this identity, coupled with the smoothing recursions of Section \ref{sec:smoothing}, can lead to an online gradient ascent, that provides an online estimate of the MLE.
+It has been noted (see \citealp[Chapter 10]{cappe2005inference}, or \citealp{olsson2020particle}), how this identity, coupled with the smoothing recursions of Section \ref{sec:smoothing}, can lead to an online gradient ascent, that provides an online estimate of the MLE.
 An extension of this method is illustrated in Section~\ref{sec:simu:tangent:filter} in a challenging setting where the transition density, and therefore \eqref{eq:def:elln}, cannot be evaluated.
 \end{example}
 
@@ -773,43 +773,19 @@ As expected, the raw estimator shows different rates of convergence depending on
 \caption{\label{fig:1obs:1start:6Grads}(\textit{Left}) online estimation of $\theta$ for the data set presented in Figure \ref{fig:1obs:50start}, with different decreasing rates values $\kappa$. (\textit{Right}) Averaged estimator, where $\hat{\parvec}$ is averaged after a burning phase of 300 time steps.}
 \end{figure}
 
+ 
 \section{Applications to real data}
 \label{sec:real:data}
 
-\subsection{Stochastic volatility model}
-\label{sec:simu:sv}
-
-We first consider a classical data set of the daily log-returns of the Standard \& Poor's 500 Index from 2005 to 2018, freely available in the \texttt{R} package \texttt{stochvolTMB} \citep{wahl2021stochvolTMB}. 
-Our goal is to estimate the volatility through a classical stochastic volatility model \citep{taylor1982financial}. Namely, we consider the following model:
-\begin{align*}
-X_k &= \left\lbrace 
-\begin{array}{lr}
-\frac{\sigma}{\sqrt{1 - \phi^2}}\varepsilon_k & \text{ for } k = 0\\
-\phi X_{k-1} + \sigma  \varepsilon_k 
-& \text{ for } k > 0
-\end{array}
-\right., \\
-Y_k &= \beta\exp\left(X_k/2\right)\zeta_k,
-\end{align*}
- where, $X_k$ is the hidden volatility at day $k$, $Y_k$ are the observed dayly log-returns, $\beta, \phi$ and $\sigma$ are unknown positive parameters (and such that $\phi < 1$), and for  $k \geqslant 0$, $(\varepsilon_k)_{k\geqslant0}$ and $(\zeta_k)_{k\geqslant0}$ are sequences of independent random variables with distribution $\mathcal{N}(0, 1)$.
- We aim at performing maximum likelihood inference through an EM algorithm, where the E-step is performed using our backward importance sampling algorithm. 
- The E step for this model rely on the approximation of 5 expectations of elementary additive functionals. Knowing these expectations, the M step is then explicit (see, for instance, \citealp[Chapter 12]{douc2014nonlinear}, for computation details).
-
-The particle smoother is implemented using $N = 400$ particles and $\tilde{N}=200$. 
- Estimated parameters are $\hat{\beta} = 0.01, \hat{\phi} = 0.98, \hat{\sigma} = 0.24$, which are consistant with usual estimations for this data set (see for instance \cite{wahl2021stochvolTMB}).  Figure \ref{fig:stoch:vol} shows the resulting estimated volatility, where the exceptional periods such as the aftermath of the 2008 crisis are characterized by high volatility.
- 
-\begin{figure}
-\begin{center}
-\includegraphics[width = .45\textwidth]{FigureSup.pdf}
-\end{center}
-\caption{\label{fig:stoch:vol} \textit{Left:} S\& P 500 daily log return between 2005 and 2018. \textit{Right:} Estimated volatility after estimation of unknown parameters via an EM algorithm. High volatility correspond to periods of high variance in log returns.}
-\end{figure}  
+We now focus on real data applications, and specifically on abundance estimation of predator-prey populations in a context of noisy observations. 
+The Lotka-Volterra model is specified in continuous time, , as fully discussed in \cite{hening2018persistence}. 
+This challenging context aims to illustrate how our method performs in a context where state of the art unbiased methods (such as the Exact algorithms of \cite{beskos2006exact}) cannot be performed.
+An easier and more standard example of real application to standard stochastic volatility model is postponed in appendix.
  
 \subsection{Multidimensional diffusion processes: Stochastic Lotka-Volterra model}
 \label{sec:simu:LV}
 
-This section sets the focus on a stochastic model describing in continuous time the population dynamics in a predator-prey system, as fully discussed in \cite{hening2018persistence}. 
-The bivariate process $(X_t)_{t\geqslant 0}$ of predators and preys abundances is assumed to follow the stochastic  Lotka-Volterra model:
+In a continuous time Lotka-Volterra framework, we assume that  $(X_t)_{t\geqslant 0}$ is a bivariate process giving the actual abundance of predators and preys is assumed to follow the following SDE:
 \begin{equation}
 \label{eq:LV:SDE}
 \rmd X_t = \alpha_\parvec(X_t) \rmd t + \begin{pmatrix}X_1(t) & 0 \\ 0 & X_2(t)\end{pmatrix} \Gamma \rmd \W_t\eqsp,\
@@ -838,7 +814,7 @@ At each iteration, the estimator $\theta_k$ is updated by finding a parameter $\
 The last estimate $\hat{\theta}$ obtained with this EM algorithm  is used to  estimate the actual abundances in the model (similarly to the synthetic data case). 
 Figure \ref{fig:LV:hares:lynx} shows  estimates of $\pE_{\hat{\theta}}\left[ X_k \vert Y_{0:n}\right]$ obtained with 30 independent runs of our algorithm. 
 The particle smoother is implemented using $N = 200$ particles and $\tilde{N}=20$. 
-The replicates show that the variance of our estimator (for a given set of observations) is much smaller than the one of the Poor Man's smoother.
+The replicates show that the variance of our estimator (for a given set of observations) is much smaller than the one of the Poor Man's smoother, resulting in a more precise estimation of the actual abundances of hares and lynxes.
 
 \begin{figure}
 \begin{center}
@@ -979,11 +955,12 @@ The stability of this estimator is studied in \cite{fearnhead2017continuous} whi
 The parametrix algorithm mentioned above is a highly flexible procedure to obtain such an unbiased estimate for a much broader class of diffusions than Poisson based estimations which require strong assumptions. 
 However, as the update \eqref{CIS:eq:rho} involves the difference of two Kolmogorov operators, the parametrix estimator of the transition density may be negative, and has no reason to satisfy \eqref{eq:AR:bound}.
 
-\section{Supplementary material for Section \ref{sec:simu:LV}}
+\section{Supplementary material for Section \ref{sec:real:data}}
+
 
 \subsection*{Proposal distribution in the Lotka-Volterra experiment}
 
-In this section, we detail the proposal distribution chosen for the particle filter applied to the Lotka-Voltera model defined in the experiment section of the article. 
+In this section, we detail the proposal distribution chosen for the particle filter applied to the Lotka-Voltera model defined in  section \ref{sec:real:data} of the article. 
 
 
 At each time ${k +1}$, for $k\geqslant 0$, the objective is to to sample a new particle $\xi_{k+1}$ conditionally on a particle $\xi_{k}$ at time $k$, an observation $Y_{k+1}$, and a parameter $\theta$. 
@@ -1004,7 +981,7 @@ $$
 $$
 The term $\text{diag}(\Sf)/2$ in the mean of $\varepsilon_{k+1} $ ensures that $\pE\left[\xi_{k+1}\right] =  \mf(\xi_{k}, y_{k+1})$. In our experiments, $\Sp$ was chosen as equal to $\Sigma$.
 
-\subsubsection*{Estimation on synthetic data}
+\subsubsection*{Estimation on synthetic data for the Lotka-Volterra model}
 
 Simulated data are obtained using the model given by \eqref{eq:LV:SDE} and \eqref{eq:LV:obs:model} for a known set of parameters.
  Chosen values of $\theta$, $\Sigma$, $\text{c}_1$ and $\text{c}_2$ are the following:
@@ -1040,5 +1017,37 @@ The proposed backward importance sampling smoother manages to estimate efficient
 \end{center}
 \caption{\label{fig:LV:tracking} Estimated predator-prey abundances (middle) in a stochastic Lotka Volterra model using our backward sampling estimate on simulated abundance indexes (left). Right panel shows the ground truth.}
 \end{figure}
+
+\subsection*{Stochastic volatility model, application to S \& P 500 data}
+\label{sec:simu:sv}
+
+We first consider a classical data set of the daily log-returns of the Standard \& Poor's 500 Index from 2005 to 2018, freely available in the \texttt{R} package \texttt{stochvolTMB} \citep{wahl2021stochvolTMB}. 
+Our goal is to estimate the volatility through a classical stochastic volatility model \citep{taylor1982financial}. Namely, we consider the following model:
+\begin{align*}
+X_k &= \left\lbrace 
+\begin{array}{lr}
+\frac{\sigma}{\sqrt{1 - \phi^2}}\varepsilon_k & \text{ for } k = 0\\
+\phi X_{k-1} + \sigma  \varepsilon_k 
+& \text{ for } k > 0
+\end{array}
+\right., \\
+Y_k &= \beta\exp\left(X_k/2\right)\zeta_k,
+\end{align*}
+ where, $X_k$ is the hidden volatility at day $k$, $Y_k$ are the observed dayly log-returns, $\beta, \phi$ and $\sigma$ are unknown positive parameters (and such that $\phi < 1$), and for  $k \geqslant 0$, $(\varepsilon_k)_{k\geqslant0}$ and $(\zeta_k)_{k\geqslant0}$ are sequences of independent random variables with distribution $\mathcal{N}(0, 1)$.
+ We aim at performing maximum likelihood inference through an EM algorithm, where the E-step is performed using our backward importance sampling algorithm. 
+ The E step for this model rely on the approximation of 5 expectations of elementary additive functionals. Knowing these expectations, the M step is then explicit (see, for instance, \citealp[Chapter 12]{douc2014nonlinear}, for computation details).
+
+The particle smoother is implemented using $N = 400$ particles and $\tilde{N}=200$. 
+ Estimated parameters are $\hat{\beta} = 0.01, \hat{\phi} = 0.98, \hat{\sigma} = 0.24$, which are consistant with usual estimations for this data set (see for instance \cite{wahl2021stochvolTMB}).  Figure \ref{fig:stoch:vol} shows the resulting estimated volatility, where the exceptional periods such as the aftermath of the 2008 crisis are characterized by high volatility.
+ 
+\begin{figure}
+\begin{center}
+\includegraphics[height = .333\textwidth]{FigureSup.pdf}
+\end{center}
+\caption{\label{fig:stoch:vol} (\textit{Left}) S\& P 500 daily log return between 2005 and 2018. (\textit{Right}) Estimated volatility after estimation of unknown parameters via an EM algorithm. High volatility correspond to periods of high variance in log returns.}
+\end{figure} 
+
+
+
 
 \end{document}
