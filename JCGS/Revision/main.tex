@@ -259,8 +259,9 @@ This paper proposes a new Sequential Monte Carlo algorithm to perform online est
 In this setting, obtaining low variance estimators of expectations under the posterior distributions of the unobserved states given the observations is a challenging task. 
 Following recent theoretical results for pseudo-marginal sequential Monte Carlo smoothers, a pseudo-marginal backward importance sampling step is introduced to estimate such expectations. 
 This new step allows to reduce very significantly the computational time  of the existing numerical solutions based on an acceptance-rejection procedure for similar performance, and to broaden the class of eligible models for such methods. 
-For instance, in the context of multivariate stochastic differential equations, the proposed algorithm makes use of unbiased estimates of the unknown transition densities under much weaker assumptions than standard alternatives.
+For instance, in the context of multivariate stochastic differential equations, the proposed algorithm makes use of unbiased estimates of the unknown transition densities under much weaker assumptions than most standard alternatives.
  The performance of this estimator is assessed for high-dimensional discrete-time latent data models,  for recursive maximum likelihood estimation in the context of partially observed diffusion process (POD), and  in the case of a bidimensional partially observed stochastic Lotka-Volterra model. 
+
 \end{abstract}
 
 \noindent%
@@ -778,9 +779,9 @@ As expected, the raw estimator shows different rates of convergence depending on
 \label{sec:real:data}
 
 We now focus on real data applications, and specifically on abundance estimation of predator-prey populations in a context of noisy observations. 
-The Lotka-Volterra model is specified in continuous time, , as fully discussed in \cite{hening2018persistence}. 
-This challenging context aims to illustrate how our method performs in a context where state of the art unbiased methods (such as the Exact algorithms of \cite{beskos2006exact}) cannot be performed.
-An easier and more standard example of real application to standard stochastic volatility model is postponed in appendix.
+The Lotka-Volterra model is specified in continuous time, as fully discussed in \cite{hening2018persistence}. 
+This challenging context aims to illustrate how our method performs in a context where state-of-the art unbiased methods, such as the Exact algorithms of \cite{beskos2006exact}, cannot be performed.
+We also propose in the suplementary material an additional  (and more standard) example of real data application using a stochastic volatility model.
  
 \subsection{Multidimensional diffusion processes: Stochastic Lotka-Volterra model}
 \label{sec:simu:LV}
