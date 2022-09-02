@@ -1,0 +1,27 @@
+{
+    "id": "D7B0BE53",
+    "path": "~/Documents/particle_smoothing_for_SDE/R_files_for_articles/codes_for_BIS_for_POD.Rmd",
+    "project_path": null,
+    "type": "r_markdown",
+    "hash": "4115930207",
+    "contents": "",
+    "dirty": false,
+    "created": 1620139515527.0,
+    "source_on_save": false,
+    "relative_order": 5,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "313,3",
+        "scrollLine": "0",
+        "last_setup_crc32": ""
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1620140416,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1620140416995,
+    "read_only": false,
+    "read_only_alternatives": []
+}
