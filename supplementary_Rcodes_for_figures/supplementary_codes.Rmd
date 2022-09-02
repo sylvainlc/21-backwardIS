@@ -647,4 +647,85 @@ results <- mclapply(1:30, function(my_seed){
   mc.cores = detectCores() - 1)
 ```
 
-The results are then used to perform the smoothing as in previous section
+The results are then used to perform the smoothing as in previous section.
+
+# Stochastic volatility model
+
+Smoothing functions for the stochastic volatility model are available in the file `utils_SV_PF_functions.R`.
+The user can change the `smoothing` argument in the code below to test other smoothing methods (such as `PoorMan` or `FFBSi`).
+
+```{r stochastic_volatility}
+
+# Clean environment -------------------------------------------------------
+
+rm(list = ls())
+
+# Loading data ------------------------------------------------------------
+
+library(tidyverse)
+library(parallel)
+library(stochvolTMB) # To get the data
+
+# Data
+
+Ys <- get(data(spy, package = "stochvolTMB"))
+
+# Loading particle filter functions ---------------------------------------
+
+source("utils_SV_PF_functions.R")
+
+# Performing PF -----------------------------------------------------------
+
+set.seed(123)
+
+
+# Checking an E_step ------------------------------------------------------
+
+# Different starting points, inspired by the vignette of the stochvolTMB package
+params_design <- expand.grid(beta_ = seq(1e-3, 5e-2, length.out = 5),
+                             phi_ = c(0.9, 0.95, 0.99),
+                             sigma_ = c(0.1, 0.15, 0.2))
+foo <- function(beta_, phi_, sigma_, n_EM_steps = 30){
+  param0 <- list(beta = beta_, phi = phi_, sigma_ = sigma_)
+  results <- data.frame(beta = beta_, phi = phi_, sigma = sigma_, 
+                        iteration = 0)
+  for(i in 1:n_EM_steps){
+    PF <- get_particle_filter(Ys = Ys, 
+                              params = param0, 
+                              method = "bootstrap", 
+                              N = 400, 
+                              smoothing = "BIS",
+                              IS_method = "IS", 
+                              get_N_tilde = function(N) .5 * N)
+    param0 <- get_exact_M_step(length(Ys), PF$E_statistics)
+    results <- bind_rows(results, 
+                         data.frame(beta = param0$beta, 
+                                    phi = param0$phi, 
+                                    sigma = param0$sigma, 
+                                    iteration = i))
+  }
+  last_PF <- get_particle_filter(Ys = Ys, 
+                                 params = param0, 
+                                 method = "bootstrap", 
+                                 N = 1e3, 
+                                 smoothing = "none")
+  list(res_df = results, likelihood = last_PF$loglik)
+}
+all_results <- mcmapply(foo, params_design$beta_, 
+                        params_design$phi_, 
+                         params_design$sigma_, 
+                        mc.cores = detectCores() - 1,
+                        SIMPLIFY = FALSE)
+# Get the best final param
+best_param <- all_results[[map_dbl(all_results, "likelihood") %>% which.max()]]$res_df %>% 
+  slice(n()) %>% 
+  as.list()
+
+# Final smoother, using FFBSi
+get_particle_filter(Ys = Ys, 
+                    params = best_param, 
+                    method = "bootstrap", 
+                    N = 100, 
+                    smoothing = "FFBSi")
+```
+
