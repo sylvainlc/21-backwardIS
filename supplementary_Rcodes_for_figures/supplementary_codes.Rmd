@@ -284,7 +284,7 @@ trueTheta <- pi/4; trueSigma2 <- 1;
 n <- 5000; times <- seq(0, by = 1, length = n)
 base_pow <- 0.6
 # Function to obtain a sequence of gradient steps
-get_grad_steps <- function(gradient_power, cst = 8, n = n){
+get_grad_steps <- function(gradient_power, cst = 8, n){
   firstStep <- 0.5
   nStart <- 300 # Number
   steps <- c(rep(firstStep, nStart), sapply(cst * firstStep * (1:(n - nStart) )^(-gradient_power),
@@ -301,6 +301,11 @@ get_grad_steps <- function(gradient_power, cst = 8, n = n){
 # dir.create("simulated_data")
 n_traj <- 500
 # For windows user, replace by lapply and remove the mc.cores argument below
+if(!dir.exists("simulated_data/")){
+  dir.create("simulated_data") # Create a folder to stock simulated data
+}
+# Simulated 500 trajectories and write it in the folder "simulated_data"
+# Simulation is done exactly using exact algorithms
 mclapply(1:n_traj, 
          function(i){
            seed <- 100 + i
@@ -329,8 +334,10 @@ observations <- simulated_POD[, "observations"]
 
 # Estimation parameters ---------------------------------------------------
 
+## One set of observations, several starting points for the algorithm
+
 get_estimation_one_obs_several_start <- function(){
-  gradientSteps <- get_grad_steps(0.6, cst = 8)
+  gradientSteps <- get_grad_steps(0.6, cst = 8, n = n)
   n_start_points <- 50
   n_particles <- 100
   N_tilde <- n_particles / 10
@@ -349,7 +356,25 @@ get_estimation_one_obs_several_start <- function(){
   return(thetaEst)
 }
 
-get_estimation_one_obs_several_start()
+res_one_obs_several_start <- get_estimation_one_obs_several_start()
+
+
+res_several_obs_one_start <- mclapply(1:length(dir("simulated_data/")), function(i){
+  seed <- 100 + i
+  set.seed(seed)
+  simulated_POD <- read.table(paste0("simulated_data/simul_data_seed", seed, ".txt"),
+                              sep = ";", header = T)
+  observations <- simulated_POD[, "observations"]
+  thetaStart <- trueTheta
+  Res <- fastTangOR(observations, times,
+                    thetaModel = thetaStart, sigma2 = trueSigma2, particleSize = 500,
+                    updateOrders = rep(TRUE, length(observations)), 
+                    gradientSteps = get_grad_steps(0.6, cst = 8, 
+                                                   n = length(observations)), 
+                    all = TRUE, estimateSigma2 = FALSE, randomWalkParam = 1)
+  Res
+}, 
+mc.cores = detectCores() - 1)
 ```
 
 
@@ -485,7 +510,6 @@ ggplot(concatened_results) +
 ### Data set
 
 ```{r hares_lynx_data}
-
 rm(list = ls()) # Cleaning environment
 hares_lynx_data <- read.table("supplementary_data_hares_lynx.txt",
                               skip = 4, header = TRUE, sep = "\t")
@@ -493,7 +517,7 @@ hares_lynx_data <- read.table("supplementary_data_hares_lynx.txt",
 
 ### Performing EM for estimation
 
-** Initial parameters **
+**Initial parameter **
 
 ```{r performing_EM}
 # Dynamics parameters
@@ -620,7 +644,7 @@ results <- mclapply(1:30, function(my_seed){
               n_cands = 10,
               n_iter = 30, seed = my_seed,
               name = "lynx")},
-  mc.cores = 10)
+  mc.cores = detectCores() - 1)
 ```
 
 The results are then used to perform the smoothing as in previous section

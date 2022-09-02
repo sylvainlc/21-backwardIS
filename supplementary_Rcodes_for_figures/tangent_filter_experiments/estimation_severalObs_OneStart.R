@@ -5,8 +5,6 @@ source("simulationParameters.R")
 
 # Estimation parameters ---------------------------------------------------
 
-estTheta = T; estSig = F; updateOrders <- rep(T, n)
-gradientSteps <- get_grad_steps(0.6, cst = 8)
 allRes <- mclapply(1:length(dir("simulated_data/")), function(i){
   seed <- 100 + i
   set.seed(seed)
@@ -16,8 +14,9 @@ allRes <- mclapply(1:length(dir("simulated_data/")), function(i){
   thetaStart <- trueTheta
   Res <- fastTangOR(observations, times,
                     thetaModel = thetaStart, sigma2 = trueSigma2, particleSize = 500,
-                    updateOrders = updateOrders, gradientSteps = gradientSteps, 
-                    all = T, estimateSigma2 = F, randomWalkParam = 1)
+                    updateOrders = rep(TRUE, length(observations)), 
+                    gradientSteps = get_grad_steps(0.6, cst = 8), 
+                    all = TRUE, estimateSigma2 = FALSE, randomWalkParam = 1)
   Res
 }, mc.cores = detectCores())
 
