@@ -1,0 +1,26 @@
+{
+    "id": "869535CF",
+    "path": "~/Documents/particle_smoothing_for_SDE/18-tangentsde/ArticleExperiments/article_figures_codes.R",
+    "project_path": "article_figures_codes.R",
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1662110403159.0,
+    "source_on_save": false,
+    "relative_order": 3,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "182,0",
+        "scrollLine": "163"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1662110774,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1662110774157,
+    "read_only": false,
+    "read_only_alternatives": []
+}

@@ -1,0 +1,24 @@
+{
+    "id": "9B987F13",
+    "path": "~/Documents/particle_smoothing_for_SDE/18-tangentsde/ArticleExperiments/simulation_results/est_oneObs_oneStart_severalGrads.txt",
+    "project_path": "simulation_results/est_oneObs_oneStart_severalGrads.txt",
+    "type": "text",
+    "hash": "1997764124",
+    "contents": "",
+    "dirty": false,
+    "created": 1620137442728.0,
+    "source_on_save": false,
+    "relative_order": 3,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1599745086,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1599745086,
+    "read_only": false,
+    "read_only_alternatives": []
+}
