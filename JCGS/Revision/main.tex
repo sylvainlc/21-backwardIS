@@ -791,7 +791,7 @@ In a continuous time Lotka-Volterra framework, we assume that  $(X_t)_{t\geqslan
 \label{eq:LV:SDE}
 \rmd X_t = \alpha_\parvec(X_t) \rmd t + \begin{pmatrix}X_1(t) & 0 \\ 0 & X_2(t)\end{pmatrix} \Gamma \rmd \W_t\eqsp,\
 \end{equation}
-where $\W_t$ is a vector of independent standard Wiener processes, $\Gamma$ a $2\times 2$ matrix, and for $x = (x_1, x_2)^T:$
+where $\W_t$ is a vector of independent standard Wiener processes, $\Gamma$ a $2\times 2$ matrix, and for $x = (x_1, x_2)^\top$:
 \[
 \alpha_\parvec(x) = \begin{pmatrix} x_1( a_{10} - a_{11}x_1 - a_{12}x_2)\\  x_2(-a_{20} + a_{21}x_1 - a_{22}x_2) \end{pmatrix}\eqsp .
 \]
@@ -799,7 +799,7 @@ In this context, the unknow parameter to be estimated is $\parvec = ( a_{10}, a_
 \begin{equation}
 Y_{t_k} = \begin{pmatrix} \text{c}_1X_1(t_k)\mathrm{e}^{\epsilon^{(1)}_{t_k}} \\ \text{c}_2X_2(t_k)\mathrm{e}^{\epsilon^{(2)}_{t_k}}\end{pmatrix}\eqsp, \label{eq:LV:obs:model}
 \end{equation}
-where $\text{c} = (\text{c}_1, \text{c}_2)^T$ is known (the observed fraction of the population) and $\lbrace \epsilon_{t_k} =(\epsilon^{(1)}_{t_k}, \epsilon^{(2)}_{t_k})\rbrace_{1\leqslant k\leqslant n}$ are i.i.d. random variables distributed as a $\mathcal{N}_2(-\text{diag}\ \Sigma/2, \Sigma)$ where $\Sigma$ is an unknown 2 $\times$ 2 covariance matrix. It is straightforward to show that for a generic $\parvec$, in the SDE defined by \eqref{eq:LV:SDE}, the drift function cannot be written (even after the Lamperti transform) as the gradient of a potential. 
+where $\text{c} = (\text{c}_1, \text{c}_2)^\top$ is known (the observed fraction of the population) and $\lbrace \epsilon_{t_k} =(\epsilon^{(1)}_{t_k}, \epsilon^{(2)}_{t_k})\rbrace_{1\leqslant k\leqslant n}$ are i.i.d. random variables distributed as a $\mathcal{N}_2(-\text{diag}\ \Sigma/2, \Sigma)$ where $\Sigma$ is an unknown 2 $\times$ 2 covariance matrix. It is straightforward to show that for a generic $\parvec$, in the SDE defined by \eqref{eq:LV:SDE}, the drift function cannot be written (even after the Lamperti transform) as the gradient of a potential. 
 Therefore, the General Poisson estimator cannot be used as an unbiased estimator of the transition density. 
 Following Section \ref{sec:wald:trick}, an almost surely positive unbiased estimate of the transition density is obtained by combining the Wald's trick to the parametrix estimators of \cite{fearnhead2017continuous}.
 The proposal distribution for the particle filter is again a trade off between model dynamics and the observation model (full details are given in the appendix). We focus below on the applications of the model on a real dataset. 
@@ -828,11 +828,11 @@ The replicates show that the variance of our estimator (for a given set of obser
 
 In this work we presented a novel algorithm for inference in general state space models where  some key quantities such as transition densities cannot be evaluated.
 Following \cite{gloaguen2021pseudo}, we used 
-a pseudo marginal SMC approach, proposing a workaround, the backward importance sampling, to the computationally intensive accept-rejection trick of \cite{gloaguen2018online}.
-In section \ref{sec:simu:RNN}, we showed the performances of this estimator in the context of hidden state estimation for RNN and showed that we perform better than the classical Poor Man smoother when the dimension of the hidden state increases. 
-In section \ref{sec:simu:SINE}, an empirical study on a partially diffusion process suggest that the bias of this estimator can quickly become negligible with enough Monte Carlo effort, and is less computationnaly intensive than the state of the art unbiased estimator.
-We showed how in section \ref{sec:simu:SINE}, conjugate to a novel unbiased estimate of the gradient of log transition density for diffusion process, pseudo marginal SMC can be used to perform online estimation in partially observed diffusion process.
-At last, on section \ref{sec:real:data}, we showed how inference our estimator can be used for generic multidimensional POD by conjugating our approach with a novel unbiased and positive estimator of filtering weights in this pseudo marginal context.
+a pseudo marginal SMC approach, proposing a workaround, the backward importance sampling, to the computationally intensive accept-rejection approach of \cite{gloaguen2018online}.
+In Section \ref{sec:simu:RNN}, we highlighted the performance of this estimator in the context of hidden state estimation for RNN and showed that we perform better than the classical path-space smoother when the dimension of the hidden state increases. 
+In Section \ref{sec:simu:SINE}, an empirical study using a partially observed diffusion process suggests that the bias of this estimator can quickly become negligible with enough Monte Carlo samples, and is less computationnaly intensive than the state-of-the art unbiased estimator.
+In Section \ref{sec:simu:SINE}, conjugate to a novel unbiased estimate of the gradient of log transition density for diffusion process, pseudo marginal SMC can be used to perform online estimation in partially observed diffusion process.
+At last, on Section \ref{sec:real:data}, we showed how inference our estimator can be used for generic multidimensional POD by conjugating our approach with a novel unbiased and positive estimator of filtering weights in this pseudo marginal context.
 
 Future research remains to study the theoretical properties of this algorithm, and the theoretical impact of the biased introduced by self normalized importance sampling in that context. 
 Such a study could provide insights on how to choose $\tilde{N}$ relatively to $N$.
