@@ -781,7 +781,7 @@ As expected, the raw estimator shows different rates of convergence depending on
 We now focus on real data applications, and specifically on abundance estimation of predator-prey populations in a context of noisy observations. 
 The Lotka-Volterra model is specified in continuous time, as fully discussed in \cite{hening2018persistence}. 
 This challenging context aims at illustrating how our method performs in a context where state-of-the art unbiased methods, such as the Exact algorithms of \cite{beskos2006exact}, cannot be performed.
-We also propose in the suplementary material an additional example of real data application using a stochastic volatility model.
+We also propose in the suplementary material an additional real data application using a stochastic volatility model.
  
 %\subsection{Multidimensional diffusion processes: Stochastic Lotka-Volterra model}
 %\label{sec:simu:LV}
@@ -832,9 +832,9 @@ a pseudo marginal SMC approach, but introduced a backward importance sampler ins
 In Section \ref{sec:simu:RNN}, we highlighted the performance of this estimator in the general context of hidden state estimation for RNN and showed that our method performs better than the classical path-space smoother when the dimension of the hidden state increases. 
 In Section \ref{sec:simu:SINE}, an empirical study using a partially observed diffusion process suggests that the bias of this estimator can quickly become negligible with enough Monte Carlo samples, and is less computationally intensive than the state-of-the art unbiased estimator.
 Based on a novel unbiased estimate of the gradient of log transition density for diffusion processes, we also illustrated how pseudo marginal SMC can be used to perform online estimation for partially observed diffusion processes.
-At last, on Section \ref{sec:real:data}, we showed how inference our estimator can be used for generic multidimensional POD by conjugating our approach with a novel unbiased and positive estimator of filtering weights in this pseudo marginal context.
+In Section \ref{sec:real:data}, we showed that our estimator can be used in the challenging context of multidimensional POD.
 
-Future research remains to study the theoretical properties of this algorithm, and the theoretical impact of the biased introduced by self normalized importance sampling in that context. 
+This work also paves the way to future research such as  the analysis of the theoretical properties of biased pseudo marginal SMC algorithms, and the theoretical impact of the biased introduced by self normalized importance sampling in that context. 
 Such a study could provide insights on how to choose $\tilde{N}$ relatively to $N$.
 
 \bibliographystyle{Chicago}
@@ -1027,16 +1027,16 @@ Our goal is to estimate the volatility through a classical stochastic volatility
 \begin{align*}
 X_k &= \left\lbrace 
 \begin{array}{lr}
-\frac{\sigma}{\sqrt{1 - \phi^2}}\varepsilon_k & \text{ for } k = 0\\
+\sigma(1 - \phi^2)^{-1/2}\varepsilon_k & \text{ for } k = 0\,,\\
 \phi X_{k-1} + \sigma  \varepsilon_k 
-& \text{ for } k > 0
+& \text{ for } k > 0\,,
 \end{array}
-\right., \\
-Y_k &= \beta\exp\left(X_k/2\right)\zeta_k,
+\right. \\
+Y_k &= \beta\exp\left(X_k/2\right)\zeta_k\,,
 \end{align*}
  where, $X_k$ is the hidden volatility at day $k$, $Y_k$ are the observed dayly log-returns, $\beta, \phi$ and $\sigma$ are unknown positive parameters (and such that $\phi < 1$), and for  $k \geqslant 0$, $(\varepsilon_k)_{k\geqslant0}$ and $(\zeta_k)_{k\geqslant0}$ are sequences of independent random variables with distribution $\mathcal{N}(0, 1)$.
- We aim at performing maximum likelihood inference through an EM algorithm, where the E-step is performed using our backward importance sampling algorithm. 
- The E step for this model rely on the approximation of 5 expectations of elementary additive functionals. Knowing these expectations, the M step is then explicit (see, for instance, \citealp[Chapter 12]{douc2014nonlinear}, for computation details).
+ We aim at performing maximum likelihood inference using an EM algorithm, where the E step is approximated with our backward importance sampling algorithm. 
+ The E step for this model relies on the approximation of 5 expectations of elementary additive functionals. Knowing these expectations, the M step is then explicit (see, for instance, \citealp[Chapter 12]{douc2014nonlinear}, for computation details).
 
 The particle smoother is implemented using $N = 400$ particles and $\tilde{N}=200$. 
  Estimated parameters are $\hat{\beta} = 0.01, \hat{\phi} = 0.98, \hat{\sigma} = 0.24$, which are consistant with usual estimations for this data set (see for instance \cite{wahl2021stochvolTMB}).  Figure \ref{fig:stoch:vol} shows the resulting estimated volatility, where the exceptional periods such as the aftermath of the 2008 crisis are characterized by high volatility.
