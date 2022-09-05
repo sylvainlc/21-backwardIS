@@ -222,22 +222,6 @@ get_particle_filter <- function(Ys, params, method = "bootstrap",
     E_statistics <- get_E_statistics(smoothing_particles,
                                      y = Ys, W = smoothing_weights[, n_obs])
   }
-  else if(smoothing == "FFBSm"){
-    # Smoothing
-    smoothing_weights <- filtering_weights
-    for(t in (n_obs - 1):1){
-      smoothing_weights[, t] <- sapply(smoothing_particles[, t + 1],
-                                       function(x){
-                                         log_u_weights <- log(filtering_weights[, t]) + 
-                                           dnorm(x, params$phi * particles[, t], params$sigma, log = TRUE)
-                                         max_log_uw <- max(log_unnormed_weights)
-                                         unnormed_weights <- exp(log_unnormed_weights - max_log_uw)
-                                         return(sum(unnormed_weights))
-                                       })
-    }
-    smoothing_weights <- apply(smoothing_weights, 2, function(x) x / sum(x))
-    smoothing_particles <- particles
-  }
   else if(smoothing == "BIS"){
     N_tilde <- get_N_tilde(N)
     E_statistics <- get_E_statistics_BIS(particles, Ys, filtering_weights,
